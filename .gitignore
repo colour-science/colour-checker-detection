@@ -1,0 +1,10 @@
+*.pyc
+.DS_Store
+.coverage
+.idea
+.ipynb_checkpoints/
+__pycache__
+build
+colour_checker_detection.egg-info
+dist
+docs/_build

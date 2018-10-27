@@ -1,0 +1,6 @@
+[submodule "colour_checker_detection/resources/colour-checker-detection-tests-dataset"]
+	path = colour_checker_detection/resources/colour-checker-detection-tests-dataset
+	url = https://github.com/colour-science/colour-checker-detection-tests-dataset.git
+[submodule "colour_checker_detection/resources/colour-checker-detection-examples-dataset"]
+	path = colour_checker_detection/resources/colour-checker-detection-examples-dataset
+	url = https://github.com/colour-science/colour-checker-detection-examples-dataset.git

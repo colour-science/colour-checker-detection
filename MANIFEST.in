@@ -1,0 +1,12 @@
+include LICENSE
+include *.bib
+include *.rst
+include docs/_build/latex/ColourCheckerDetection.pdf
+graft colour_checker_detection/examples
+graft docs/_build/html
+graft docs/_build/doctrees
+prune colour_checker_detection/examples/.ipynb_checkpoints
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude ._*
+global-exclude .DS_Store
