@@ -34,10 +34,10 @@ __status__ = 'Production'
 
 __all__ = [
     'ASPECT_RATIO', 'SWATCHES_HORIZONTAL', 'SWATCHES_VERTICAL', 'SWATCHES',
-    'WORKING_WIDTH', 'ColourCheckersDetectionData',
-    'ColourCheckerSwatchesData', 'swatch_masks', 'as_8_bit_BGR_image',
-    'adjust_image', 'is_square', 'contour_centroid', 'scale_contour',
-    'crop_and_level_image_with_rectangle',
+    'SWATCH_MINIMUM_AREA_FACTOR', 'WORKING_WIDTH',
+    'ColourCheckersDetectionData', 'ColourCheckerSwatchesData', 'swatch_masks',
+    'as_8_bit_BGR_image', 'adjust_image', 'is_square', 'contour_centroid',
+    'scale_contour', 'crop_and_level_image_with_rectangle',
     'colour_checkers_coordinates_segmentation',
     'extract_colour_checkers_segmentation',
     'detect_colour_checkers_segmentation'
@@ -69,6 +69,16 @@ SWATCHES = SWATCHES_HORIZONTAL * SWATCHES_VERTICAL
 Colour checker total swatches count.
 
 SWATCHES : int
+"""
+
+SWATCH_MINIMUM_AREA_FACTOR = 200
+"""
+Swatch minimum area factor :math:`f` with the minimum area :math:`m_a`
+expressed as follows: :math:`m_a = image_w * image_h / s_c / f` where
+:math:`image_w`, :math:`image_h` and :math:`s_c` are respectively the image
+width, height and the swatches count.
+
+SWATCH_MINIMUM_AREA_FACTOR : numeric
 """
 
 WORKING_WIDTH = 1440
@@ -141,6 +151,19 @@ def swatch_masks(width, height, swatches_h, swatches_v, samples):
     -------
     list
         List of swatch masks.
+
+    Examples
+    --------
+    >>> from pprint import pprint
+    >>> pprint(swatch_masks(16, 8, 4, 2, 1))
+    [array([2, 2, 2, 2]),
+     array([2, 2, 6, 6]),
+     array([ 2,  2, 10, 10]),
+     array([ 2,  2, 14, 14]),
+     array([6, 6, 2, 2]),
+     array([6, 6, 6, 6]),
+     array([ 6,  6, 10, 10]),
+     array([ 6,  6, 14, 14])]
     """
 
     samples = as_int(samples / 2)
@@ -176,6 +199,50 @@ def as_8_bit_BGR_image(image):
     -----
     -   In the eventuality where the image is already an integer array, the
         conversion is by-passed.
+
+    Examples
+    --------
+    >>> from colour.algebra import random_triplet_generator
+    >>> prng = np.random.RandomState(4)
+    >>> image = list(random_triplet_generator(8, random_state=prng))
+    >>> image = np.reshape(image, [4, 2, 3])
+    >>> print(image)
+    [[[ 0.96702984  0.54723225  0.97268436]
+      [ 0.71481599  0.69772882  0.2160895 ]]
+    <BLANKLINE>
+     [[ 0.97627445  0.00623026  0.25298236]
+      [ 0.43479153  0.77938292  0.19768507]]
+    <BLANKLINE>
+     [[ 0.86299324  0.98340068  0.16384224]
+      [ 0.59733394  0.0089861   0.38657128]]
+    <BLANKLINE>
+     [[ 0.04416006  0.95665297  0.43614665]
+      [ 0.94897731  0.78630599  0.8662893 ]]]
+    >>> image = as_8_bit_BGR_image(image)
+    >>> print(image)
+    [[[251 195 251]
+      [128 217 219]]
+    <BLANKLINE>
+     [[137  18 252]
+      [122 228 176]]
+    <BLANKLINE>
+     [[112 253 238]
+      [167  23 203]]
+    <BLANKLINE>
+     [[176 250  59]
+      [239 229 249]]]
+    >>> as_8_bit_BGR_image(image)
+    array([[[251, 195, 251],
+            [128, 217, 219]],
+    <BLANKLINE>
+           [[137,  18, 252],
+            [122, 228, 176]],
+    <BLANKLINE>
+           [[112, 253, 238],
+            [167,  23, 203]],
+    <BLANKLINE>
+           [[176, 250,  59],
+            [239, 229, 249]]], dtype=uint8)
     """
 
     image = np.asarray(image)
@@ -203,6 +270,25 @@ def adjust_image(image, target_width=WORKING_WIDTH):
     -------
     ndarray
         Resized image.
+
+    Examples
+    --------
+    >>> from colour.algebra import random_triplet_generator
+    >>> prng = np.random.RandomState(4)
+    >>> image = list(random_triplet_generator(8, random_state=prng))
+    >>> image = np.reshape(image, [2, 4, 3])
+    >>> adjust_image(image, 5)  # doctest: +ELLIPSIS
+    array([[[ 0.9823518...,  0.5380895...,  1.0186476...],
+            [ 0.7563578...,  0.731978 ...,  0.4231120...],
+            [ 0.8726642...,  0.2936055...,  0.1687892...],
+            [ 0.8540266...,  0.1457020...,  0.2416218...],
+            [ 0.4018965...,  0.8263517...,  0.1943257...]],
+    <BLANKLINE>
+           [[ 0.8791320...,  1.0425965...,  0.1503114...],
+            [ 0.7324403...,  0.1763674...,  0.3189642...],
+            [ 0.2110148...,  0.4074382...,  0.3919139...],
+            [ 0.2356165...,  1.0136062...,  0.5616219...],
+            [ 1.0039447...,  0.7759574...,  0.8924203...]]])
     """
 
     width, height = image.shape[1], image.shape[0]
@@ -235,6 +321,15 @@ def is_square(contour, tolerance=0.015):
     -------
     bool
         Whether given contour is a square.
+
+    Examples
+    --------
+    >>> shape = np.array([[0, 0], [1, 0], [1, 1], [0, 1]])
+    >>> is_square(shape)
+    True
+    >>> shape = np.array([[0.5, 0], [1, 0], [1, 1], [0, 1]])
+    >>> is_square(shape)
+    False
     """
 
     return cv2.matchShapes(contour, np.array([[0, 0], [1, 0], [1, 1], [0, 1]]),
@@ -259,6 +354,12 @@ def contour_centroid(contour):
     -----
     -   A :class:`tuple` class is returned instead of a :class:`ndarray` class
         for convenience with *OpenCV*.
+
+    Examples
+    --------
+    >>> contour = np.array([[0, 0], [1, 0], [1, 1], [0, 1]])
+    >>> contour_centroid(contour)
+    (0.5, 0.5)
     """
 
     moments = cv2.moments(contour)
@@ -283,6 +384,15 @@ def scale_contour(contour, factor):
     -------
     ndarray
         Scaled contour.
+
+    Examples
+    --------
+    >>> contour = np.array([[0, 0], [1, 0], [1, 1], [0, 1]])
+    >>> scale_contour(contour, 2)
+    array([[ 0.,  0.],
+           [ 2.,  0.],
+           [ 2.,  2.],
+           [ 0.,  2.]])
     """
 
     centroid = as_int_array(contour_centroid(contour))
@@ -310,6 +420,30 @@ def crop_and_level_image_with_rectangle(image, rectangle):
     References
     ----------
     :cite:`Abecassis2011`
+
+    Notes
+    -----
+    -   ``image`` is expected to be an unsigned 8-bit sRGB encoded image.
+
+    Examples
+    --------
+    >>> import os
+    >>> from colour import read_image
+    >>> from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
+    >>> path = os.path.join(TESTS_RESOURCES_DIRECTORY,
+    ...                     'colour_checker_detection', 'detection',
+    ...                     'IMG_1967.png')
+    >>> image = as_8_bit_BGR_image(adjust_image(read_image(path)))
+    >>> rectangle = (
+    ...     (723.29608154, 465.50939941),
+    ...     (461.24377441, 696.34759522),
+    ...     -88.18692780,
+    ... )
+    >>> print(image.shape)
+    (958, 1440, 3)
+    >>> image = crop_and_level_image_with_rectangle(image, rectangle)
+    >>> print(image.shape)
+    (461, 696, 3)
     """
 
     width, height = image.shape[1], image.shape[0]
@@ -376,14 +510,28 @@ def colour_checkers_coordinates_segmentation(image, additional_data=False):
     Notes
     -----
     -   Multiple colour checkers can be detected if presented in ``image``.
-    -   ``image`` is expected to be an unsigned 8-bit sRGB encoded image.
+
+    Examples
+    --------
+    >>> import os
+    >>> from colour import read_image
+    >>> from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
+    >>> path = os.path.join(TESTS_RESOURCES_DIRECTORY,
+    ...                     'colour_checker_detection', 'detection',
+    ...                     'IMG_1967.png')
+    >>> image = read_image(path)
+    >>> colour_checkers_coordinates_segmentation(image)
+    [array([[1065,  707],
+           [ 369,  688],
+           [ 382,  226],
+           [1078,  246]])]
     """
 
     image = as_8_bit_BGR_image(adjust_image(image, WORKING_WIDTH))
 
     width, height = image.shape[1], image.shape[0]
     maximum_area = width * height / SWATCHES
-    minimum_area = width * height / SWATCHES / 100
+    minimum_area = width * height / SWATCHES / SWATCH_MINIMUM_AREA_FACTOR
 
     block_size = as_int(WORKING_WIDTH * 0.015)
     block_size = block_size - block_size % 2 + 1
@@ -475,6 +623,66 @@ def extract_colour_checkers_segmentation(image):
     -------
     list
         List of colour checkers sub-images.
+
+    Examples
+    --------
+    >>> import os
+    >>> from colour import read_image
+    >>> from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
+    >>> path = os.path.join(TESTS_RESOURCES_DIRECTORY,
+    ...                     'colour_checker_detection', 'detection',
+    ...                     'IMG_1967.png')
+    >>> image = read_image(path)
+    >>> extract_colour_checkers_segmentation(image)
+    ... # doctest: +SKIP
+    [array([[[ 86, 104, 113],
+            [ 89, 102, 118],
+            [ 88, 101, 117],
+            ...,
+            [ 79, 101, 114],
+            [ 76, 101, 114],
+            [ 79,  98, 110]],
+    <BLANKLINE>
+           [[ 84, 104, 112],
+            [ 85, 102, 115],
+            [ 84, 101, 115],
+            ...,
+            [ 80, 101, 110],
+            [ 79, 101, 112],
+            [ 78,  98, 112]],
+    <BLANKLINE>
+           [[ 84, 102, 112],
+            [ 82, 102, 112],
+            [ 82, 101, 113],
+            ...,
+            [ 81, 100, 109],
+            [ 80, 100, 110],
+            [ 79, 100, 113]],
+    <BLANKLINE>
+           ...,
+           [[ 89, 105, 117],
+            [ 90, 106, 120],
+            [ 86, 106, 117],
+            ...,
+            [ 84, 100, 109],
+            [ 83, 100, 111],
+            [ 80, 100, 114]],
+    <BLANKLINE>
+           [[ 89, 106, 116],
+            [ 91, 107, 121],
+            [ 89, 106, 119],
+            ...,
+            [ 81,  99, 113],
+            [ 79, 100, 115],
+            [ 75, 100, 114]],
+    <BLANKLINE>
+           [[ 84, 108, 117],
+            [ 89, 108, 117],
+            [ 91, 107, 117],
+            ...,
+            [ 79,  98, 117],
+            [ 77, 100, 117],
+            [ 73, 101, 116]]], dtype=uint8)]
     """
 
     image = as_8_bit_BGR_image(adjust_image(image, WORKING_WIDTH))
@@ -515,6 +723,41 @@ def detect_colour_checkers_segmentation(image,
     list
         List of colour checkers swatches or :class:`ColourCheckerSwatchesData`
         class instances.
+
+    Examples
+    --------
+    >>> import os
+    >>> from colour import read_image
+    >>> from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
+    >>> path = os.path.join(TESTS_RESOURCES_DIRECTORY,
+    ...                     'colour_checker_detection', 'detection',
+    ...                     'IMG_1967.png')
+    >>> image = read_image(path)
+    >>> detect_colour_checkers_segmentation(image)  # doctest: +ELLIPSIS
+    [array([[ 0.3594894...,  0.2225419...,  0.1176996...],
+           [ 0.6250058...,  0.3931947...,  0.2417636...],
+           [ 0.3304194...,  0.3142103...,  0.2874383...],
+           [ 0.3034269...,  0.2721812...,  0.1053537...],
+           [ 0.4153488...,  0.3183605...,  0.3067842...],
+           [ 0.3458465...,  0.4393400...,  0.2912665...],
+           [ 0.6782215...,  0.3519573...,  0.0752686...],
+           [ 0.2715231...,  0.2515535...,  0.3295411...],
+           [ 0.6171124...,  0.2687208...,  0.1852935...],
+           [ 0.3049796...,  0.1792275...,  0.1908085...],
+           [ 0.4844366...,  0.4576518...,  0.0392559...],
+           [ 0.6494152...,  0.3991223...,  0.0329260...],
+           [ 0.1922949...,  0.1842026...,  0.2731065...],
+           [ 0.2780555...,  0.3836590...,  0.1233134...],
+           [ 0.5515815...,  0.2126631...,  0.1250530...],
+           [ 0.7178619...,  0.5132913...,  0.0804213...],
+           [ 0.5753956...,  0.2563947...,  0.2672106...],
+           [ 0.1799058...,  0.3160584...,  0.2945296...],
+           [ 0.7402078...,  0.6088296...,  0.4374975...],
+           [ 0.6272391...,  0.5156084...,  0.3713541...],
+           [ 0.5120363...,  0.4196305...,  0.2976295...],
+           [ 0.3690167...,  0.3019190...,  0.2083050...],
+           [ 0.2624792...,  0.2143349...,  0.1428991...],
+           [ 0.1625438...,  0.1333312...,  0.0807412...]])]
     """
 
     image = adjust_image(image, WORKING_WIDTH)
