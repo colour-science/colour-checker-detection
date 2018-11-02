@@ -100,7 +100,7 @@ class ColourCheckersDetectionData(
     Parameters
     ----------
     colour_checkers : array_like
-        Colour checker bounding boxes, i.e. the. clusters that have the
+        Colour checker bounding boxes, i.e., the. clusters that have the
         relevant count of swatches.
     clusters : array_like
         Detected swatches clusters.
