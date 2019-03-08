@@ -26,7 +26,7 @@ from colour.models import oetf_sRGB, oetf_reverse_sRGB
 from colour.utilities import as_float_array, as_int_array, as_int
 
 __author__ = 'Colour Developers'
-__copyright__ = 'Copyright (C) 2015-2018 - Colour Developers'
+__copyright__ = 'Copyright (C) 2018-2019 - Colour Developers'
 __license__ = 'New BSD License - http://opensource.org/licenses/BSD-3-Clause'
 __maintainer__ = 'Colour Developers'
 __email__ = 'colour-science@googlegroups.com'
