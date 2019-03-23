@@ -1,12 +1,16 @@
 Contributors
 ============
 
-Colour - Checker Detection
---------------------------
+Development & Technical Support
+-------------------------------
 
 -   **Thomas Mansencal**, *Visual Effects Artist @ Weta Digital*
 
     Project coordination, overall development.
+
+-   **Manuel Leonhardt**,  *ARRI Cine Technik*
+
+    Technical support.
 
 About
 -----
