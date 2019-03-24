@@ -20,8 +20,8 @@ __status__ = 'Production'
 __all__ = ['TODO_FILE_TEMPLATE', 'extract_todo_items', 'export_todo_items']
 
 TODO_FILE_TEMPLATE = """
-Colour - Demosaicing - TODO
-===========================
+Colour - Checker Detection - TODO
+=================================
 
 TODO
 ----
@@ -31,7 +31,7 @@ TODO
 About
 -----
 
-| **Colour - Demosaicing** by Colour Developers
+| **Colour - Checker Detection** by Colour Developers
 | Copyright © 2018-2019 – Colour Developers – `colour-science@googlegroups.com <colour-science@googlegroups.com>`_
 | This software is released under terms of New BSD License: http://opensource.org/licenses/BSD-3-Clause
 | `http://github.com/colour-science/colour-checker-detection <http://github.com/colour-science/colour-checker-detection>`_
