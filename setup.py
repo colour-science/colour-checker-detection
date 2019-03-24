@@ -29,7 +29,9 @@ SHORT_DESCRIPTION = 'Colour - Checker Detection'
 
 LONG_DESCRIPTION = open('README.rst').read()
 
-INSTALLATION_REQUIREMENTS = ['colour-science>=0.3.12', 'opencv>=3.4.3']
+INSTALLATION_REQUIREMENTS = [
+    'colour-science>=0.3.12', 'opencv-python==3.4.5.20'
+]
 
 if os.environ.get('READTHEDOCS') == 'True':
     INSTALLATION_REQUIREMENTS = [
