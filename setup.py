@@ -35,7 +35,8 @@ INSTALLATION_REQUIREMENTS = [
 
 if os.environ.get('READTHEDOCS') == 'True':
     INSTALLATION_REQUIREMENTS = [
-        'colour-science>=0.3.12', 'mock==1.0.1', 'sphinxcontrib-bibtex'
+        'colour-science>=0.3.12', 'mock==1.0.1', 'opencv-python==3.4.5.20',
+        'sphinxcontrib-bibtex'
     ]
 
 DOCS_REQUIREMENTS = [
