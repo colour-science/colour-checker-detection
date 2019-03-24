@@ -21,7 +21,7 @@ basename = re.sub('_(\w)', lambda x: x.group(1).upper(),
 
 autosummary_generate = True
 
-autodoc_mock_imports = ['colour', 'scipy', 'scipy.ndimage.filters']
+autodoc_mock_imports = ['colour', 'cv2']
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
