@@ -65,7 +65,7 @@ API
 ^^^
 
 The main reference for
-`Colour - Demosaicing <https://github.com/colour-science/colour-checker-detection>`_
+`Colour - Checker Detection <https://github.com/colour-science/colour-checker-detection>`_
 is the manual:
 
 .. toctree::

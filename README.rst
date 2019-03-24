@@ -84,7 +84,7 @@ API
 ^^^
 
 The main reference for `Colour - Checker Detection <https://github.com/colour-science/colour-checker-detection>`_
-is the Sphinx `API Reference <https://colour-checker-detection.readthedocs.io/en/latest/api.html>`_.
+is the `Colour - Checker Detection Manual <https://colour-checker-detection.readthedocs.io/en/latest/manual.html>`_.
 
 Examples
 ^^^^^^^^
