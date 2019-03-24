@@ -6,7 +6,7 @@ TODO
 
 -   colour_checker_detection/__init__.py
 
-    -   Line 50 : # TODO: Remove legacy printing support when deemed appropriate.
+    -   Line 66 : # TODO: Remove legacy printing support when deemed appropriate.
 
 About
 -----
