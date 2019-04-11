@@ -25,7 +25,7 @@ A `Python <https://www.python.org/>`_ package implementing various colour
 checker detection algorithms and related utilities.
 
 It is open source and freely available under the
-`New BSD License <http://opensource.org/licenses/BSD-3-Clause>`_ terms.
+`New BSD License <https://opensource.org/licenses/BSD-3-Clause>`_ terms.
 
 ..  image:: https://raw.githubusercontent.com/colour-science/colour-checker-detection/master/docs/_static/ColourCheckerDetection_001.png
 
@@ -117,5 +117,5 @@ About
 
 | **Colour - Checker Detection** by Colour Developers
 | Copyright © 2018-2019 – Colour Developers – `colour-science@googlegroups.com <colour-science@googlegroups.com>`_
-| This software is released under terms of New BSD License: http://opensource.org/licenses/BSD-3-Clause
+| This software is released under terms of New BSD License: https://opensource.org/licenses/BSD-3-Clause
 | `https://github.com/colour-science/colour-checker-detection <https://github.com/colour-science/colour-checker-detection>`_
