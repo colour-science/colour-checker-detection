@@ -1,2 +1,7 @@
 [run]
 source = colour_checker_detection
+[report]
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
+    pass
