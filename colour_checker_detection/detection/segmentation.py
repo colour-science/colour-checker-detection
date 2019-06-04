@@ -22,7 +22,7 @@ import cv2
 import numpy as np
 from collections import namedtuple
 
-from colour.models import oetf_sRGB, oetf_reverse_sRGB
+from colour.models import eotf_reverse_sRGB, eotf_sRGB
 from colour.utilities import as_float_array, as_int_array, as_int
 
 __author__ = 'Colour Developers'
@@ -250,7 +250,7 @@ def as_8_bit_BGR_image(image):
     if image.dtype == np.uint8:
         return image
 
-    return cv2.cvtColor((oetf_sRGB(image) * 255).astype(np.uint8),
+    return cv2.cvtColor((eotf_reverse_sRGB(image) * 255).astype(np.uint8),
                         cv2.COLOR_RGB2BGR)
 
 
@@ -767,7 +767,7 @@ def detect_colour_checkers_segmentation(image,
     colour_checkers_colours = []
     colour_checkers_data = []
     for colour_checker in extract_colour_checkers_segmentation(image):
-        colour_checker = oetf_reverse_sRGB(
+        colour_checker = eotf_sRGB(
             as_float_array(colour_checker[..., ::-1]) / 255)
         width, height = (colour_checker.shape[1], colour_checker.shape[0])
         masks = swatch_masks(width, height, swatches_h, swatches_v, samples)
