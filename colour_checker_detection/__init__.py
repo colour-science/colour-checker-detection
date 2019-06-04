@@ -38,9 +38,9 @@ __all__ = [
 
 RESOURCES_DIRECTORY = os.path.join(os.path.dirname(__file__), 'resources')
 EXAMPLES_RESOURCES_DIRECTORY = os.path.join(
-    RESOURCES_DIRECTORY, 'colour-checker-detection-examples-dataset')
+    RESOURCES_DIRECTORY, 'colour-checker-detection-examples-datasets')
 TESTS_RESOURCES_DIRECTORY = os.path.join(
-    RESOURCES_DIRECTORY, 'colour-checker-detection-tests-dataset')
+    RESOURCES_DIRECTORY, 'colour-checker-detection-tests-datasets')
 
 __application_name__ = 'Colour - Checker Detection'
 
