@@ -21,28 +21,24 @@ addons:
       - libilmbase-dev
 
 before_install:
-  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-  - chmod +x miniconda.sh
-  - ./miniconda.sh -b -p /home/travis/miniconda
-  - export PATH=/home/travis/miniconda/bin:$PATH
-  - conda update --yes --quiet conda
-  - PACKAGES="python=${PYTHON_VERSION}"
-  - PACKAGES="${PACKAGES} numpy"; if [ ${NUMPY_VERSION} ]; then PACKAGES="${PACKAGES}=${NUMPY_VERSION}"; fi
-  - PACKAGES="${PACKAGES} matplotlib"; if [ ${MATPLOTLIB_VERSION} ]; then PACKAGES="${PACKAGES}=${MATPLOTLIB_VERSION}"; fi
-  - PACKAGES="${PACKAGES} scipy"; if [ ${SCIPY_VERSION} ]; then PACKAGES="${PACKAGES}=${SCIPY_VERSION}"; fi
   - wget https://github.com/OpenImageIO/oiio/archive/Release-1.5.21.tar.gz -O /tmp/OpenImageIO-1.5.21.tar.gz
   - tar -xvf /tmp/OpenImageIO-1.5.21.tar.gz
   - cd oiio-Release-1.5.21
   - make
   - cd /home/travis/build/colour-science/colour-checker-detection
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b -p /home/travis/miniconda
+  - export PATH=/home/travis/miniconda/bin:$PATH
+  - conda update --yes --quiet conda
 
 install:
-  - conda create --yes --quiet -n colour-checker-detection-test ${PACKAGES} pip setuptools nose
-  - source activate colour-checker-detection-test
-  - pip install colour-science coverage coveralls flake8 mock==1.0.1
+  - conda create --yes --quiet -n colour-checker-detection-ci python=${PYTHON_VERSION} coverage coveralls flake8 matplotlib mock nose
+  - source activate colour-checker-detection-ci
+  - conda install -y -c conda-forge colour-science opencv=3.4.7
   - sudo cp /home/travis/build/colour-science/colour-checker-detection/oiio-Release-1.5.21/dist/linux64/bin/* /usr/local/bin/
   - sudo cp /home/travis/build/colour-science/colour-checker-detection/oiio-Release-1.5.21/dist/linux64/lib/* /usr/local/lib/
-  - cp /home/travis/build/colour-science/colour-checker-detection/oiio-Release-1.5.21/dist/linux64/python/OpenImageIO.so /home/travis/miniconda/envs/colour-checker-detection-test/lib/python2.7/site-packages/
+  - cp /home/travis/build/colour-science/colour-checker-detection/oiio-Release-1.5.21/dist/linux64/python/OpenImageIO.so /home/travis/miniconda/envs/colour-checker-detection-ci/lib/python2.7/site-packages/
 
 script:
   - flake8 colour_checker_detection
