@@ -30,20 +30,20 @@ SHORT_DESCRIPTION = 'Colour - Checker Detection'
 LONG_DESCRIPTION = open('README.rst').read()
 
 INSTALLATION_REQUIREMENTS = [
-    'colour-science>=0.3.12', 'opencv-python==3.4.5.20'
+    'colour-science>=0.3.12', 'opencv-python==3.4.*.*'
 ]
 
 if os.environ.get('READTHEDOCS') == 'True':
     INSTALLATION_REQUIREMENTS = [
-        'colour-science>=0.3.12', 'mock==1.0.1', 'opencv-python==3.4.5.20',
+        'colour-science>=0.3.12', 'mock', 'opencv-python==3.4.*.*',
         'sphinxcontrib-bibtex'
     ]
 
 DOCS_REQUIREMENTS = [
-    'sphinx>=1.6.6', 'sphinxcontrib-bibtex', 'sphinx_rtd_theme'
+    'sphinx>=1.6.*', 'sphinxcontrib-bibtex', 'sphinx_rtd_theme'
 ]
 
-TESTS_REQUIREMENTS = ['coverage>=3.7.1', 'flake8>=2.1.0', 'nose>=1.3.4']
+TESTS_REQUIREMENTS = ['coverage', 'flake8', 'nose']
 
 DEVELOPMENT_REQUIREMENTS = DOCS_REQUIREMENTS + TESTS_REQUIREMENTS + [
     'invoke', 'restructuredtext-lint', 'twine', 'yapf==0.23.0'
