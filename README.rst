@@ -15,7 +15,7 @@ Colour - Checker Detection
     :target: https://www.codacy.com/app/colour-science/colour-checker-detection
     :alt: Code Grade
 .. |version| image:: https://img.shields.io/pypi/v/colour-checker-detection.svg?style=flat-square
-    :target: https://pypi.python.org/pypi/colour-checker-detection
+    :target: https://pypi.org/project/colour-checker-detection
     :alt: Package Version
 
 .. end-badges
