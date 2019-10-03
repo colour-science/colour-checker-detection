@@ -12,6 +12,7 @@ if sys.version_info[:2] >= (3, 2):
 import fnmatch
 import os
 import re
+import uuid
 from invoke import task
 
 import colour_checker_detection
@@ -25,13 +26,15 @@ __email__ = 'colour-science@googlegroups.com'
 __status__ = 'Production'
 
 __all__ = [
-    'APPLICATION_NAME', 'PYTHON_PACKAGE_NAME', 'PYPI_PACKAGE_NAME',
-    'BIBLIOGRAPHY_NAME', 'clean', 'formatting', 'tests', 'quality', 'examples',
-    'docs', 'todo', 'preflight', 'build', 'virtualise', 'tag', 'release',
-    'sha256'
+    'APPLICATION_NAME', 'APPLICATION_VERSION', 'PYTHON_PACKAGE_NAME',
+    'PYPI_PACKAGE_NAME', 'BIBLIOGRAPHY_NAME', 'clean', 'formatting', 'tests',
+    'quality', 'examples', 'docs', 'todo', 'preflight', 'build', 'virtualise',
+    'tag', 'release', 'sha256'
 ]
 
 APPLICATION_NAME = colour_checker_detection.__application_name__
+
+APPLICATION_VERSION = colour_checker_detection.__version__
 
 PYTHON_PACKAGE_NAME = colour_checker_detection.__name__
 
@@ -143,10 +146,6 @@ def tests(ctx, nose=True):
     bool
         Task success.
     """
-
-    # TODO: Find a way to deploy OpenImageIO.
-
-    return
 
     if nose:
         message_box('Running "Nosetests"...')
@@ -285,7 +284,7 @@ def preflight(ctx):
     message_box('Finishing "Preflight"...')
 
 
-@task(docs, todo, preflight)
+@task(preflight, todo, docs)
 def build(ctx):
     """
     Builds the project and runs dependency tasks, i.e., *docs*, *todo*, and
@@ -303,8 +302,7 @@ def build(ctx):
     """
 
     message_box('Building...')
-    ctx.run('python setup.py sdist')
-    ctx.run('python setup.py bdist_wheel --universal')
+    ctx.run('poetry build')
 
 
 @task(clean, build)
@@ -325,25 +323,20 @@ def virtualise(ctx, tests=True):
         Task success.
     """
 
-    pip_binary = '../staging/bin/pip'
-    nosetests_binary = '../staging/bin/nosetests'
-
+    unique_name = '{0}-{1}'.format(PYPI_PACKAGE_NAME, uuid.uuid1())
     with ctx.cd('dist'):
-        ctx.run('tar -xvf {0}-*.tar.gz'.format(PYPI_PACKAGE_NAME))
-        ctx.run('virtualenv staging')
-        with ctx.cd('{0}-*'.format(PYPI_PACKAGE_NAME)):
-            ctx.run('pwd')
-            ctx.run('{0} install numpy'.format(pip_binary))
-            ctx.run('{0} install -e .'.format(pip_binary))
-            ctx.run('{0} install matplotlib'.format(pip_binary))
-            ctx.run('{0} install nose'.format(pip_binary))
-            ctx.run('{0} install mock'.format(pip_binary))
+        ctx.run('tar -xvf {0}-{1}.tar.gz'.format(PYPI_PACKAGE_NAME,
+                                                 APPLICATION_VERSION))
+        ctx.run('mv {0}-{1} {2}'.format(PYPI_PACKAGE_NAME, APPLICATION_VERSION,
+                                        unique_name))
+        with ctx.cd(unique_name):
+            ctx.run('poetry env use 3')
+            ctx.run('poetry install --extras "optional plotting"')
+            ctx.run('source $(poetry env info -p)/bin/activate')
+            ctx.run('python -c "import imageio;'
+                    'imageio.plugins.freeimage.download()"')
             if tests:
-                # TODO: Find a way to deploy OpenImageIO.
-
-                return
-
-                ctx.run(nosetests_binary)
+                ctx.run('poetry run nosetests')
 
 
 @task

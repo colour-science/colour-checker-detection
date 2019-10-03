@@ -3,10 +3,10 @@ Colour - Checker Detection
 
 .. start-badges
 
-|travis| |coveralls| |codacy| |version|
+|actions| |coveralls| |codacy| |version|
 
-.. |travis| image:: https://img.shields.io/travis/colour-science/colour-checker-detection/develop.svg?style=flat-square
-    :target: https://travis-ci.org/colour-science/colour-checker-detection
+.. |actions| image:: https://github.com/colour-science/colour-checker-detection/workflows/Continuous%20Integration/badge.svg
+    :target: https://github.com/colour-science/colour-checker-detection/actions
     :alt: Develop Build Status
 .. |coveralls| image:: http://img.shields.io/coveralls/colour-science/colour-checker-detection/develop.svg?style=flat-square
     :target: https://coveralls.io/r/colour-science/colour-checker-detection
@@ -57,10 +57,9 @@ Primary Dependencies
 
 **Colour - Checker Detection** requires various dependencies in order to run:
 
--  `Python 2.7 <https://www.python.org/download/releases/>`_ or
-   `Python 3.7 <https://www.python.org/download/releases/>`_
+-  `Python >=3.5 <https://www.python.org/download/releases/>`_
 -  `Colour Science <https://www.colour-science.org>`_
--  `opencv-python <https://pypi.org/project/opencv-python/>`_
+-  `opencv-python >=4 <https://pypi.org/project/opencv-python/>`_
 
 Pypi
 ^^^^
@@ -70,14 +69,6 @@ the `Python Package Index <http://pypi.python.org/pypi/colour-checker-detection>
 issuing this command in a shell::
 
 	pip install colour-checker-detection
-
-The tests suite dependencies are installed as follows::
-
-    pip install 'colour-checker-detection[tests]'
-
-The documentation building dependencies are installed as follows::
-
-    pip install 'colour-checker-detection[docs]'
 
 The overall development dependencies are installed as follows::
 
