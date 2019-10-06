@@ -8,4 +8,5 @@ build
 colour_checker_detection.egg-info
 dist
 docs/_build
+docs/generated
 poetry.lock
