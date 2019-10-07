@@ -32,10 +32,13 @@ About
 -----
 
 | **Colour - Checker Detection** by Colour Developers
-| Copyright © 2018-2019 – Colour Developers – `colour-science@googlegroups.com <colour-science@googlegroups.com>`_
-| This software is released under terms of New BSD License: https://opensource.org/licenses/BSD-3-Clause
-| `https://github.com/colour-science/colour-checker-detection <https://github.com/colour-science/colour-checker-detection>`_
-"""[1:]
+| Copyright © 2018-2019 – Colour Developers – \
+`colour-science@googlegroups.com <colour-science@googlegroups.com>`_
+| This software is released under terms of New BSD License: \
+https://opensource.org/licenses/BSD-3-Clause
+| `https://github.com/colour-science/colour-checker-detection \
+<https://github.com/colour-science/colour-checker-detection>`_
+""" [1:]
 
 
 def extract_todo_items(root_directory):
@@ -105,8 +108,8 @@ def export_todo_items(todo_items, file_path):
     for module, todo_items in todo_items.items():
         todo_rst.append('-   {0}\n'.format(module))
         for line_numer, todo_item in todo_items:
-            todo_rst.append(
-                '    -   Line {0} : {1}'.format(line_numer, todo_item))
+            todo_rst.append('    -   Line {0} : {1}'.format(
+                line_numer, todo_item))
 
         todo_rst.append('\n')
 

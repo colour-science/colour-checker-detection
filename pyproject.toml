@@ -53,6 +53,7 @@ invoke = { version = "*", optional = true }  # Development dependency.
 mock = { version = "*", optional = true }  # Development dependency.
 nose = { version = "*", optional = true }  # Development dependency.
 numpy = { version = "*", optional = true }
+pre-commit = { version = "*", optional = true }  # Development dependency.
 pytest = { version = "*", optional = true }  # Development dependency.
 restructuredtext-lint = { version = "*", optional = true }  # Development dependency.
 sphinx = { version = "*", optional = true }  # Development dependency.
@@ -70,6 +71,7 @@ flake8 = "*"
 invoke = "*"
 mock = "*"
 nose = "*"
+pre-commit = "*"
 pytest = "*"
 restructuredtext-lint = "*"
 sphinx = "*"
@@ -88,6 +90,7 @@ development = [
     "invoke",
     "mock",
     "nose",
+    "pre-commit",
     "pytest",
     "restructuredtext-lint",
     "sphinx",

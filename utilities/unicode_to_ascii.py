@@ -11,9 +11,9 @@ if sys.version_info[0] < 3:
     reload(sys)  # noqa
     sys.setdefaultencoding('utf-8')
 
-import codecs
-import os
-import unicodedata
+import codecs  # noqa
+import os  # noqa
+import unicodedata  # noqa
 
 __copyright__ = 'Copyright (C) 2018-2019 - Colour Developers'
 __license__ = 'New BSD License - https://opensource.org/licenses/BSD-3-Clause'
@@ -46,9 +46,10 @@ def unicode_to_ascii(root_directory):
 
     for root, dirnames, filenames in os.walk(root_directory):
         for filename in filenames:
-            if (not filename.endswith('.tex') and not filename.endswith('.py')
-                    and not filename.endswith('.bib')
-                    and not filename.endswith('.rst')):
+            if (not filename.endswith('.tex') and
+                    not filename.endswith('.py') and
+                    not filename.endswith('.bib') and
+                    not filename.endswith('.rst')):
                 continue
 
             if filename == 'unicode_to_ascii.py':
