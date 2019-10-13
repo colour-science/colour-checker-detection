@@ -22,7 +22,7 @@ import cv2
 import numpy as np
 from collections import namedtuple
 
-from colour.models import decoding_cctf, encoding_cctf
+from colour.models import cctf_decoding, cctf_encoding
 from colour.utilities import as_float_array, as_int_array, as_int
 
 __author__ = 'Colour Developers'
@@ -250,7 +250,7 @@ def as_8_bit_BGR_image(image):
     if image.dtype == np.uint8:
         return image
 
-    return cv2.cvtColor((encoding_cctf(image) * 255).astype(np.uint8),
+    return cv2.cvtColor((cctf_encoding(image) * 255).astype(np.uint8),
                         cv2.COLOR_RGB2BGR)
 
 
@@ -767,7 +767,7 @@ def detect_colour_checkers_segmentation(image,
     colour_checkers_colours = []
     colour_checkers_data = []
     for colour_checker in extract_colour_checkers_segmentation(image):
-        colour_checker = decoding_cctf(
+        colour_checker = cctf_decoding(
             as_float_array(colour_checker[..., ::-1]) / 255)
         width, height = (colour_checker.shape[1], colour_checker.shape[0])
         masks = swatch_masks(width, height, swatches_h, swatches_v, samples)

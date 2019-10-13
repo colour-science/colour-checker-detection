@@ -13,7 +13,7 @@ import os
 import unittest
 
 from colour import read_image
-from colour.models import encoding_cctf
+from colour.models import cctf_encoding
 
 from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
 from colour_checker_detection.detection.segmentation import (
@@ -90,7 +90,7 @@ as_8_bit_BGR_image` definition unit tests methods.
         self.assertEqual(image_o.dtype, np.uint8)
         np.testing.assert_almost_equal(
             image_o[16, 16, ...],
-            (encoding_cctf(image_i[16, 16, ::-1]) * 255).astype(np.uint8))
+            (cctf_encoding(image_i[16, 16, ::-1]) * 255).astype(np.uint8))
 
 
 class TestAdjustImage(unittest.TestCase):
