@@ -41,8 +41,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.5"
-colour-science = "^0.3.12"
-imageio = "*"  # TODO: Remove when "colour-science-0.3.13" is released.
+colour-science = "^0.3.14"
 opencv-python = "^4"
 
 biblib-simple = { version = "*", optional = true }  # Development dependency.
