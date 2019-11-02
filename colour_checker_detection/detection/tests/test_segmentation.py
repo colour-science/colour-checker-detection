@@ -13,7 +13,7 @@ import os
 import unittest
 
 from colour import read_image
-from colour.models import oetf_sRGB
+from colour.models import cctf_encoding
 
 from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
 from colour_checker_detection.detection.segmentation import (
@@ -25,7 +25,7 @@ from colour_checker_detection.detection import (
 
 __author__ = 'Colour Developers'
 __copyright__ = 'Copyright (C) 2018-2019 - Colour Developers'
-__license__ = 'New BSD License - http://opensource.org/licenses/BSD-3-Clause'
+__license__ = 'New BSD License - https://opensource.org/licenses/BSD-3-Clause'
 __maintainer__ = 'Colour Developers'
 __email__ = 'colour-science@googlegroups.com'
 __status__ = 'Production'
@@ -90,7 +90,7 @@ as_8_bit_BGR_image` definition unit tests methods.
         self.assertEqual(image_o.dtype, np.uint8)
         np.testing.assert_almost_equal(
             image_o[16, 16, ...],
-            (oetf_sRGB(image_i[16, 16, ::-1]) * 255).astype(np.uint8))
+            (cctf_encoding(image_i[16, 16, ::-1]) * 255).astype(np.uint8))
 
 
 class TestAdjustImage(unittest.TestCase):
