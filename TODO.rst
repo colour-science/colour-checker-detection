@@ -1,17 +1,23 @@
-Colour - Demosaicing - TODO
-===========================
+Colour - Checker Detection - TODO
+=================================
 
 TODO
 ----
 
 -   colour_checker_detection/__init__.py
 
-    -   Line 66 : # TODO: Remove legacy printing support when deemed appropriate.
+    -   Line 67 : # TODO: Remove legacy printing support when deemed appropriate.
+
+
+-   colour_checker_detection/detection/tests/test_segmentation.py
+
+    -   Line 207 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
+    -   Line 492 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
 
 About
 -----
 
-| **Colour - Demosaicing** by Colour Developers
-| Copyright © 2018-2019 – Colour Developers – `colour-science@googlegroups.com <colour-science@googlegroups.com>`_
-| This software is released under terms of New BSD License: http://opensource.org/licenses/BSD-3-Clause
-| `http://github.com/colour-science/colour-checker-detection <http://github.com/colour-science/colour-checker-detection>`_
+| **Colour - Checker Detection** by Colour Developers
+| Copyright © 2018-2019 – Colour Developers – `colour-science@googlegroups.com <colour-science@googlegroups.com>`__
+| This software is released under terms of New BSD License: https://opensource.org/licenses/BSD-3-Clause
+| `https://github.com/colour-science/colour-checker-detection <https://github.com/colour-science/colour-checker-detection>`__

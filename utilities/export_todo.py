@@ -12,7 +12,7 @@ import os
 from collections import OrderedDict
 
 __copyright__ = 'Copyright (C) 2018-2019 - Colour Developers'
-__license__ = 'New BSD License - http://opensource.org/licenses/BSD-3-Clause'
+__license__ = 'New BSD License - https://opensource.org/licenses/BSD-3-Clause'
 __maintainer__ = 'Colour Developers'
 __email__ = 'colour-science@googlegroups.com'
 __status__ = 'Production'
@@ -20,8 +20,8 @@ __status__ = 'Production'
 __all__ = ['TODO_FILE_TEMPLATE', 'extract_todo_items', 'export_todo_items']
 
 TODO_FILE_TEMPLATE = """
-Colour - Demosaicing - TODO
-===========================
+Colour - Checker Detection - TODO
+=================================
 
 TODO
 ----
@@ -31,10 +31,13 @@ TODO
 About
 -----
 
-| **Colour - Demosaicing** by Colour Developers
-| Copyright © 2018-2019 – Colour Developers – `colour-science@googlegroups.com <colour-science@googlegroups.com>`_
-| This software is released under terms of New BSD License: http://opensource.org/licenses/BSD-3-Clause
-| `http://github.com/colour-science/colour-checker-detection <http://github.com/colour-science/colour-checker-detection>`_
+| **Colour - Checker Detection** by Colour Developers
+| Copyright © 2018-2019 – Colour Developers – \
+`colour-science@googlegroups.com <colour-science@googlegroups.com>`__
+| This software is released under terms of New BSD License: \
+https://opensource.org/licenses/BSD-3-Clause
+| `https://github.com/colour-science/colour-checker-detection \
+<https://github.com/colour-science/colour-checker-detection>`__
 """ [1:]
 
 
@@ -105,8 +108,8 @@ def export_todo_items(todo_items, file_path):
     for module, todo_items in todo_items.items():
         todo_rst.append('-   {0}\n'.format(module))
         for line_numer, todo_item in todo_items:
-            todo_rst.append(
-                '    -   Line {0} : {1}'.format(line_numer, todo_item))
+            todo_rst.append('    -   Line {0} : {1}'.format(
+                line_numer, todo_item))
 
         todo_rst.append('\n')
 

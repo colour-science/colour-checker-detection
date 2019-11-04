@@ -22,12 +22,12 @@ import cv2
 import numpy as np
 from collections import namedtuple
 
-from colour.models import oetf_sRGB, oetf_reverse_sRGB
+from colour.models import cctf_decoding, cctf_encoding
 from colour.utilities import as_float_array, as_int_array, as_int
 
 __author__ = 'Colour Developers'
 __copyright__ = 'Copyright (C) 2018-2019 - Colour Developers'
-__license__ = 'New BSD License - http://opensource.org/licenses/BSD-3-Clause'
+__license__ = 'New BSD License - https://opensource.org/licenses/BSD-3-Clause'
 __maintainer__ = 'Colour Developers'
 __email__ = 'colour-science@googlegroups.com'
 __status__ = 'Production'
@@ -250,7 +250,7 @@ def as_8_bit_BGR_image(image):
     if image.dtype == np.uint8:
         return image
 
-    return cv2.cvtColor((oetf_sRGB(image) * 255).astype(np.uint8),
+    return cv2.cvtColor((cctf_encoding(image) * 255).astype(np.uint8),
                         cv2.COLOR_RGB2BGR)
 
 
@@ -547,8 +547,8 @@ def colour_checkers_coordinates_segmentation(image, additional_data=False):
     image_c = cv2.dilate(image_c, kernel, iterations=1)
 
     # Detecting contours.
-    _image_c, contours, _hierarchy = cv2.findContours(image_c, cv2.RETR_TREE,
-                                                      cv2.CHAIN_APPROX_NONE)
+    contours, _hierarchy = cv2.findContours(image_c, cv2.RETR_TREE,
+                                            cv2.CHAIN_APPROX_NONE)
 
     # Filtering squares/swatches contours.
     swatches = []
@@ -568,8 +568,8 @@ def colour_checkers_coordinates_segmentation(image, additional_data=False):
     ]:
         cv2.drawContours(clusters, [swatch], -1, [255] * 3, -1)
     clusters = cv2.cvtColor(clusters, cv2.COLOR_RGB2GRAY)
-    _image_c, clusters, _hierarchy = cv2.findContours(
-        clusters, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    clusters, _hierarchy = cv2.findContours(clusters, cv2.RETR_EXTERNAL,
+                                            cv2.CHAIN_APPROX_NONE)
     clusters = [
         as_int_array(
             scale_contour(cv2.boxPoints(cv2.minAreaRect(cluster)), 0.975))
@@ -767,7 +767,7 @@ def detect_colour_checkers_segmentation(image,
     colour_checkers_colours = []
     colour_checkers_data = []
     for colour_checker in extract_colour_checkers_segmentation(image):
-        colour_checker = oetf_reverse_sRGB(
+        colour_checker = cctf_decoding(
             as_float_array(colour_checker[..., ::-1]) / 255)
         width, height = (colour_checker.shape[1], colour_checker.shape[0])
         masks = swatch_masks(width, height, swatches_h, swatches_v, samples)

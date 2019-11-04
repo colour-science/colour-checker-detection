@@ -25,7 +25,7 @@ from .detection import (colour_checkers_coordinates_segmentation,
 
 __author__ = 'Colour Developers'
 __copyright__ = 'Copyright (C) 2018-2019 - Colour Developers'
-__license__ = 'New BSD License - http://opensource.org/licenses/BSD-3-Clause'
+__license__ = 'New BSD License - https://opensource.org/licenses/BSD-3-Clause'
 __maintainer__ = 'Colour Developers'
 __email__ = 'colour-science@googlegroups.com'
 __status__ = 'Production'
@@ -38,15 +38,15 @@ __all__ = [
 
 RESOURCES_DIRECTORY = os.path.join(os.path.dirname(__file__), 'resources')
 EXAMPLES_RESOURCES_DIRECTORY = os.path.join(
-    RESOURCES_DIRECTORY, 'colour-checker-detection-examples-dataset')
+    RESOURCES_DIRECTORY, 'colour-checker-detection-examples-datasets')
 TESTS_RESOURCES_DIRECTORY = os.path.join(
-    RESOURCES_DIRECTORY, 'colour-checker-detection-tests-dataset')
+    RESOURCES_DIRECTORY, 'colour-checker-detection-tests-datasets')
 
 __application_name__ = 'Colour - Checker Detection'
 
 __major_version__ = '0'
 __minor_version__ = '1'
-__change_version__ = '0'
+__change_version__ = '1'
 __version__ = '.'.join(
     (__major_version__,
      __minor_version__,
@@ -54,15 +54,16 @@ __version__ = '.'.join(
 
 try:
     version = subprocess.check_output(  # nosec
-        ['git', 'describe'], cwd=os.path.dirname(__file__)).strip()
+        ['git', 'describe'],
+        cwd=os.path.dirname(__file__),
+        stderr=subprocess.STDOUT).strip()
     version = version.decode('utf-8')
 except Exception:
     version = __version__
 
 colour.utilities.ANCILLARY_COLOUR_SCIENCE_PACKAGES[
     'colour-checker-detection'] = version
-colour.utilities.ANCILLARY_RUNTIME_PACKAGES[
-    'opencv'] = cv2.__version__
+colour.utilities.ANCILLARY_RUNTIME_PACKAGES['opencv'] = cv2.__version__
 
 # TODO: Remove legacy printing support when deemed appropriate.
 try:
