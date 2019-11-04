@@ -6,7 +6,13 @@ TODO
 
 -   colour_checker_detection/__init__.py
 
-    -   Line 66 : # TODO: Remove legacy printing support when deemed appropriate.
+    -   Line 67 : # TODO: Remove legacy printing support when deemed appropriate.
+
+
+-   colour_checker_detection/detection/tests/test_segmentation.py
+
+    -   Line 207 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
+    -   Line 492 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
 
 About
 -----

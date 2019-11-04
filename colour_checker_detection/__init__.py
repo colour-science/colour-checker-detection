@@ -63,8 +63,7 @@ except Exception:
 
 colour.utilities.ANCILLARY_COLOUR_SCIENCE_PACKAGES[
     'colour-checker-detection'] = version
-colour.utilities.ANCILLARY_RUNTIME_PACKAGES[
-    'opencv'] = cv2.__version__
+colour.utilities.ANCILLARY_RUNTIME_PACKAGES['opencv'] = cv2.__version__
 
 # TODO: Remove legacy printing support when deemed appropriate.
 try:

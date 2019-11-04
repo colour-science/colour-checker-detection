@@ -49,6 +49,8 @@ coverage = { version = "*", optional = true }  # Development dependency.
 coveralls = { version = "*", optional = true }  # Development dependency.
 flake8 = { version = "*", optional = true }  # Development dependency.
 invoke = { version = "*", optional = true }  # Development dependency.
+jupyter = { version = "*", optional = true }  # Development dependency.
+matplotlib = { version = "*", optional = true }  # Development dependency.
 mock = { version = "*", optional = true }  # Development dependency.
 nose = { version = "*", optional = true }  # Development dependency.
 numpy = { version = "*", optional = true }
@@ -68,6 +70,8 @@ coverage = "*"
 coveralls = "*"
 flake8 = "*"
 invoke = "*"
+jupyter = "*"
+matplotlib = "*"
 mock = "*"
 nose = "*"
 pre-commit = "*"
@@ -87,6 +91,8 @@ development = [
     "coveralls",
     "flake8",
     "invoke",
+    "jupyter",
+    "matplotlib",
     "mock",
     "nose",
     "pre-commit",
