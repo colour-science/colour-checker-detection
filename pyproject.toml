@@ -38,6 +38,10 @@ classifiers = [
     "Topic :: Scientific/Engineering",
     "Topic :: Software Development"
 ]
+exclude = [
+    "colour_checker_detection/resources/colour-checker-detection-examples-datasets/detection/*",
+    "colour_checker_detection/resources/colour-checker-detection-tests-datasets/colour_checker_detection/detection/*",
+]
 
 [tool.poetry.dependencies]
 python = "^3.5"
