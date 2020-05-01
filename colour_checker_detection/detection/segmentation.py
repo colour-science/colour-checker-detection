@@ -12,8 +12,8 @@ Defines objects for colour checker detection using segmentation:
 References
 ----------
 -   :cite:`Abecassis2011` : Abecassis, F. (2011). OpenCV - Rotation
-    (Deskewing). Retrieved October 27, 2018, from
-    http://felix.abecassis.me/2011/10/opencv-rotation-deskewing/
+    (Deskewing). Retrieved October 27, 2018, from http://felix.abecassis.me/\
+2011/10/opencv-rotation-deskewing/
 """
 
 from __future__ import division, unicode_literals
