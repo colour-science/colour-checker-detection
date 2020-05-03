@@ -5,7 +5,7 @@ Colour - Checker Detection
 
 |actions| |coveralls| |codacy| |version|
 
-.. |actions| image:: https://github.com/colour-science/colour-checker-detection/workflows/Continuous%20Integration/badge.svg
+.. |actions| image:: https://img.shields.io/github/workflow/status/colour-science/colour-checker-detection/Continuous%20Integration?label=actions&logo=github&style=flat-square
     :target: https://github.com/colour-science/colour-checker-detection/actions
     :alt: Develop Build Status
 .. |coveralls| image:: http://img.shields.io/coveralls/colour-science/colour-checker-detection/develop.svg?style=flat-square
@@ -113,6 +113,6 @@ About
 -----
 
 | **Colour - Checker Detection** by Colour Developers
-| Copyright © 2018-2019 – Colour Developers – `colour-science@googlegroups.com <colour-science@googlegroups.com>`__
+| Copyright © 2018-2020 – Colour Developers – `colour-developers@colour-science.org <colour-developers@colour-science.org>`__
 | This software is released under terms of New BSD License: https://opensource.org/licenses/BSD-3-Clause
 | `https://github.com/colour-science/colour-checker-detection <https://github.com/colour-science/colour-checker-detection>`__

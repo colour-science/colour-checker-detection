@@ -12,8 +12,8 @@ Defines objects for colour checker detection using segmentation:
 References
 ----------
 -   :cite:`Abecassis2011` : Abecassis, F. (2011). OpenCV - Rotation
-    (Deskewing). Retrieved October 27, 2018, from
-    http://felix.abecassis.me/2011/10/opencv-rotation-deskewing/
+    (Deskewing). Retrieved October 27, 2018, from http://felix.abecassis.me/\
+2011/10/opencv-rotation-deskewing/
 """
 
 from __future__ import division, unicode_literals
@@ -26,10 +26,10 @@ from colour.models import cctf_decoding, cctf_encoding
 from colour.utilities import as_float_array, as_int_array, as_int
 
 __author__ = 'Colour Developers'
-__copyright__ = 'Copyright (C) 2018-2019 - Colour Developers'
+__copyright__ = 'Copyright (C) 2018-2020 - Colour Developers'
 __license__ = 'New BSD License - https://opensource.org/licenses/BSD-3-Clause'
 __maintainer__ = 'Colour Developers'
-__email__ = 'colour-science@googlegroups.com'
+__email__ = 'colour-developers@colour-science.org'
 __status__ = 'Production'
 
 __all__ = [

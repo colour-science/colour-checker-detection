@@ -21,10 +21,10 @@ import colour_checker_detection
 from colour.utilities import message_box
 
 __author__ = 'Colour Developers'
-__copyright__ = 'Copyright (C) 2018-2019 - Colour Developers'
+__copyright__ = 'Copyright (C) 2018-2020 - Colour Developers'
 __license__ = 'New BSD License - https://opensource.org/licenses/BSD-3-Clause'
 __maintainer__ = 'Colour Developers'
-__email__ = 'colour-science@googlegroups.com'
+__email__ = 'colour-developers@colour-science.org'
 __status__ = 'Production'
 
 __all__ = [
@@ -127,7 +127,7 @@ def formatting(ctx, yapf=True, asciify=True, bibtex=True):
                 entry[key] = re.sub('(?<!\\\\)\\&', '\\&', value)
 
         with open(bibtex_path, 'w') as bibtex_file:
-            for entry in bibtex.values():
+            for entry in sorted(bibtex.values(), key=lambda x: x.key):
                 bibtex_file.write(entry.to_bib())
                 bibtex_file.write('\n')
 
@@ -305,11 +305,12 @@ def requirements(ctx):
     """
 
     message_box('Exporting "requirements.txt" file...')
-    ctx.run('poetry run pip freeze | grep -v "github.com/colour-science" '
+    ctx.run('poetry run pip freeze | '
+            'egrep -v "github.com/colour-science|enum34" '
             '> requirements.txt')
 
 
-@task(preflight, docs, todo, requirements)
+@task(clean, preflight, docs, todo, requirements)
 def build(ctx):
     """
     Builds the project and runs dependency tasks, i.e., *docs*, *todo*, and
@@ -328,9 +329,10 @@ def build(ctx):
 
     message_box('Building...')
     ctx.run('poetry build')
+    ctx.run('twine check dist/*')
 
 
-@task(clean, build)
+@task
 def virtualise(ctx, tests=True):
     """
     Create a virtual environment for the project build.
@@ -412,7 +414,7 @@ def tag(ctx):
         ctx.run('git flow release finish v{0}'.format(version))
 
 
-@task(clean, build)
+@task(build)
 def release(ctx):
     """
     Releases the project to *Pypi* with *Twine*.
