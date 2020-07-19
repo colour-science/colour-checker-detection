@@ -37,7 +37,7 @@ extras_require = \
                  'yapf==0.23'],
  'read-the-docs': ['mock', 'numpy', 'sphinxcontrib-bibtex']}
 
-    setup(
+setup(
     name='colour-checker-detection',
     version='0.1.1',
     description='Colour checker detection with Python',
@@ -52,5 +52,4 @@ extras_require = \
     install_requires=install_requires,
     extras_require=extras_require,
     python_requires='>=3.5,<4.0',
-    )
-    
+)
