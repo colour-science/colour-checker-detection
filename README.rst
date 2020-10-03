@@ -68,11 +68,11 @@ Once the dependencies satisfied, **Colour - Checker Detection** can be installed
 the `Python Package Index <http://pypi.python.org/pypi/colour-checker-detection>`__ by
 issuing this command in a shell::
 
-	pip install colour-checker-detection
+	pip install --user colour-checker-detection
 
 The overall development dependencies are installed as follows::
 
-    pip install 'colour-checker-detection[development]'
+    pip install --user 'colour-checker-detection[development]'
 
 Usage
 -----
