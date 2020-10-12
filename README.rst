@@ -64,7 +64,7 @@ Primary Dependencies
 Pypi
 ^^^^
 
-Once the dependencies satisfied, **Colour - Checker Detection** can be installed from
+Once the dependencies are satisfied, **Colour - Checker Detection** can be installed from
 the `Python Package Index <http://pypi.python.org/pypi/colour-checker-detection>`__ by
 issuing this command in a shell::
 
