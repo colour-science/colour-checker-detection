@@ -45,7 +45,7 @@ exclude = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.5"
+python = "^3.6"
 colour-science = "^0.3.14"
 opencv-python = "^4"
 
