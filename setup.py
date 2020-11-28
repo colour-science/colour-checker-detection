@@ -14,7 +14,7 @@ package_data = \
                               'resources/colour-checker-detection-tests-datasets/*']}
 
 install_requires = \
-['colour-science>=0.3.14,<0.4.0', 'opencv-python>=4,<5']
+['colour-science>=0.3.16,<0.4.0', 'opencv-python>=4,<5']
 
 extras_require = \
 {'development': ['biblib-simple',
@@ -29,7 +29,7 @@ extras_require = \
                  'pre-commit',
                  'pytest',
                  'restructuredtext-lint',
-                 'sphinx',
+                 'sphinx<=3.1.2',
                  'sphinx_rtd_theme',
                  'sphinxcontrib-bibtex',
                  'toml',
@@ -51,5 +51,5 @@ setup(
     package_data=package_data,
     install_requires=install_requires,
     extras_require=extras_require,
-    python_requires='>=3.5,<4.0',
+    python_requires='>=3.6,<4.0',
 )

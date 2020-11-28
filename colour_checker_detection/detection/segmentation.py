@@ -155,15 +155,15 @@ def swatch_masks(width, height, swatches_h, swatches_v, samples):
     Examples
     --------
     >>> from pprint import pprint
-    >>> pprint(swatch_masks(16, 8, 4, 2, 1))
-    [array([2, 2, 2, 2]),
-     array([2, 2, 6, 6]),
-     array([ 2,  2, 10, 10]),
-     array([ 2,  2, 14, 14]),
-     array([6, 6, 2, 2]),
-     array([6, 6, 6, 6]),
-     array([ 6,  6, 10, 10]),
-     array([ 6,  6, 14, 14])]
+    >>> pprint(swatch_masks(16, 8, 4, 2, 1))  # doctest: +ELLIPSIS
+    [array([2, 2, 2, 2]...),
+     array([2, 2, 6, 6]...),
+     array([ 2,  2, 10, 10]...),
+     array([ 2,  2, 14, 14]...),
+     array([6, 6, 2, 2]...),
+     array([6, 6, 6, 6]...),
+     array([ 6,  6, 10, 10]...),
+     array([ 6,  6, 14, 14]...)]
     """
 
     samples = as_int(samples / 2)
@@ -520,11 +520,11 @@ def colour_checkers_coordinates_segmentation(image, additional_data=False):
     ...                     'colour_checker_detection', 'detection',
     ...                     'IMG_1967.png')
     >>> image = read_image(path)
-    >>> colour_checkers_coordinates_segmentation(image)
+    >>> colour_checkers_coordinates_segmentation(image)  # doctest: +ELLIPSIS
     [array([[1065,  707],
            [ 369,  688],
            [ 382,  226],
-           [1078,  246]])]
+           [1078,  246]]...)]
     """
 
     image = as_8_bit_BGR_image(adjust_image(image, WORKING_WIDTH))
