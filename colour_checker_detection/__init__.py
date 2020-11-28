@@ -46,7 +46,7 @@ __application_name__ = 'Colour - Checker Detection'
 
 __major_version__ = '0'
 __minor_version__ = '1'
-__change_version__ = '1'
+__change_version__ = '2'
 __version__ = '.'.join(
     (__major_version__,
      __minor_version__,
