@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "colour-checker-detection"
-version = "0.1.1"
+version = "0.1.2"
 description = "Colour checker detection with Python"
 license = "BSD-3-Clause"
-authors = [ "Colour Developers" ]
+authors = [ "Colour Developers <colour-developers@colour-science.org>" ]
+maintainers = [ "Colour Developers <colour-developers@colour-science.org>" ]
 readme = 'README.rst'
 repository = "https://github.com/colour-science/colour-checker-detection"
 homepage = "https://www.colour-science.org/"
@@ -38,10 +39,14 @@ classifiers = [
     "Topic :: Scientific/Engineering",
     "Topic :: Software Development"
 ]
+exclude = [
+    "colour_checker_detection/resources/colour-checker-detection-examples-datasets/detection/*",
+    "colour_checker_detection/resources/colour-checker-detection-tests-datasets/colour_checker_detection/detection/*",
+]
 
 [tool.poetry.dependencies]
-python = "^3.5"
-colour-science = "^0.3.14"
+python = "^3.6"
+colour-science = "^0.3.16"
 opencv-python = "^4"
 
 biblib-simple = { version = "*", optional = true }  # Development dependency.
@@ -57,7 +62,7 @@ numpy = { version = "*", optional = true }
 pre-commit = { version = "*", optional = true }  # Development dependency.
 pytest = { version = "*", optional = true }  # Development dependency.
 restructuredtext-lint = { version = "*", optional = true }  # Development dependency.
-sphinx = { version = "*", optional = true }  # Development dependency.
+sphinx = { version = "<=3.1.2", optional = true }  # Development dependency.
 sphinx_rtd_theme = { version = "*", optional = true }  # Development dependency.
 sphinxcontrib-bibtex = { version = "*", optional = true }  # Development dependency.
 toml = { version = "*", optional = true }  # Development dependency.
@@ -77,7 +82,7 @@ nose = "*"
 pre-commit = "*"
 pytest = "*"
 restructuredtext-lint = "*"
-sphinx = "*"
+sphinx = "<=3.1.2"
 sphinx_rtd_theme = "*"
 sphinxcontrib-bibtex = "*"
 toml = "*"

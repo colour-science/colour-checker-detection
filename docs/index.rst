@@ -37,31 +37,30 @@ Primary Dependencies
 
 **Colour - Checker Detection** requires various dependencies in order to run:
 
--  `Python 2.7 <https://www.python.org/download/releases/>`__ or
-   `Python 3.7 <https://www.python.org/download/releases/>`__
--  `Colour Science <https://www.colour-science.org>`__
--  `opencv-python <https://pypi.org/project/opencv-python/>`__
+-   `python>=3.5 <https://www.python.org/download/releases/>`__
+-   `colour-science <https://pypi.org/project/colour-science/>`__
+-   `opencv-python>=4 <https://pypi.org/project/opencv-python/>`__
 
 Pypi
 ^^^^
 
-Once the dependencies satisfied, **Colour - Checker Detection** can be installed from
+Once the dependencies are satisfied, **Colour - Checker Detection** can be installed from
 the `Python Package Index <http://pypi.python.org/pypi/colour-checker-detection>`__ by
 issuing this command in a shell::
 
-	pip install colour-checker-detection
+	pip install --user colour-checker-detection
 
 The tests suite dependencies are installed as follows::
 
-    pip install 'colour-checker-detection[tests]'
+    pip install --user 'colour-checker-detection[tests]'
 
 The documentation building dependencies are installed as follows::
 
-    pip install 'colour-checker-detection[docs]'
+    pip install --user 'colour-checker-detection[docs]'
 
 The overall development dependencies are installed as follows::
 
-    pip install 'colour-checker-detection[development]'
+    pip install --user 'colour-checker-detection[development]'
 
 Usage
 -----
@@ -108,6 +107,6 @@ About
 -----
 
 | **Colour - Checker Detection** by Colour Developers
-| Copyright © 2018-2019 – Colour Developers – `colour-science@googlegroups.com <colour-science@googlegroups.com>`__
+| Copyright © 2018-2020 – Colour Developers – `colour-developers@colour-science.org <colour-developers@colour-science.org>`__
 | This software is released under terms of New BSD License: https://opensource.org/licenses/BSD-3-Clause
 | `https://github.com/colour-science/colour-checker-detection <https://github.com/colour-science/colour-checker-detection>`__

@@ -24,10 +24,10 @@ from .detection import (colour_checkers_coordinates_segmentation,
                         detect_colour_checkers_segmentation)
 
 __author__ = 'Colour Developers'
-__copyright__ = 'Copyright (C) 2018-2019 - Colour Developers'
+__copyright__ = 'Copyright (C) 2018-2020 - Colour Developers'
 __license__ = 'New BSD License - https://opensource.org/licenses/BSD-3-Clause'
 __maintainer__ = 'Colour Developers'
-__email__ = 'colour-science@googlegroups.com'
+__email__ = 'colour-developers@colour-science.org'
 __status__ = 'Production'
 
 __all__ = [
@@ -46,7 +46,7 @@ __application_name__ = 'Colour - Checker Detection'
 
 __major_version__ = '0'
 __minor_version__ = '1'
-__change_version__ = '1'
+__change_version__ = '2'
 __version__ = '.'.join(
     (__major_version__,
      __minor_version__,

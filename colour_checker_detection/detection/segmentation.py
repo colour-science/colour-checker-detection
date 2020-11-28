@@ -12,8 +12,8 @@ Defines objects for colour checker detection using segmentation:
 References
 ----------
 -   :cite:`Abecassis2011` : Abecassis, F. (2011). OpenCV - Rotation
-    (Deskewing). Retrieved October 27, 2018, from
-    http://felix.abecassis.me/2011/10/opencv-rotation-deskewing/
+    (Deskewing). Retrieved October 27, 2018, from http://felix.abecassis.me/\
+2011/10/opencv-rotation-deskewing/
 """
 
 from __future__ import division, unicode_literals
@@ -26,10 +26,10 @@ from colour.models import cctf_decoding, cctf_encoding
 from colour.utilities import as_float_array, as_int_array, as_int
 
 __author__ = 'Colour Developers'
-__copyright__ = 'Copyright (C) 2018-2019 - Colour Developers'
+__copyright__ = 'Copyright (C) 2018-2020 - Colour Developers'
 __license__ = 'New BSD License - https://opensource.org/licenses/BSD-3-Clause'
 __maintainer__ = 'Colour Developers'
-__email__ = 'colour-science@googlegroups.com'
+__email__ = 'colour-developers@colour-science.org'
 __status__ = 'Production'
 
 __all__ = [
@@ -155,15 +155,15 @@ def swatch_masks(width, height, swatches_h, swatches_v, samples):
     Examples
     --------
     >>> from pprint import pprint
-    >>> pprint(swatch_masks(16, 8, 4, 2, 1))
-    [array([2, 2, 2, 2]),
-     array([2, 2, 6, 6]),
-     array([ 2,  2, 10, 10]),
-     array([ 2,  2, 14, 14]),
-     array([6, 6, 2, 2]),
-     array([6, 6, 6, 6]),
-     array([ 6,  6, 10, 10]),
-     array([ 6,  6, 14, 14])]
+    >>> pprint(swatch_masks(16, 8, 4, 2, 1))  # doctest: +ELLIPSIS
+    [array([2, 2, 2, 2]...),
+     array([2, 2, 6, 6]...),
+     array([ 2,  2, 10, 10]...),
+     array([ 2,  2, 14, 14]...),
+     array([6, 6, 2, 2]...),
+     array([6, 6, 6, 6]...),
+     array([ 6,  6, 10, 10]...),
+     array([ 6,  6, 14, 14]...)]
     """
 
     samples = as_int(samples / 2)
@@ -520,11 +520,11 @@ def colour_checkers_coordinates_segmentation(image, additional_data=False):
     ...                     'colour_checker_detection', 'detection',
     ...                     'IMG_1967.png')
     >>> image = read_image(path)
-    >>> colour_checkers_coordinates_segmentation(image)
+    >>> colour_checkers_coordinates_segmentation(image)  # doctest: +ELLIPSIS
     [array([[1065,  707],
            [ 369,  688],
            [ 382,  226],
-           [1078,  246]])]
+           [1078,  246]]...)]
     """
 
     image = as_8_bit_BGR_image(adjust_image(image, WORKING_WIDTH))

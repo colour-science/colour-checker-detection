@@ -5,7 +5,7 @@ Colour - Checker Detection
 
 |actions| |coveralls| |codacy| |version|
 
-.. |actions| image:: https://github.com/colour-science/colour-checker-detection/workflows/Continuous%20Integration/badge.svg
+.. |actions| image:: https://img.shields.io/github/workflow/status/colour-science/colour-checker-detection/Continuous%20Integration?label=actions&logo=github&style=flat-square
     :target: https://github.com/colour-science/colour-checker-detection/actions
     :alt: Develop Build Status
 .. |coveralls| image:: http://img.shields.io/coveralls/colour-science/colour-checker-detection/develop.svg?style=flat-square
@@ -57,22 +57,22 @@ Primary Dependencies
 
 **Colour - Checker Detection** requires various dependencies in order to run:
 
--  `Python >=3.5 <https://www.python.org/download/releases/>`__
--  `Colour Science <https://www.colour-science.org>`__
--  `opencv-python >=4 <https://pypi.org/project/opencv-python/>`__
+-   `python>=3.5 <https://www.python.org/download/releases/>`__
+-   `colour-science <https://pypi.org/project/colour-science/>`__
+-   `opencv-python>=4 <https://pypi.org/project/opencv-python/>`__
 
 Pypi
 ^^^^
 
-Once the dependencies satisfied, **Colour - Checker Detection** can be installed from
+Once the dependencies are satisfied, **Colour - Checker Detection** can be installed from
 the `Python Package Index <http://pypi.python.org/pypi/colour-checker-detection>`__ by
 issuing this command in a shell::
 
-	pip install colour-checker-detection
+	pip install --user colour-checker-detection
 
 The overall development dependencies are installed as follows::
 
-    pip install 'colour-checker-detection[development]'
+    pip install --user 'colour-checker-detection[development]'
 
 Usage
 -----
@@ -113,6 +113,6 @@ About
 -----
 
 | **Colour - Checker Detection** by Colour Developers
-| Copyright © 2018-2019 – Colour Developers – `colour-science@googlegroups.com <colour-science@googlegroups.com>`__
+| Copyright © 2018-2020 – Colour Developers – `colour-developers@colour-science.org <colour-developers@colour-science.org>`__
 | This software is released under terms of New BSD License: https://opensource.org/licenses/BSD-3-Clause
 | `https://github.com/colour-science/colour-checker-detection <https://github.com/colour-science/colour-checker-detection>`__

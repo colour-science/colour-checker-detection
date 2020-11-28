@@ -11,13 +11,13 @@ TODO
 
 -   colour_checker_detection/detection/tests/test_segmentation.py
 
-    -   Line 207 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
-    -   Line 492 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
+    -   Line 227 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
+    -   Line 517 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
 
 About
 -----
 
 | **Colour - Checker Detection** by Colour Developers
-| Copyright © 2018-2019 – Colour Developers – `colour-science@googlegroups.com <colour-science@googlegroups.com>`__
+| Copyright © 2018-2020 – Colour Developers – `colour-developers@colour-science.org <colour-developers@colour-science.org>`__
 | This software is released under terms of New BSD License: https://opensource.org/licenses/BSD-3-Clause
 | `https://github.com/colour-science/colour-checker-detection <https://github.com/colour-science/colour-checker-detection>`__
