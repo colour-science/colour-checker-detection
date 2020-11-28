@@ -403,7 +403,7 @@ def virtualise(ctx, tests=True):
                                         unique_name))
         with ctx.cd(unique_name):
             ctx.run('poetry env use 3')
-            ctx.run('poetry install --extras "optional plotting"')
+            ctx.run('poetry install')
             ctx.run('source $(poetry env info -p)/bin/activate')
             ctx.run('python -c "import imageio;'
                     'imageio.plugins.freeimage.download()"')

@@ -11,8 +11,8 @@ TODO
 
 -   colour_checker_detection/detection/tests/test_segmentation.py
 
-    -   Line 207 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
-    -   Line 492 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
+    -   Line 227 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
+    -   Line 517 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
 
 About
 -----

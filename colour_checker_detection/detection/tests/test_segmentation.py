@@ -85,6 +85,11 @@ as_8_bit_BGR_image` definition unit tests methods.
 as_8_bit_BGR_image` definition unit tests methods.
         """
 
+        # Skipping unit test when "png" files are missing, e.g. when testing
+        # the distributed "Python" package.
+        if len(PNG_FILES) > 0:
+            return
+
         image_i = read_image(PNG_FILES[0])
         image_o = as_8_bit_BGR_image(image_i)
 
@@ -105,6 +110,11 @@ adjust_image` definition unit tests methods.
     Defines :func:`colour_checker_detection.detection.segmentation.\
 adjust_image` definition unit tests methods.
         """
+
+        # Skipping unit test when "png" files are missing, e.g. when testing
+        # the distributed "Python" package.
+        if len(PNG_FILES) > 0:
+            return
 
         image = adjust_image(read_image(PNG_FILES[0]))
         self.assertEqual(image.shape[1], WORKING_WIDTH)
@@ -180,6 +190,11 @@ crop_and_level_image_with_rectangle` definition unit tests methods.
 crop_and_level_image_with_rectangle` definition unit tests methods.
         """
 
+        # Skipping unit test when "png" files are missing, e.g. when testing
+        # the distributed "Python" package.
+        if len(PNG_FILES) > 0:
+            return
+
         image = as_8_bit_BGR_image(adjust_image(read_image(PNG_FILES[0])))
         rectangle = (
             (832.99865723, 473.05020142),
@@ -204,6 +219,11 @@ colour_checkers_coordinates_segmentation` definition unit tests methods.
     Defines :func:`colour_checker_detection.detection.segmentation.\
 colour_checkers_coordinates_segmentation` definition unit tests methods.
         """
+
+        # Skipping unit test when "png" files are missing, e.g. when testing
+        # the distributed "Python" package.
+        if len(PNG_FILES) > 0:
+            return
 
         # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
         if platform.system() in ('Windows', 'Microsoft', 'Linux'):
@@ -489,6 +509,11 @@ detect_colour_checkers_segmentation` definition unit tests methods.
     Defines :func:`colour_checker_detection.detection.segmentation.\
 detect_colour_checkers_segmentation` definition unit tests methods.
         """
+
+        # Skipping unit test when "png" files are missing, e.g. when testing
+        # the distributed "Python" package.
+        if len(PNG_FILES) > 0:
+            return
 
         # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
         if platform.system() in ('Windows', 'Microsoft', 'Linux'):
