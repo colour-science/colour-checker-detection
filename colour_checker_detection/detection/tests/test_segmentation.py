@@ -5,8 +5,6 @@ Defines unit tests for :mod:`colour_checker_detection.detection.segmentation`
 module.
 """
 
-from __future__ import division, unicode_literals
-
 import glob
 import numpy as np
 import os
