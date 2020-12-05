@@ -16,8 +16,6 @@ References
 2011/10/opencv-rotation-deskewing/
 """
 
-from __future__ import division, unicode_literals
-
 import cv2
 import numpy as np
 from collections import namedtuple
