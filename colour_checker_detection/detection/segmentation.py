@@ -519,10 +519,10 @@ def colour_checkers_coordinates_segmentation(image, additional_data=False):
     ...                     'IMG_1967.png')
     >>> image = read_image(path)
     >>> colour_checkers_coordinates_segmentation(image)  # doctest: +ELLIPSIS
-    [array([[1065,  707],
-           [ 369,  688],
+    [array([[ 369,  688],
            [ 382,  226],
-           [1078,  246]]...)]
+           [1078,  246],
+           [1065,  707]]...)]
     """
 
     image = as_8_bit_BGR_image(adjust_image(image, WORKING_WIDTH))
