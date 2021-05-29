@@ -3,7 +3,7 @@
 Colour Checker Detection - Segmentation
 =======================================
 
-Defines objects for colour checker detection using segmentation:
+Defines the objects for colour checker detection using segmentation:
 
 -   :func:`colour_checkers_coordinates_segmentation`
 -   :func:`extract_colour_checkers_segmentation`
