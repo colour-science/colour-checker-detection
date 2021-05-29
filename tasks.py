@@ -67,6 +67,7 @@ def clean(ctx, docs=True, bytecode=False):
         patterns.append('docs/generated')
 
     if bytecode:
+        patterns.append('**/__pycache__')
         patterns.append('**/*.pyc')
 
     for pattern in patterns:
@@ -144,9 +145,9 @@ def tests(ctx, nose=True):
 
     if nose:
         message_box('Running "Nosetests"...')
-        ctx.run(
-            'nosetests --with-doctest --with-coverage --cover-package={0} {0}'.
-            format(PYTHON_PACKAGE_NAME))
+        ctx.run('nosetests --with-doctest --with-coverage '
+                '--traverse-namespace --cover-package={0} {0}'.format(
+                    PYTHON_PACKAGE_NAME))
     else:
         message_box('Running "Pytest"...')
         ctx.run('py.test --disable-warnings --doctest-modules '
@@ -297,8 +298,8 @@ def requirements(ctx):
     """
 
     message_box('Exporting "requirements.txt" file...')
-    ctx.run('poetry run pip freeze | '
-            'egrep -v "github.com/colour-science|enum34" '
+    ctx.run('poetry run pip list --format=freeze | '
+            'egrep -v "github.com/colour-science" '
             '> requirements.txt')
 
 

@@ -1,8 +1,8 @@
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Defines unit tests for :mod:`colour_checker_detection.detection.segmentation`
-module.
+Defines the unit tests for the
+:mod:`colour_checker_detection.detection.segmentation` module.
 """
 
 import glob
