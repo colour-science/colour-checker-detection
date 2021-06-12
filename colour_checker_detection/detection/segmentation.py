@@ -5,9 +5,11 @@ Colour Checker Detection - Segmentation
 
 Defines the objects for colour checker detection using segmentation:
 
--   :func:`colour_checkers_coordinates_segmentation`
--   :func:`extract_colour_checkers_segmentation`
--   :func:`detect_colour_checkers_segmentation`
+-   :attr:`colour_checker_detection.SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC`
+-   :attr:`colour_checker_detection.SETTINGS_SEGMENTATION_COLORCHECKER_SG`
+-   :func:`colour_checker_detection.colour_checkers_coordinates_segmentation`
+-   :func:`colour_checker_detection.extract_colour_checkers_segmentation`
+-   :func:`colour_checker_detection.detect_colour_checkers_segmentation`
 
 References
 ----------
@@ -34,9 +36,10 @@ __status__ = 'Production'
 
 __all__ = [
     'SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC',
-    'ColourCheckersDetectionData', 'ColourCheckerSwatchesData', 'swatch_masks',
-    'as_8_bit_BGR_image', 'adjust_image', 'is_square', 'contour_centroid',
-    'scale_contour', 'crop_and_level_image_with_rectangle',
+    'SETTINGS_SEGMENTATION_COLORCHECKER_SG', 'ColourCheckersDetectionData',
+    'ColourCheckerSwatchesData', 'swatch_masks', 'as_8_bit_BGR_image',
+    'adjust_image', 'is_square', 'contour_centroid', 'scale_contour',
+    'crop_and_level_image_with_rectangle',
     'colour_checkers_coordinates_segmentation',
     'extract_colour_checkers_segmentation',
     'detect_colour_checkers_segmentation'
@@ -51,8 +54,10 @@ SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC = {
     'swatches_vertical': 4,
     'swatches_count_minimum': int(24 * 0.75),
     'swatches_count_maximum': int(24 * 1.25),
-    'swatch_minimum_area_factor': 200,
     'swatches_neutral_slice': slice(18, 23, 1),
+    'swatch_minimum_area_factor': 200,
+    'swatch_contour_scale': 1 + 1 / 3,
+    'cluster_contour_scale': 0.975,
     'working_width': 1440,
     'fast_non_local_means_denoising_kwargs': {
         'h': 10,
@@ -72,10 +77,36 @@ if is_documentation_building():  # pragma: no cover
     SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC = DocstringDict(
         SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
     SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC.__doc__ = """
-Settings for the segmentation of the *ColorChecker Classic* and
-*ColorChecker Passport*.
+Settings for the segmentation of the *X-Rite* *ColorChecker Classic* and
+*X-Rite* *ColorChecker Passport*.
 
 SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC : dict
+"""
+
+SETTINGS_SEGMENTATION_COLORCHECKER_SG = (
+    SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC.copy())
+
+SETTINGS_SEGMENTATION_COLORCHECKER_SG.update({
+    'aspect_ratio': 1.4,
+    'aspect_ratio_minimum': 1.4 * 0.9,
+    'aspect_ratio_maximum': 1.4 * 1.1,
+    'swatches': 140,
+    'swatches_horizontal': 14,
+    'swatches_vertical': 10,
+    'swatches_count_minimum': int(140 * 0.50),
+    'swatches_count_maximum': int(140 * 1.5),
+    'swatch_minimum_area_factor': 200,
+    'swatches_neutral_slice': slice(60, 65, 1),
+    'swatch_contour_scale': 1 + 1 / 3,
+    'cluster_contour_scale': 1,
+})
+if is_documentation_building():  # pragma: no cover
+    SETTINGS_SEGMENTATION_COLORCHECKER_SG = DocstringDict(
+        SETTINGS_SEGMENTATION_COLORCHECKER_SG)
+    SETTINGS_SEGMENTATION_COLORCHECKER_SG.__doc__ = """
+Settings for the segmentation of the *X-Rite* *ColorChecker SG**.
+
+SETTINGS_SEGMENTATION_COLORCHECKER_SG : dict
 """
 
 
@@ -526,14 +557,20 @@ def colour_checkers_coordinates_segmentation(image,
         Minimum swatches count to be considered for the detection.
     swatches_count_maximum : numeric, optional
         Maximum swatches count to be considered for the detection.
+    swatches_neutral_slice : numeric, optional
+        A `slice` instance defining neutral swatches used to detect if the
+        colour checker is upside down.
     swatch_minimum_area_factor : numeric, optional
         Swatch minimum area factor :math:`f` with the minimum area :math:`m_a`
         expressed as follows: :math:`m_a = image_w * image_h / s_c / f` where
         :math:`image_w`, :math:`image_h` and :math:`s_c` are respectively the
         image width, height and the swatches count.
-    swatches_neutral_slice : numeric, optional
-        A `slice` instance defining neutral swatches used to detect if the
-        colour checker is upside down.
+    swatch_contour_scale : numeric, optional
+        As the image is filtered, the swatches area will tend to shrink, the
+        generated contours can thus be scaled.
+    cluster_contour_scale : numeric, optional
+        As the swatches are clustered, it might be necessary to adjust the
+        cluster scale so that the masks are centred better on the swatches.
     working_width : int, optional
         Size the input image is resized to for detection.
     fast_non_local_means_denoising_kwargs : dict, optional
@@ -615,7 +652,7 @@ def colour_checkers_coordinates_segmentation(image,
     # Clustering squares/swatches.
     clusters = np.zeros(image.shape, dtype=np.uint8)
     for swatch in [
-            as_int_array(scale_contour(swatch, 1 + 1 / 3))
+            as_int_array(scale_contour(swatch, settings.swatch_contour_scale))
             for swatch in swatches
     ]:
         cv2.drawContours(clusters, [swatch], -1, [255] * 3, -1)
@@ -624,8 +661,9 @@ def colour_checkers_coordinates_segmentation(image,
                                             cv2.CHAIN_APPROX_NONE)
     clusters = [
         as_int_array(
-            scale_contour(cv2.boxPoints(cv2.minAreaRect(cluster)), 0.975))
-        for cluster in clusters
+            scale_contour(
+                cv2.boxPoints(cv2.minAreaRect(cluster)),
+                settings.cluster_contour_scale)) for cluster in clusters
     ]
 
     # Filtering clusters using their aspect ratio.
@@ -692,14 +730,20 @@ def extract_colour_checkers_segmentation(image, **kwargs):
         Minimum swatches count to be considered for the detection.
     swatches_count_maximum : numeric, optional
         Maximum swatches count to be considered for the detection.
+    swatches_neutral_slice : numeric, optional
+        A `slice` instance defining neutral swatches used to detect if the
+        colour checker is upside down.
     swatch_minimum_area_factor : numeric, optional
         Swatch minimum area factor :math:`f` with the minimum area :math:`m_a`
         expressed as follows: :math:`m_a = image_w * image_h / s_c / f` where
         :math:`image_w`, :math:`image_h` and :math:`s_c` are respectively the
         image width, height and the swatches count.
-    swatches_neutral_slice : numeric, optional
-        A `slice` instance defining neutral swatches used to detect if the
-        colour checker is upside down.
+    swatch_contour_scale : numeric, optional
+        As the image is filtered, the swatches area will tend to shrink, the
+        generated contours can thus be scaled.
+    cluster_contour_scale : numeric, optional
+        As the swatches are clustered, it might be necessary to adjust the
+        cluster scale so that the masks are centred better on the swatches.
     working_width : int, optional
         Size the input image is resized to for detection.
     fast_non_local_means_denoising_kwargs : dict, optional
@@ -788,7 +832,8 @@ def extract_colour_checkers_segmentation(image, **kwargs):
                      settings.interpolation_method))
 
     colour_checkers = []
-    for colour_checker in colour_checkers_coordinates_segmentation(image):
+    for colour_checker in colour_checkers_coordinates_segmentation(
+            image, **settings):
         colour_checker = crop_and_level_image_with_rectangle(
             image, cv2.minAreaRect(colour_checker),
             settings.interpolation_method)
@@ -840,14 +885,20 @@ def detect_colour_checkers_segmentation(image,
         Minimum swatches count to be considered for the detection.
     swatches_count_maximum : numeric, optional
         Maximum swatches count to be considered for the detection.
+    swatches_neutral_slice : numeric, optional
+        A `slice` instance defining neutral swatches used to detect if the
+        colour checker is upside down.
     swatch_minimum_area_factor : numeric, optional
         Swatch minimum area factor :math:`f` with the minimum area :math:`m_a`
         expressed as follows: :math:`m_a = image_w * image_h / s_c / f` where
         :math:`image_w`, :math:`image_h` and :math:`s_c` are respectively the
         image width, height and the swatches count.
-    swatches_neutral_slice : numeric, optional
-        A `slice` instance defining neutral swatches used to detect if the
-        colour checker is upside down.
+    swatch_contour_scale : numeric, optional
+        As the image is filtered, the swatches area will tend to shrink, the
+        generated contours can thus be scaled.
+    cluster_contour_scale : numeric, optional
+        As the swatches are clustered, it might be necessary to adjust the
+        cluster scale so that the masks are centred better on the swatches.
     working_width : int, optional
         Size the input image is resized to for detection.
     fast_non_local_means_denoising_kwargs : dict, optional
@@ -915,10 +966,11 @@ def detect_colour_checkers_segmentation(image,
 
     colour_checkers_colours = []
     colour_checkers_data = []
-    for colour_checker in extract_colour_checkers_segmentation(image):
+    for colour_checker in extract_colour_checkers_segmentation(
+            image, **settings):
         colour_checker = cctf_decoding(
             as_float_array(colour_checker[..., ::-1]) / 255)
-        width, height = (colour_checker.shape[1], colour_checker.shape[0])
+        width, height = colour_checker.shape[1], colour_checker.shape[0]
         masks = swatch_masks(width, height, swatches_h, swatches_v, samples)
 
         swatch_colours = []
