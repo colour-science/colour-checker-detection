@@ -21,7 +21,9 @@ import numpy as np
 from collections import namedtuple
 
 from colour.models import cctf_decoding, cctf_encoding
-from colour.utilities import as_float_array, as_int_array, as_int
+from colour.utilities import Structure, as_float_array, as_int_array, as_int
+from colour.utilities.documentation import (DocstringDict,
+                                            is_documentation_building)
 
 __author__ = 'Colour Developers'
 __copyright__ = 'Copyright (C) 2018-2021 - Colour Developers'
@@ -31,8 +33,7 @@ __email__ = 'colour-developers@colour-science.org'
 __status__ = 'Production'
 
 __all__ = [
-    'ASPECT_RATIO', 'SWATCHES_HORIZONTAL', 'SWATCHES_VERTICAL', 'SWATCHES',
-    'SWATCH_MINIMUM_AREA_FACTOR', 'WORKING_WIDTH',
+    'SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC',
     'ColourCheckersDetectionData', 'ColourCheckerSwatchesData', 'swatch_masks',
     'as_8_bit_BGR_image', 'adjust_image', 'is_square', 'contour_centroid',
     'scale_contour', 'crop_and_level_image_with_rectangle',
@@ -41,49 +42,40 @@ __all__ = [
     'detect_colour_checkers_segmentation'
 ]
 
-ASPECT_RATIO = 1.5
-"""
-Colour checker aspect ratio.
+SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC = {
+    'aspect_ratio': 1.5,
+    'aspect_ratio_minimum': 1.5 * 0.9,
+    'aspect_ratio_maximum': 1.5 * 1.1,
+    'swatches': 24,
+    'swatches_horizontal': 6,
+    'swatches_vertical': 4,
+    'swatches_count_minimum': int(24 * 0.75),
+    'swatches_count_maximum': int(24 * 1.25),
+    'swatch_minimum_area_factor': 200,
+    'swatches_neutral_slice': slice(18, 23, 1),
+    'working_width': 1440,
+    'fast_non_local_means_denoising_kwargs': {
+        'h': 10,
+        'templateWindowSize': 7,
+        'searchWindowSize': 21,
+    },
+    'adaptive_threshold_kwargs': {
+        'maxValue': 255,
+        'adaptiveMethod': cv2.ADAPTIVE_THRESH_MEAN_C,
+        'thresholdType': cv2.THRESH_BINARY,
+        'blockSize': int(1440 * 0.015) - int(1440 * 0.015) % 2 + 1,
+        'C': 3
+    },
+    'interpolation_method': cv2.INTER_CUBIC,
+}
+if is_documentation_building():  # pragma: no cover
+    SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC = DocstringDict(
+        SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
+    SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC.__doc__ = """
+Settings for the segmentation of the *ColorChecker Classic* and
+*ColorChecker Passport*.
 
-ASPECT_RATIO : numeric
-"""
-
-SWATCHES_HORIZONTAL = 6
-"""
-Colour checker horizontal swatches count.
-
-SWATCHES_HORIZONTAL : int
-"""
-
-SWATCHES_VERTICAL = 4
-"""
-Colour checker vertical swatches count.
-
-SWATCHES_VERTICAL : int
-"""
-
-SWATCHES = SWATCHES_HORIZONTAL * SWATCHES_VERTICAL
-"""
-Colour checker total swatches count.
-
-SWATCHES : int
-"""
-
-SWATCH_MINIMUM_AREA_FACTOR = 200
-"""
-Swatch minimum area factor :math:`f` with the minimum area :math:`m_a`
-expressed as follows: :math:`m_a = image_w * image_h / s_c / f` where
-:math:`image_w`, :math:`image_h` and :math:`s_c` are respectively the image
-width, height and the swatches count.
-
-SWATCH_MINIMUM_AREA_FACTOR : numeric
-"""
-
-WORKING_WIDTH = 1440
-"""
-Width processed images are resized to.
-
-WORKING_WIDTH : int
+SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC : dict
 """
 
 
@@ -252,7 +244,7 @@ def as_8_bit_BGR_image(image):
                         cv2.COLOR_RGB2BGR)
 
 
-def adjust_image(image, target_width=WORKING_WIDTH):
+def adjust_image(image, target_width, interpolation_method=cv2.INTER_CUBIC):
     """
     Adjusts given image so that it is horizontal and resizes it to given target
     width.
@@ -263,6 +255,12 @@ def adjust_image(image, target_width=WORKING_WIDTH):
         Image to adjust.
     target_width : int, optional
         Width the image is resized to.
+    interpolation_method : int, optional
+        **{cv2.INTER_CUBIC, cv2.INTER_NEAREST, cv2.INTER_LINEAR,
+        cv2.INTER_AREA, cv2.INTER_LANCZOS4, cv2.INTER_LINEAR_EXACT,
+        cv2.INTER_NEAREST_EXACT, cv2.INTER_MAX, cv2.WARP_FILL_OUTLIERS,
+        cv2.WARP_INVERSE_MAP}**,
+        Interpolation method.
 
     Returns
     -------
@@ -301,7 +299,7 @@ def adjust_image(image, target_width=WORKING_WIDTH):
     else:
         return cv2.resize(
             image, (as_int(target_width), as_int(height / ratio)),
-            interpolation=cv2.INTER_CUBIC)
+            interpolation=interpolation_method)
 
 
 def is_square(contour, tolerance=0.015):
@@ -399,7 +397,9 @@ def scale_contour(contour, factor):
     return scaled_contour
 
 
-def crop_and_level_image_with_rectangle(image, rectangle):
+def crop_and_level_image_with_rectangle(image,
+                                        rectangle,
+                                        interpolation_method=cv2.INTER_CUBIC):
     """
     Crops and rotates/levels given image using given rectangle.
 
@@ -409,6 +409,12 @@ def crop_and_level_image_with_rectangle(image, rectangle):
         Image to crop and rotate/level.
     rectangle : tuple
         Rectangle used to crop and rotate/level the image.
+    interpolation_method : int, optional
+        **{cv2.INTER_CUBIC, cv2.INTER_NEAREST, cv2.INTER_LINEAR,
+        cv2.INTER_AREA, cv2.INTER_LANCZOS4, cv2.INTER_LINEAR_EXACT,
+        cv2.INTER_NEAREST_EXACT, cv2.INTER_MAX, cv2.WARP_FILL_OUTLIERS,
+        cv2.WARP_INVERSE_MAP}**,
+        Interpolation method.
 
     Returns
     -------
@@ -431,7 +437,7 @@ def crop_and_level_image_with_rectangle(image, rectangle):
     >>> path = os.path.join(TESTS_RESOURCES_DIRECTORY,
     ...                     'colour_checker_detection', 'detection',
     ...                     'IMG_1967.png')
-    >>> image = as_8_bit_BGR_image(adjust_image(read_image(path)))
+    >>> image = as_8_bit_BGR_image(adjust_image(read_image(path), 1440))
     >>> rectangle = (
     ...     (723.29608154, 465.50939941),
     ...     (461.24377441, 696.34759522),
@@ -446,7 +452,7 @@ def crop_and_level_image_with_rectangle(image, rectangle):
 
     width, height = image.shape[1], image.shape[0]
     width_r, height_r = rectangle[1]
-    centroid = as_int_array(contour_centroid(cv2.boxPoints(rectangle)))
+    centroid = contour_centroid(cv2.boxPoints(rectangle))
     centroid = centroid[0], centroid[1]
     angle = rectangle[-1]
 
@@ -458,14 +464,16 @@ def crop_and_level_image_with_rectangle(image, rectangle):
 
     M_r = cv2.getRotationMatrix2D(centroid, angle, 1)
 
-    image_r = cv2.warpAffine(image, M_r, (width, height), cv2.INTER_CUBIC)
+    image_r = cv2.warpAffine(image, M_r, (width, height), interpolation_method)
     image_c = cv2.getRectSubPix(image_r, (width_r, height_r),
                                 (centroid[0], centroid[1]))
 
     return image_c
 
 
-def colour_checkers_coordinates_segmentation(image, additional_data=False):
+def colour_checkers_coordinates_segmentation(image,
+                                             additional_data=False,
+                                             **kwargs):
     """
     Detects the colour checkers coordinates in given image :math:`image` using
     segmentation.
@@ -488,7 +496,7 @@ def colour_checkers_coordinates_segmentation(image, additional_data=False):
     -   Clusters with an aspect ratio different to the expected one are
         rejected, a side-effect is that the complementary pane of the
         *X-Rite* *ColorChecker Passport* is omitted.
-    -   Clusters with a number of swatches close to :attr:`SWATCHES` are
+    -   Clusters with a number of swatches close to the expected one are
         kept.
 
     Parameters
@@ -497,6 +505,48 @@ def colour_checkers_coordinates_segmentation(image, additional_data=False):
         Image to detect the colour checkers in.
     additional_data : bool, optional
         Whether to output additional data.
+
+    Other Parameters
+    ----------------
+    aspect_ratio : numeric, optional
+        Colour checker aspect ratio, e.g. 1.5.
+    aspect_ratio_minimum : numeric, optional
+        Minimum colour checker aspect ratio for detection: projective geometry
+        might reduce the colour checker aspect ratio.
+    aspect_ratio_maximum : numeric, optional
+        Maximum colour checker aspect ratio for detection: projective geometry
+        might increase the colour checker aspect ratio.
+    swatches : int, optional
+        Colour checker swatches total count.
+    swatches_horizontal : int, optional
+        Colour checker swatches horizontal columns count.
+    swatches_vertical : int, optional
+        Colour checker swatches vertical row count.
+    swatches_count_minimum : numeric, optional
+        Minimum swatches count to be considered for the detection.
+    swatches_count_maximum : numeric, optional
+        Maximum swatches count to be considered for the detection.
+    swatch_minimum_area_factor : numeric, optional
+        Swatch minimum area factor :math:`f` with the minimum area :math:`m_a`
+        expressed as follows: :math:`m_a = image_w * image_h / s_c / f` where
+        :math:`image_w`, :math:`image_h` and :math:`s_c` are respectively the
+        image width, height and the swatches count.
+    swatches_neutral_slice : numeric, optional
+        A `slice` instance defining neutral swatches used to detect if the
+        colour checker is upside down.
+    working_width : int, optional
+        Size the input image is resized to for detection.
+    fast_non_local_means_denoising_kwargs : dict, optional
+        Keyword arguments for :func:`cv2.fastNlMeansDenoising` definition.
+    adaptive_threshold_kwargs : dict, optional
+        Keyword arguments for :func:`cv2.adaptiveThreshold` definition.
+    interpolation_method : int, optional
+        **{cv2.INTER_CUBIC, cv2.INTER_NEAREST, cv2.INTER_LINEAR,
+        cv2.INTER_AREA, cv2.INTER_LANCZOS4, cv2.INTER_LINEAR_EXACT,
+        cv2.INTER_NEAREST_EXACT, cv2.INTER_MAX, cv2.WARP_FILL_OUTLIERS,
+        cv2.WARP_INVERSE_MAP}**,
+        Interpolation method used when resizing the images, `cv2.INTER_CUBIC`
+        and `cv2.INTER_LINEAR` methods are recommended.
 
     Returns
     -------
@@ -525,22 +575,26 @@ def colour_checkers_coordinates_segmentation(image, additional_data=False):
            [1065,  707]]...)]
     """
 
-    image = as_8_bit_BGR_image(adjust_image(image, WORKING_WIDTH))
+    settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
+    settings.update(**kwargs)
+
+    image = as_8_bit_BGR_image(
+        adjust_image(image, settings.working_width,
+                     settings.interpolation_method))
 
     width, height = image.shape[1], image.shape[0]
-    maximum_area = width * height / SWATCHES
-    minimum_area = width * height / SWATCHES / SWATCH_MINIMUM_AREA_FACTOR
-
-    block_size = as_int(WORKING_WIDTH * 0.015)
-    block_size = block_size - block_size % 2 + 1
+    maximum_area = width * height / settings.swatches
+    minimum_area = (width * height / settings.swatches /
+                    settings.swatch_minimum_area_factor)
 
     # Thresholding/Segmentation.
     image_g = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-    image_g = cv2.fastNlMeansDenoising(image_g, None, 10, 7, 21)
-    image_s = cv2.adaptiveThreshold(image_g, 255, cv2.ADAPTIVE_THRESH_MEAN_C,
-                                    cv2.THRESH_BINARY, block_size, 3)
+    image_g = cv2.fastNlMeansDenoising(
+        image_g, None, **settings.fast_non_local_means_denoising_kwargs)
+    image_s = cv2.adaptiveThreshold(image_g,
+                                    **settings.adaptive_threshold_kwargs)
     # Cleanup.
-    kernel = np.ones((3, 3), np.uint8)
+    kernel = np.ones([3, 3], np.uint8)
     image_c = cv2.erode(image_s, kernel, iterations=1)
     image_c = cv2.dilate(image_c, kernel, iterations=1)
 
@@ -581,7 +635,8 @@ def colour_checkers_coordinates_segmentation(image, additional_data=False):
         width = max(rectangle[1][0], rectangle[1][1])
         height = min(rectangle[1][0], rectangle[1][1])
         ratio = width / height
-        if ASPECT_RATIO * 0.9 < ratio < ASPECT_RATIO * 1.1:
+        if (settings.aspect_ratio_minimum < ratio <
+                settings.aspect_ratio_maximum):
             filtered_clusters.append(cluster)
     clusters = filtered_clusters
 
@@ -596,8 +651,8 @@ def colour_checkers_coordinates_segmentation(image, additional_data=False):
         counts.append(count)
     counts = np.array(counts)
     indexes = np.where(
-        np.logical_and(counts >= SWATCHES * 0.75,
-                       counts <= SWATCHES * 1.25))[0].tolist()
+        np.logical_and(counts >= settings.swatches_count_minimum,
+                       counts <= settings.swatches_count_maximum))[0].tolist()
 
     colour_checkers = [clusters[i] for i in indexes]
 
@@ -608,7 +663,7 @@ def colour_checkers_coordinates_segmentation(image, additional_data=False):
         return colour_checkers
 
 
-def extract_colour_checkers_segmentation(image):
+def extract_colour_checkers_segmentation(image, **kwargs):
     """
     Extracts the colour checkers sub-images in given image using segmentation.
 
@@ -616,6 +671,48 @@ def extract_colour_checkers_segmentation(image):
     ----------
     image : array_like
         Image to extract the colours checkers sub-images from.
+
+    Other Parameters
+    ----------------
+    aspect_ratio : numeric, optional
+        Colour checker aspect ratio, e.g. 1.5.
+    aspect_ratio_minimum : numeric, optional
+        Minimum colour checker aspect ratio for detection: projective geometry
+        might reduce the colour checker aspect ratio.
+    aspect_ratio_maximum : numeric, optional
+        Maximum colour checker aspect ratio for detection: projective geometry
+        might increase the colour checker aspect ratio.
+    swatches : int, optional
+        Colour checker swatches total count.
+    swatches_horizontal : int, optional
+        Colour checker swatches horizontal columns count.
+    swatches_vertical : int, optional
+        Colour checker swatches vertical row count.
+    swatches_count_minimum : numeric, optional
+        Minimum swatches count to be considered for the detection.
+    swatches_count_maximum : numeric, optional
+        Maximum swatches count to be considered for the detection.
+    swatch_minimum_area_factor : numeric, optional
+        Swatch minimum area factor :math:`f` with the minimum area :math:`m_a`
+        expressed as follows: :math:`m_a = image_w * image_h / s_c / f` where
+        :math:`image_w`, :math:`image_h` and :math:`s_c` are respectively the
+        image width, height and the swatches count.
+    swatches_neutral_slice : numeric, optional
+        A `slice` instance defining neutral swatches used to detect if the
+        colour checker is upside down.
+    working_width : int, optional
+        Size the input image is resized to for detection.
+    fast_non_local_means_denoising_kwargs : dict, optional
+        Keyword arguments for :func:`cv2.fastNlMeansDenoising` definition.
+    adaptive_threshold_kwargs : dict, optional
+        Keyword arguments for :func:`cv2.adaptiveThreshold` definition.
+    interpolation_method : int, optional
+        **{cv2.INTER_CUBIC, cv2.INTER_NEAREST, cv2.INTER_LINEAR,
+        cv2.INTER_AREA, cv2.INTER_LANCZOS4, cv2.INTER_LINEAR_EXACT,
+        cv2.INTER_NEAREST_EXACT, cv2.INTER_MAX, cv2.WARP_FILL_OUTLIERS,
+        cv2.WARP_INVERSE_MAP}**,
+        Interpolation method used when resizing the images, `cv2.INTER_CUBIC`
+        and `cv2.INTER_LINEAR` methods are recommended.
 
     Returns
     -------
@@ -683,12 +780,18 @@ def extract_colour_checkers_segmentation(image):
             [ 73, 101, 116]]], dtype=uint8)]
     """
 
-    image = as_8_bit_BGR_image(adjust_image(image, WORKING_WIDTH))
+    settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
+    settings.update(**kwargs)
+
+    image = as_8_bit_BGR_image(
+        adjust_image(image, settings.working_width,
+                     settings.interpolation_method))
 
     colour_checkers = []
     for colour_checker in colour_checkers_coordinates_segmentation(image):
         colour_checker = crop_and_level_image_with_rectangle(
-            image, cv2.minAreaRect(colour_checker))
+            image, cv2.minAreaRect(colour_checker),
+            settings.interpolation_method)
         width, height = (colour_checker.shape[1], colour_checker.shape[0])
 
         if width < height:
@@ -702,7 +805,8 @@ def extract_colour_checkers_segmentation(image):
 
 def detect_colour_checkers_segmentation(image,
                                         samples=16,
-                                        additional_data=False):
+                                        additional_data=False,
+                                        **kwargs):
     """
     Detects the colour checkers swatches in given image using segmentation.
 
@@ -715,6 +819,48 @@ def detect_colour_checkers_segmentation(image,
         samples count is :math:`samples^2`.
     additional_data : bool, optional
         Whether to output additional data.
+
+    Other Parameters
+    ----------------
+    aspect_ratio : numeric, optional
+        Colour checker aspect ratio, e.g. 1.5.
+    aspect_ratio_minimum : numeric, optional
+        Minimum colour checker aspect ratio for detection: projective geometry
+        might reduce the colour checker aspect ratio.
+    aspect_ratio_maximum : numeric, optional
+        Maximum colour checker aspect ratio for detection: projective geometry
+        might increase the colour checker aspect ratio.
+    swatches : int, optional
+        Colour checker swatches total count.
+    swatches_horizontal : int, optional
+        Colour checker swatches horizontal columns count.
+    swatches_vertical : int, optional
+        Colour checker swatches vertical row count.
+    swatches_count_minimum : numeric, optional
+        Minimum swatches count to be considered for the detection.
+    swatches_count_maximum : numeric, optional
+        Maximum swatches count to be considered for the detection.
+    swatch_minimum_area_factor : numeric, optional
+        Swatch minimum area factor :math:`f` with the minimum area :math:`m_a`
+        expressed as follows: :math:`m_a = image_w * image_h / s_c / f` where
+        :math:`image_w`, :math:`image_h` and :math:`s_c` are respectively the
+        image width, height and the swatches count.
+    swatches_neutral_slice : numeric, optional
+        A `slice` instance defining neutral swatches used to detect if the
+        colour checker is upside down.
+    working_width : int, optional
+        Size the input image is resized to for detection.
+    fast_non_local_means_denoising_kwargs : dict, optional
+        Keyword arguments for :func:`cv2.fastNlMeansDenoising` definition.
+    adaptive_threshold_kwargs : dict, optional
+        Keyword arguments for :func:`cv2.adaptiveThreshold` definition.
+    interpolation_method : int, optional
+        **{cv2.INTER_CUBIC, cv2.INTER_NEAREST, cv2.INTER_LINEAR,
+        cv2.INTER_AREA, cv2.INTER_LANCZOS4, cv2.INTER_LINEAR_EXACT,
+        cv2.INTER_NEAREST_EXACT, cv2.INTER_MAX, cv2.WARP_FILL_OUTLIERS,
+        cv2.WARP_INVERSE_MAP}**,
+        Interpolation method used when resizing the images, `cv2.INTER_CUBIC`
+        and `cv2.INTER_LINEAR` methods are recommended.
 
     Returns
     -------
@@ -758,9 +904,14 @@ def detect_colour_checkers_segmentation(image,
            [ 0.1625438...,  0.1333312...,  0.0807412...]])]
     """
 
-    image = adjust_image(image, WORKING_WIDTH)
+    settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
+    settings.update(**kwargs)
 
-    swatches_h, swatches_v = SWATCHES_HORIZONTAL, SWATCHES_VERTICAL
+    image = adjust_image(image, settings.working_width,
+                         settings.interpolation_method)
+
+    swatches_h, swatches_v = (settings.swatches_horizontal,
+                              settings.swatches_vertical)
 
     colour_checkers_colours = []
     colour_checkers_data = []
@@ -778,7 +929,8 @@ def detect_colour_checkers_segmentation(image,
                     axis=(0, 1)))
 
         # Colour checker could be in reverse order.
-        swatch_neutral_colours = swatch_colours[18:23]
+        swatch_neutral_colours = swatch_colours[
+            settings.swatches_neutral_slice]
         is_reversed = False
         for i, swatch, in enumerate(swatch_neutral_colours[:-1]):
             if np.mean(swatch) < np.mean(swatch_neutral_colours[i + 1]):
