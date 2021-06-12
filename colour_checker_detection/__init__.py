@@ -18,6 +18,7 @@ import subprocess  # nosec
 import colour
 
 from .detection import (SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC,
+                        SETTINGS_SEGMENTATION_COLORCHECKER_SG,
                         colour_checkers_coordinates_segmentation,
                         extract_colour_checkers_segmentation,
                         detect_colour_checkers_segmentation)
@@ -31,6 +32,7 @@ __status__ = 'Production'
 
 __all__ = [
     'SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC',
+    'SETTINGS_SEGMENTATION_COLORCHECKER_SG',
     'colour_checkers_coordinates_segmentation',
     'extract_colour_checkers_segmentation',
     'detect_colour_checkers_segmentation'
