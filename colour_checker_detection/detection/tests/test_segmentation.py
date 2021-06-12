@@ -16,8 +16,9 @@ from colour.models import cctf_encoding
 
 from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
 from colour_checker_detection.detection.segmentation import (
-    WORKING_WIDTH, swatch_masks, as_8_bit_BGR_image, adjust_image, is_square,
-    contour_centroid, scale_contour, crop_and_level_image_with_rectangle)
+    SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC, swatch_masks,
+    as_8_bit_BGR_image, adjust_image, is_square, contour_centroid,
+    scale_contour, crop_and_level_image_with_rectangle)
 from colour_checker_detection.detection import (
     colour_checkers_coordinates_segmentation,
     extract_colour_checkers_segmentation, detect_colour_checkers_segmentation)
@@ -115,7 +116,9 @@ adjust_image` definition unit tests methods.
             return
 
         image = adjust_image(read_image(PNG_FILES[0]))
-        self.assertEqual(image.shape[1], WORKING_WIDTH)
+        self.assertEqual(
+            image.shape[1],
+            SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC.working_width)
 
 
 class TestIsSquare(unittest.TestCase):
