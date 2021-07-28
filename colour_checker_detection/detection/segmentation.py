@@ -967,7 +967,7 @@ def detect_colour_checkers_segmentation(image,
         masks = swatch_masks(width, height, swatches_h, swatches_v, samples)
 
         swatch_colours = []
-        for i, mask in enumerate(masks):
+        for mask in masks:
             swatch_colours.append(
                 np.mean(
                     colour_checker[mask[0]:mask[1], mask[2]:mask[3], ...],
