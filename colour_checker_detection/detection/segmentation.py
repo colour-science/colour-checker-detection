@@ -23,7 +23,8 @@ import numpy as np
 from collections import namedtuple
 
 from colour.models import cctf_encoding
-from colour.utilities import Structure, as_float_array, as_int_array, as_int
+from colour.utilities import (Structure, as_float_array, as_int_array, as_int,
+                              usage_warning)
 from colour.utilities.documentation import (DocstringDict,
                                             is_documentation_building)
 
@@ -54,7 +55,8 @@ SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC = {
     'swatches_vertical': 4,
     'swatches_count_minimum': int(24 * 0.75),
     'swatches_count_maximum': int(24 * 1.25),
-    'swatches_neutral_slice': slice(18, 24, 1),
+    'swatches_chromatic_slice': slice(0 + 1, 0 + 6 - 1, 1),
+    'swatches_achromatic_slice': slice(18 + 1, 18 + 6 - 1, 1),
     'swatch_minimum_area_factor': 200,
     'swatch_contour_scale': 1 + 1 / 3,
     'cluster_contour_scale': 0.975,
@@ -96,7 +98,8 @@ SETTINGS_SEGMENTATION_COLORCHECKER_SG.update({
     'swatches_count_minimum': int(140 * 0.50),
     'swatches_count_maximum': int(140 * 1.5),
     'swatch_minimum_area_factor': 200,
-    'swatches_neutral_slice': slice(60, 66, 1),
+    'swatches_chromatic_slice': slice(48, 48 + 5, 1),
+    'swatches_achromatic_slice': slice(115, 115 + 5, 1),
     'swatch_contour_scale': 1 + 1 / 3,
     'cluster_contour_scale': 1,
 })
@@ -553,8 +556,11 @@ def colour_checkers_coordinates_segmentation(image,
         Minimum swatches count to be considered for the detection.
     swatches_count_maximum : numeric, optional
         Maximum swatches count to be considered for the detection.
-    swatches_neutral_slice : numeric, optional
-        A `slice` instance defining neutral swatches used to detect if the
+    swatches_chromatic_slice : numeric, optional
+        A `slice` instance defining chromatic swatches used to detect if the
+        colour checker is upside down.
+    swatches_achromatic_slice : numeric, optional
+        A `slice` instance defining achromatic swatches used to detect if the
         colour checker is upside down.
     swatch_minimum_area_factor : numeric, optional
         Swatch minimum area factor :math:`f` with the minimum area :math:`m_a`
@@ -726,8 +732,11 @@ def extract_colour_checkers_segmentation(image, **kwargs):
         Minimum swatches count to be considered for the detection.
     swatches_count_maximum : numeric, optional
         Maximum swatches count to be considered for the detection.
-    swatches_neutral_slice : numeric, optional
-        A `slice` instance defining neutral swatches used to detect if the
+    swatches_chromatic_slice : numeric, optional
+        A `slice` instance defining chromatic swatches used to detect if the
+        colour checker is upside down.
+    swatches_achromatic_slice : numeric, optional
+        A `slice` instance defining achromatic swatches used to detect if the
         colour checker is upside down.
     swatch_minimum_area_factor : numeric, optional
         Swatch minimum area factor :math:`f` with the minimum area :math:`m_a`
@@ -880,8 +889,11 @@ def detect_colour_checkers_segmentation(image,
         Minimum swatches count to be considered for the detection.
     swatches_count_maximum : numeric, optional
         Maximum swatches count to be considered for the detection.
-    swatches_neutral_slice : numeric, optional
-        A `slice` instance defining neutral swatches used to detect if the
+    swatches_chromatic_slice : numeric, optional
+        A `slice` instance defining chromatic swatches used to detect if the
+        colour checker is upside down.
+    swatches_achromatic_slice : numeric, optional
+        A `slice` instance defining achromatic swatches used to detect if the
         colour checker is upside down.
     swatch_minimum_area_factor : numeric, optional
         Swatch minimum area factor :math:`f` with the minimum area :math:`m_a`
@@ -974,15 +986,20 @@ def detect_colour_checkers_segmentation(image,
                     axis=(0, 1)))
 
         # The colour checker might be flipped: The mean standard deviation
-        # between the normalised expected neutral swatches is used to assess if
-        # the colour checker is flipped. A correctly presented colour checker
-        # tends to have a mean standard deviation lesser than 0.05.
-        swatch_neutral_colours = as_float_array(
-            swatch_colours[settings.swatches_neutral_slice])
-        swatch_neutral_colours /= (
-            swatch_neutral_colours[..., 1][..., np.newaxis])
-        std_mean = np.mean(np.std(swatch_neutral_colours, 0))
-        if std_mean >= 0.05:
+        # of some expected normalised chromatic and achromatic neutral
+        # swatches is computed. If the chromatic mean is lesser than the
+        # achromatic mean, it means that the colour checker is flipped.
+        std_means = []
+        for slice_ in [
+                settings.swatches_chromatic_slice,
+                settings.swatches_achromatic_slice
+        ]:
+            swatch_std_mean = as_float_array(swatch_colours[slice_])
+            swatch_std_mean /= (swatch_std_mean[..., 1][..., np.newaxis])
+            std_means.append(np.mean(np.std(swatch_std_mean, 0)))
+        if std_means[0] < std_means[1]:
+            usage_warning('Colour checker was seemingly flipped,'
+                          ' reversing the samples!')
             swatch_colours = swatch_colours[::-1]
 
         swatch_colours = np.asarray(swatch_colours)
