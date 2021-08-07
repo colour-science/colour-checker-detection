@@ -54,7 +54,7 @@ SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC = {
     'swatches_vertical': 4,
     'swatches_count_minimum': int(24 * 0.75),
     'swatches_count_maximum': int(24 * 1.25),
-    'swatches_neutral_slice': slice(18, 23, 1),
+    'swatches_neutral_slice': slice(18, 24, 1),
     'swatch_minimum_area_factor': 200,
     'swatch_contour_scale': 1 + 1 / 3,
     'cluster_contour_scale': 0.975,
@@ -96,7 +96,7 @@ SETTINGS_SEGMENTATION_COLORCHECKER_SG.update({
     'swatches_count_minimum': int(140 * 0.50),
     'swatches_count_maximum': int(140 * 1.5),
     'swatch_minimum_area_factor': 200,
-    'swatches_neutral_slice': slice(60, 65, 1),
+    'swatches_neutral_slice': slice(60, 66, 1),
     'swatch_contour_scale': 1 + 1 / 3,
     'cluster_contour_scale': 1,
 })
@@ -973,17 +973,16 @@ def detect_colour_checkers_segmentation(image,
                     colour_checker[mask[0]:mask[1], mask[2]:mask[3], ...],
                     axis=(0, 1)))
 
-        # Colour checker could be in reverse order.
-        swatch_neutral_colours = swatch_colours[
-            settings.swatches_neutral_slice]
-
-        is_reversed = False
-        for i, swatch, in enumerate(swatch_neutral_colours[:-1]):
-            if np.mean(swatch) < np.mean(swatch_neutral_colours[i + 1]):
-                is_reversed = True
-                break
-
-        if is_reversed:
+        # The colour checker might be flipped: The mean standard deviation
+        # between the normalised expected neutral swatches is used to assess if
+        # the colour checker is flipped. A correctly presented colour checker
+        # tends to have a mean standard deviation lesser than 0.05.
+        swatch_neutral_colours = as_float_array(
+            swatch_colours[settings.swatches_neutral_slice])
+        swatch_neutral_colours /= (
+            swatch_neutral_colours[..., 1][..., np.newaxis])
+        std_mean = np.mean(np.std(swatch_neutral_colours, 0))
+        if std_mean >= 0.05:
             swatch_colours = swatch_colours[::-1]
 
         swatch_colours = np.asarray(swatch_colours)
