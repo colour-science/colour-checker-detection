@@ -37,10 +37,10 @@ __status__ = 'Production'
 
 __all__ = [
     'SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC',
-    'SETTINGS_SEGMENTATION_COLORCHECKER_SG', 'ColourCheckersDetectionData',
-    'ColourCheckerSwatchesData', 'swatch_masks', 'as_8_bit_BGR_image',
-    'adjust_image', 'is_square', 'contour_centroid', 'scale_contour',
-    'crop_and_level_image_with_rectangle',
+    'SETTINGS_SEGMENTATION_COLORCHECKER_SG', 'FLOAT_DTYPE_DEFAULT',
+    'ColourCheckersDetectionData', 'ColourCheckerSwatchesData', 'swatch_masks',
+    'as_8_bit_BGR_image', 'adjust_image', 'is_square', 'contour_centroid',
+    'scale_contour', 'crop_and_level_image_with_rectangle',
     'colour_checkers_coordinates_segmentation',
     'extract_colour_checkers_segmentation',
     'detect_colour_checkers_segmentation'
@@ -110,6 +110,13 @@ if is_documentation_building():  # pragma: no cover
 Settings for the segmentation of the *X-Rite* *ColorChecker SG**.
 
 SETTINGS_SEGMENTATION_COLORCHECKER_SG : dict
+"""
+
+FLOAT_DTYPE_DEFAULT = np.float32
+"""
+Dtype used for the computations.
+
+FLOAT_DTYPE_DEFAULT : dtype
 """
 
 
@@ -269,7 +276,7 @@ def as_8_bit_BGR_image(image):
             [239, 203,  18]]], dtype=uint8)
     """
 
-    image = np.asarray(image)
+    image = np.asarray(image)[..., :3]
 
     if image.dtype == np.uint8:
         return image
@@ -308,18 +315,20 @@ def adjust_image(image, target_width, interpolation_method=cv2.INTER_CUBIC):
     >>> image = list(random_triplet_generator(8, random_state=prng))
     >>> image = np.reshape(image, [2, 4, 3])
     >>> adjust_image(image, 5)  # doctest: +ELLIPSIS
-    array([[[ 0.9925326...,  0.2419374..., -0.0139522...],
-            [ 0.6174496...,  0.3460755...,  0.3189758...],
-            [ 0.7447774...,  0.6786660...,  0.1652180...],
-            [ 0.9476451...,  0.6550805...,  0.2609945...],
+    array([[[ 0.9925325...,  0.2419374..., -0.0139522...],
+            [ 0.6174497...,  0.3460756...,  0.3189758...],
+            [ 0.7447774...,  0.678666 ...,  0.1652180...],
+            [ 0.9476452...,  0.6550805...,  0.2609945...],
             [ 0.6991505...,  0.1623470...,  1.0120867...]],
     <BLANKLINE>
            [[ 0.7269885...,  0.8556784...,  0.4049920...],
-            [ 0.2666564...,  1.0401633...,  0.8238320...],
-            [ 0.6419699...,  0.5442698...,  0.9082210...],
+            [ 0.2666565...,  1.0401633...,  0.8238320...],
+            [ 0.6419699...,  0.5442698...,  0.9082211...],
             [ 0.7894426...,  0.1944301...,  0.7906868...],
-            [-0.0526997...,  0.6236684...,  0.8711482...]]])
+            [-0.0526997...,  0.6236685...,  0.8711483...]]], dtype=float32)
     """
+
+    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
 
     width, height = image.shape[1], image.shape[0]
     if width < height:
@@ -480,6 +489,8 @@ def crop_and_level_image_with_rectangle(image,
     (461, 696, 3)
     """
 
+    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
+
     width, height = image.shape[1], image.shape[0]
     width_r, height_r = rectangle[1]
     centroid = contour_centroid(cv2.boxPoints(rectangle))
@@ -613,6 +624,8 @@ def colour_checkers_coordinates_segmentation(image,
            [1078,  246],
            [1065,  707]]...)]
     """
+
+    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
 
     settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
     settings.update(**kwargs)
@@ -829,6 +842,8 @@ def extract_colour_checkers_segmentation(image, **kwargs):
             [ 0.17422497,  0.13277327,  0.07513551]]], dtype=float32)]
     """
 
+    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
+
     settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
     settings.update(**kwargs)
 
@@ -961,6 +976,8 @@ def detect_colour_checkers_segmentation(image,
            [ 0.2641854...,  0.2154006...,  0.1441268...],
            [ 0.1650097...,  0.1345238...,  0.0817438...]], dtype=float32)]
     """
+
+    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
 
     settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
     settings.update(**kwargs)
