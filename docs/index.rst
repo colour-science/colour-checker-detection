@@ -20,7 +20,7 @@ Features
 
 The following colour checker detection algorithms are implemented:
 
--   Segmentation
+- Segmentation
 
 Installation
 ------------
@@ -37,9 +37,9 @@ Primary Dependencies
 
 **Colour - Checker Detection** requires various dependencies in order to run:
 
--   `python>=3.5 <https://www.python.org/download/releases/>`__
--   `colour-science <https://pypi.org/project/colour-science/>`__
--   `opencv-python>=4 <https://pypi.org/project/opencv-python/>`__
+- `python>=3.5 <https://www.python.org/download/releases/>`__
+- `colour-science <https://pypi.org/project/colour-science/>`__
+- `opencv-python>=4 <https://pypi.org/project/opencv-python/>`__
 
 Pypi
 ^^^^
@@ -48,7 +48,7 @@ Once the dependencies are satisfied, **Colour - Checker Detection** can be insta
 the `Python Package Index <http://pypi.python.org/pypi/colour-checker-detection>`__ by
 issuing this command in a shell::
 
-	pip install --user colour-checker-detection
+    pip install --user colour-checker-detection
 
 The tests suite dependencies are installed as follows::
 
