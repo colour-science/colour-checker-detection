@@ -31,13 +31,18 @@ __email__ = 'colour-developers@colour-science.org'
 __status__ = 'Production'
 
 __all__ = [
-    'DETECTION_DIRECTORY', 'PNG_FILES', 'TestSwatchMasks',
-    'TestAs8BitBGRImage', 'TestAdjustImage', 'TestIsSquare',
-    'TestContourCentroid', 'TestScaleContour',
+    'DETECTION_DIRECTORY',
+    'PNG_FILES',
+    'TestSwatchMasks',
+    'TestAs8BitBGRImage',
+    'TestAdjustImage',
+    'TestIsSquare',
+    'TestContourCentroid',
+    'TestScaleContour',
     'TestCropAndLevelImageWithRectangle',
     'TestColourCheckersCoordinatesSegmentation',
     'TestExtractColourCheckersSegmentation',
-    'TestDetectColourCheckersSegmentation'
+    'TestDetectColourCheckersSegmentation',
 ]
 
 DETECTION_DIRECTORY = os.path.join(TESTS_RESOURCES_DIRECTORY,

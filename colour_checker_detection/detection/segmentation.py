@@ -37,13 +37,20 @@ __status__ = 'Production'
 
 __all__ = [
     'SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC',
-    'SETTINGS_SEGMENTATION_COLORCHECKER_SG', 'FLOAT_DTYPE_DEFAULT',
-    'ColourCheckersDetectionData', 'ColourCheckerSwatchesData', 'swatch_masks',
-    'as_8_bit_BGR_image', 'adjust_image', 'is_square', 'contour_centroid',
-    'scale_contour', 'crop_and_level_image_with_rectangle',
+    'SETTINGS_SEGMENTATION_COLORCHECKER_SG',
+    'FLOAT_DTYPE_DEFAULT',
+    'ColourCheckersDetectionData',
+    'ColourCheckerSwatchesData',
+    'swatch_masks',
+    'as_8_bit_BGR_image',
+    'adjust_image',
+    'is_square',
+    'contour_centroid',
+    'scale_contour',
+    'crop_and_level_image_with_rectangle',
     'colour_checkers_coordinates_segmentation',
     'extract_colour_checkers_segmentation',
-    'detect_colour_checkers_segmentation'
+    'detect_colour_checkers_segmentation',
 ]
 
 SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC = {
