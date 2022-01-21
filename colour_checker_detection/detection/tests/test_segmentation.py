@@ -16,12 +16,20 @@ from colour.models import cctf_encoding
 
 from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
 from colour_checker_detection.detection.segmentation import (
-    SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC, swatch_masks,
-    as_8_bit_BGR_image, adjust_image, is_square, contour_centroid,
-    scale_contour, crop_and_level_image_with_rectangle)
+    SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC,
+    swatch_masks,
+    as_8_bit_BGR_image,
+    adjust_image,
+    is_square,
+    contour_centroid,
+    scale_contour,
+    crop_and_level_image_with_rectangle,
+)
 from colour_checker_detection.detection import (
     colour_checkers_coordinates_segmentation,
-    extract_colour_checkers_segmentation, detect_colour_checkers_segmentation)
+    extract_colour_checkers_segmentation,
+    detect_colour_checkers_segmentation,
+)
 
 __author__ = 'Colour Developers'
 __copyright__ = 'Copyright (C) 2018-2021 - Colour Developers'

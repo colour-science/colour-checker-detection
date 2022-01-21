@@ -23,10 +23,17 @@ import numpy as np
 from collections import namedtuple
 
 from colour.models import cctf_encoding
-from colour.utilities import (Structure, as_float_array, as_int_array, as_int,
-                              usage_warning)
-from colour.utilities.documentation import (DocstringDict,
-                                            is_documentation_building)
+from colour.utilities import (
+    Structure,
+    as_float_array,
+    as_int_array,
+    as_int,
+    usage_warning,
+)
+from colour.utilities.documentation import (
+    DocstringDict,
+    is_documentation_building,
+)
 
 __author__ = 'Colour Developers'
 __copyright__ = 'Copyright (C) 2018-2021 - Colour Developers'

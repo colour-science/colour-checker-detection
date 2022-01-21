@@ -17,11 +17,13 @@ import subprocess  # nosec
 
 import colour
 
-from .detection import (SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC,
-                        SETTINGS_SEGMENTATION_COLORCHECKER_SG,
-                        colour_checkers_coordinates_segmentation,
-                        extract_colour_checkers_segmentation,
-                        detect_colour_checkers_segmentation)
+from .detection import (
+    SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC,
+    SETTINGS_SEGMENTATION_COLORCHECKER_SG,
+    colour_checkers_coordinates_segmentation,
+    extract_colour_checkers_segmentation,
+    detect_colour_checkers_segmentation,
+)
 
 __author__ = 'Colour Developers'
 __copyright__ = 'Copyright (C) 2018-2021 - Colour Developers'
