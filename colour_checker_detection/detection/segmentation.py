@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Colour Checker Detection - Segmentation
 =======================================
@@ -53,89 +52,94 @@ from colour.utilities.documentation import (
     is_documentation_building,
 )
 
-__author__ = 'Colour Developers'
-__copyright__ = 'Copyright (C) 2018-2021 - Colour Developers'
-__license__ = 'New BSD License - https://opensource.org/licenses/BSD-3-Clause'
-__maintainer__ = 'Colour Developers'
-__email__ = 'colour-developers@colour-science.org'
-__status__ = 'Production'
+__author__ = "Colour Developers"
+__copyright__ = "Copyright (C) 2018-2021 - Colour Developers"
+__license__ = "New BSD License - https://opensource.org/licenses/BSD-3-Clause"
+__maintainer__ = "Colour Developers"
+__email__ = "colour-developers@colour-science.org"
+__status__ = "Production"
 
 __all__ = [
-    'SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC',
-    'SETTINGS_SEGMENTATION_COLORCHECKER_SG',
-    'FLOAT_DTYPE_DEFAULT',
-    'ColourCheckersDetectionData',
-    'ColourCheckerSwatchesData',
-    'swatch_masks',
-    'as_8_bit_BGR_image',
-    'adjust_image',
-    'is_square',
-    'contour_centroid',
-    'scale_contour',
-    'crop_and_level_image_with_rectangle',
-    'colour_checkers_coordinates_segmentation',
-    'extract_colour_checkers_segmentation',
-    'detect_colour_checkers_segmentation',
+    "SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC",
+    "SETTINGS_SEGMENTATION_COLORCHECKER_SG",
+    "FLOAT_DTYPE_DEFAULT",
+    "ColourCheckersDetectionData",
+    "ColourCheckerSwatchesData",
+    "swatch_masks",
+    "as_8_bit_BGR_image",
+    "adjust_image",
+    "is_square",
+    "contour_centroid",
+    "scale_contour",
+    "crop_and_level_image_with_rectangle",
+    "colour_checkers_coordinates_segmentation",
+    "extract_colour_checkers_segmentation",
+    "detect_colour_checkers_segmentation",
 ]
 
 SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC: Dict = {
-    'aspect_ratio': 1.5,
-    'aspect_ratio_minimum': 1.5 * 0.9,
-    'aspect_ratio_maximum': 1.5 * 1.1,
-    'swatches': 24,
-    'swatches_horizontal': 6,
-    'swatches_vertical': 4,
-    'swatches_count_minimum': int(24 * 0.75),
-    'swatches_count_maximum': int(24 * 1.25),
-    'swatches_chromatic_slice': slice(0 + 1, 0 + 6 - 1, 1),
-    'swatches_achromatic_slice': slice(18 + 1, 18 + 6 - 1, 1),
-    'swatch_minimum_area_factor': 200,
-    'swatch_contour_scale': 1 + 1 / 3,
-    'cluster_contour_scale': 0.975,
-    'working_width': 1440,
-    'fast_non_local_means_denoising_kwargs': {
-        'h': 10,
-        'templateWindowSize': 7,
-        'searchWindowSize': 21,
+    "aspect_ratio": 1.5,
+    "aspect_ratio_minimum": 1.5 * 0.9,
+    "aspect_ratio_maximum": 1.5 * 1.1,
+    "swatches": 24,
+    "swatches_horizontal": 6,
+    "swatches_vertical": 4,
+    "swatches_count_minimum": int(24 * 0.75),
+    "swatches_count_maximum": int(24 * 1.25),
+    "swatches_chromatic_slice": slice(0 + 1, 0 + 6 - 1, 1),
+    "swatches_achromatic_slice": slice(18 + 1, 18 + 6 - 1, 1),
+    "swatch_minimum_area_factor": 200,
+    "swatch_contour_scale": 1 + 1 / 3,
+    "cluster_contour_scale": 0.975,
+    "working_width": 1440,
+    "fast_non_local_means_denoising_kwargs": {
+        "h": 10,
+        "templateWindowSize": 7,
+        "searchWindowSize": 21,
     },
-    'adaptive_threshold_kwargs': {
-        'maxValue': 255,
-        'adaptiveMethod': cv2.ADAPTIVE_THRESH_MEAN_C,
-        'thresholdType': cv2.THRESH_BINARY,
-        'blockSize': int(1440 * 0.015) - int(1440 * 0.015) % 2 + 1,
-        'C': 3
+    "adaptive_threshold_kwargs": {
+        "maxValue": 255,
+        "adaptiveMethod": cv2.ADAPTIVE_THRESH_MEAN_C,
+        "thresholdType": cv2.THRESH_BINARY,
+        "blockSize": int(1440 * 0.015) - int(1440 * 0.015) % 2 + 1,
+        "C": 3,
     },
-    'interpolation_method': cv2.INTER_CUBIC,
+    "interpolation_method": cv2.INTER_CUBIC,
 }
 if is_documentation_building():  # pragma: no cover
     SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC = DocstringDict(
-        SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
+        SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC
+    )
     SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC.__doc__ = """
 Settings for the segmentation of the *X-Rite* *ColorChecker Classic* and
 *X-Rite* *ColorChecker Passport*.
 """
 
 SETTINGS_SEGMENTATION_COLORCHECKER_SG: Dict = (
-    SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC.copy())
+    SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC.copy()
+)
 
-SETTINGS_SEGMENTATION_COLORCHECKER_SG.update({
-    'aspect_ratio': 1.4,
-    'aspect_ratio_minimum': 1.4 * 0.9,
-    'aspect_ratio_maximum': 1.4 * 1.1,
-    'swatches': 140,
-    'swatches_horizontal': 14,
-    'swatches_vertical': 10,
-    'swatches_count_minimum': int(140 * 0.50),
-    'swatches_count_maximum': int(140 * 1.5),
-    'swatch_minimum_area_factor': 200,
-    'swatches_chromatic_slice': slice(48, 48 + 5, 1),
-    'swatches_achromatic_slice': slice(115, 115 + 5, 1),
-    'swatch_contour_scale': 1 + 1 / 3,
-    'cluster_contour_scale': 1,
-})
+SETTINGS_SEGMENTATION_COLORCHECKER_SG.update(
+    {
+        "aspect_ratio": 1.4,
+        "aspect_ratio_minimum": 1.4 * 0.9,
+        "aspect_ratio_maximum": 1.4 * 1.1,
+        "swatches": 140,
+        "swatches_horizontal": 14,
+        "swatches_vertical": 10,
+        "swatches_count_minimum": int(140 * 0.50),
+        "swatches_count_maximum": int(140 * 1.5),
+        "swatch_minimum_area_factor": 200,
+        "swatches_chromatic_slice": slice(48, 48 + 5, 1),
+        "swatches_achromatic_slice": slice(115, 115 + 5, 1),
+        "swatch_contour_scale": 1 + 1 / 3,
+        "cluster_contour_scale": 1,
+    }
+)
 if is_documentation_building():  # pragma: no cover
     SETTINGS_SEGMENTATION_COLORCHECKER_SG = DocstringDict(
-        SETTINGS_SEGMENTATION_COLORCHECKER_SG)
+        SETTINGS_SEGMENTATION_COLORCHECKER_SG
+    )
     SETTINGS_SEGMENTATION_COLORCHECKER_SG.__doc__ = """
 Settings for the segmentation of the *X-Rite* *ColorChecker SG**.
 """
@@ -192,8 +196,13 @@ class ColourCheckerSwatchesData:
     swatch_masks: Tuple[NDArray, ...]
 
 
-def swatch_masks(width: Integer, height: Integer, swatches_h: Integer,
-                 swatches_v: Integer, samples: Integer) -> Tuple[NDArray, ...]:
+def swatch_masks(
+    width: Integer,
+    height: Integer,
+    swatches_h: Integer,
+    swatches_v: Integer,
+    samples: Integer,
+) -> Tuple[NDArray, ...]:
     """
     Returns swatch masks for given image width and height and swatches count.
 
@@ -237,12 +246,15 @@ def swatch_masks(width: Integer, height: Integer, swatches_h: Integer,
     for j in np.linspace(offset_v, height - offset_v, swatches_v):
         for i in np.linspace(offset_h, width - offset_h, swatches_h):
             masks.append(
-                as_int_array([
-                    j - samples_half,
-                    j + samples_half,
-                    i - samples_half,
-                    i + samples_half,
-                ]))
+                as_int_array(
+                    [
+                        j - samples_half,
+                        j + samples_half,
+                        i - samples_half,
+                        i + samples_half,
+                    ]
+                )
+            )
 
     return tuple(masks)
 
@@ -312,23 +324,28 @@ def as_8_bit_BGR_image(image: ArrayLike) -> NDArray:
             [239, 203,  18]]], dtype=uint8)
     """
 
-    image = cast(NDArray, np.asarray(image)[..., :3])
+    image = np.asarray(image)[..., :3]
 
     if image.dtype == np.uint8:
         return image
 
     return cv2.cvtColor(
-        cast(NDArray,
-             cctf_encoding(image) * 255).astype(np.uint8), cv2.COLOR_RGB2BGR)
+        cast(NDArray, cctf_encoding(image) * 255).astype(np.uint8),
+        cv2.COLOR_RGB2BGR,
+    )
 
 
 def adjust_image(
-        image: ArrayLike,
-        target_width: Integer,
-        interpolation_method: Literal[cv2.INTER_AREA,  # type: ignore[misc]
-                                      cv2.INTER_BITS, cv2.INTER_BITS2,
-                                      cv2.INTER_CUBIC, cv2.INTER_LANCZOS4,
-                                      cv2.INTER_LINEAR] = cv2.INTER_CUBIC
+    image: ArrayLike,
+    target_width: Integer,
+    interpolation_method: Literal[  # type: ignore[misc]
+        cv2.INTER_AREA,
+        cv2.INTER_BITS,
+        cv2.INTER_BITS2,
+        cv2.INTER_CUBIC,
+        cv2.INTER_LANCZOS4,
+        cv2.INTER_LINEAR,
+    ] = cv2.INTER_CUBIC,
 ) -> NDArray:
     """
     Adjusts given image so that it is horizontal and resizes it to given target
@@ -368,7 +385,7 @@ def adjust_image(
             [-0.0526997...,  0.6236685...,  0.8711483...]]], dtype=float32)
     """
 
-    image = cast(NDArray, as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3])
+    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
 
     width, height = image.shape[1], image.shape[0]
     if width < height:
@@ -381,8 +398,10 @@ def adjust_image(
         return cast(NDArray, image)
     else:
         return cv2.resize(
-            image, (as_int(target_width), as_int(height / ratio)),
-            interpolation=interpolation_method)
+            image,
+            (as_int(target_width), as_int(height / ratio)),
+            interpolation=interpolation_method,
+        )
 
 
 def is_square(contour: ArrayLike, tolerance: Floating = 0.015) -> Boolean:
@@ -411,8 +430,15 @@ def is_square(contour: ArrayLike, tolerance: Floating = 0.015) -> Boolean:
     False
     """
 
-    return cv2.matchShapes(contour, np.array([[0, 0], [1, 0], [1, 1], [0, 1]]),
-                           cv2.CONTOURS_MATCH_I2, 0.0) < tolerance
+    return (
+        cv2.matchShapes(
+            contour,
+            np.array([[0, 0], [1, 0], [1, 1], [0, 1]]),
+            cv2.CONTOURS_MATCH_I2,
+            0.0,
+        )
+        < tolerance
+    )
 
 
 def contour_centroid(contour: ArrayLike) -> Tuple[Floating, Floating]:
@@ -442,8 +468,10 @@ def contour_centroid(contour: ArrayLike) -> Tuple[Floating, Floating]:
     """
 
     moments = cv2.moments(contour)
-    centroid = (moments['m10'] / moments['m00'],
-                moments['m01'] / moments['m00'])
+    centroid = (
+        moments["m10"] / moments["m00"],
+        moments["m01"] / moments["m00"],
+    )
 
     return cast(Tuple[Floating, Floating], centroid)
 
@@ -481,12 +509,17 @@ def scale_contour(contour: ArrayLike, factor: Floating) -> NDArray:
 
 
 def crop_and_level_image_with_rectangle(
-        image: ArrayLike,
-        rectangle: Tuple[Tuple, Tuple, Floating],
-        interpolation_method: Literal[cv2.INTER_AREA,  # type: ignore[misc]
-                                      cv2.INTER_BITS, cv2.INTER_BITS2,
-                                      cv2.INTER_CUBIC, cv2.INTER_LANCZOS4,
-                                      cv2.INTER_LINEAR] = cv2.INTER_CUBIC):
+    image: ArrayLike,
+    rectangle: Tuple[Tuple, Tuple, Floating],
+    interpolation_method: Literal[  # type: ignore[misc]
+        cv2.INTER_AREA,
+        cv2.INTER_BITS,
+        cv2.INTER_BITS2,
+        cv2.INTER_CUBIC,
+        cv2.INTER_LANCZOS4,
+        cv2.INTER_LINEAR,
+    ] = cv2.INTER_CUBIC,
+):
     """
     Crops and rotates/levels given image using given rectangle.
 
@@ -529,7 +562,7 @@ def crop_and_level_image_with_rectangle(
     (461, 696, 3)
     """
 
-    image = cast(NDArray, as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3])
+    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
 
     width, height = image.shape[1], image.shape[0]
     width_r, height_r = rectangle[1]
@@ -545,14 +578,15 @@ def crop_and_level_image_with_rectangle(
     M_r = cv2.getRotationMatrix2D(centroid, angle, 1)
 
     image_r = cv2.warpAffine(image, M_r, (width, height), interpolation_method)
-    image_c = cv2.getRectSubPix(image_r, (width_r, height_r),
-                                (centroid[0], centroid[1]))
+    image_c = cv2.getRectSubPix(
+        image_r, (width_r, height_r), (centroid[0], centroid[1])
+    )
 
     return image_c
 
 
 def colour_checkers_coordinates_segmentation(
-        image: ArrayLike, additional_data: Boolean = False, **kwargs: Any
+    image: ArrayLike, additional_data: Boolean = False, **kwargs: Any
 ) -> Union[ColourCheckersDetectionData, Tuple[NDArray, ...]]:
     """
     Detects the colour checkers coordinates in given image :math:`image` using
@@ -661,59 +695,74 @@ ColourCheckersDetectionData` or :class:`tuple`
            [1065,  707]])]
     """
 
-    image = cast(NDArray, as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3])
+    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
 
     settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
     settings.update(**kwargs)
 
     image = as_8_bit_BGR_image(
-        adjust_image(image, settings.working_width,
-                     settings.interpolation_method))
+        adjust_image(
+            image, settings.working_width, settings.interpolation_method
+        )
+    )
 
     width, height = image.shape[1], image.shape[0]
     maximum_area = width * height / settings.swatches
-    minimum_area = (width * height / settings.swatches /
-                    settings.swatch_minimum_area_factor)
+    minimum_area = (
+        width
+        * height
+        / settings.swatches
+        / settings.swatch_minimum_area_factor
+    )
 
     # Thresholding/Segmentation.
     image_g = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     image_g = cv2.fastNlMeansDenoising(
-        image_g, None, **settings.fast_non_local_means_denoising_kwargs)
-    image_s = cv2.adaptiveThreshold(image_g,
-                                    **settings.adaptive_threshold_kwargs)
+        image_g, None, **settings.fast_non_local_means_denoising_kwargs
+    )
+    image_s = cv2.adaptiveThreshold(
+        image_g, **settings.adaptive_threshold_kwargs
+    )
     # Cleanup.
     kernel = np.ones([3, 3], np.uint8)
     image_c = cv2.erode(image_s, kernel, iterations=1)
     image_c = cv2.dilate(image_c, kernel, iterations=1)
 
     # Detecting contours.
-    contours, _hierarchy = cv2.findContours(image_c, cv2.RETR_TREE,
-                                            cv2.CHAIN_APPROX_NONE)
+    contours, _hierarchy = cv2.findContours(
+        image_c, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE
+    )
 
     # Filtering squares/swatches contours.
     swatches = []
     for contour in contours:
-        curve = cv2.approxPolyDP(contour, 0.01 * cv2.arcLength(contour, True),
-                                 True)
+        curve = cv2.approxPolyDP(
+            contour, 0.01 * cv2.arcLength(contour, True), True
+        )
         if minimum_area < cv2.contourArea(curve) < maximum_area and is_square(
-                curve):
+            curve
+        ):
             swatches.append(cv2.boxPoints(cv2.minAreaRect(curve)))
 
     # Clustering squares/swatches.
     contours = np.zeros(image.shape, dtype=np.uint8)
     for swatch in [
-            as_int_array(scale_contour(swatch, settings.swatch_contour_scale))
-            for swatch in swatches
+        as_int_array(scale_contour(swatch, settings.swatch_contour_scale))
+        for swatch in swatches
     ]:
         cv2.drawContours(contours, [swatch], -1, [255] * 3, -1)
     contours = cv2.cvtColor(contours, cv2.COLOR_RGB2GRAY)
-    contours, _hierarchy = cv2.findContours(contours, cv2.RETR_EXTERNAL,
-                                            cv2.CHAIN_APPROX_NONE)
+    contours, _hierarchy = cv2.findContours(
+        contours, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE
+    )
     clusters = [
         as_int_array(
             scale_contour(
                 cv2.boxPoints(cv2.minAreaRect(cluster)),
-                settings.cluster_contour_scale)) for cluster in contours
+                settings.cluster_contour_scale,
+            )
+        )
+        for cluster in contours
     ]
 
     # Filtering clusters using their aspect ratio.
@@ -723,8 +772,11 @@ ColourCheckersDetectionData` or :class:`tuple`
         width = max(rectangle[1][0], rectangle[1][1])
         height = min(rectangle[1][0], rectangle[1][1])
         ratio = width / height
-        if (settings.aspect_ratio_minimum < ratio <
-                settings.aspect_ratio_maximum):
+        if (
+            settings.aspect_ratio_minimum
+            < ratio
+            < settings.aspect_ratio_maximum
+        ):
             filtered_clusters.append(as_int_array(cluster))
     clusters = filtered_clusters
 
@@ -733,27 +785,33 @@ ColourCheckersDetectionData` or :class:`tuple`
     for cluster in clusters:
         count = 0
         for swatch in swatches:
-            if cv2.pointPolygonTest(cluster, contour_centroid(swatch),
-                                    False) == 1:
+            if (
+                cv2.pointPolygonTest(cluster, contour_centroid(swatch), False)
+                == 1
+            ):
                 count += 1
         counts.append(count)
 
     indexes = np.where(
         np.logical_and(
             as_int_array(counts) >= settings.swatches_count_minimum,
-            as_int_array(counts) <= settings.swatches_count_maximum))[0]
+            as_int_array(counts) <= settings.swatches_count_maximum,
+        )
+    )[0]
 
-    colour_checkers = tuple([clusters[i] for i in indexes])
+    colour_checkers = tuple(clusters[i] for i in indexes)
 
     if additional_data:
         return ColourCheckersDetectionData(
-            tuple(colour_checkers), tuple(clusters), tuple(swatches), image_c)
+            tuple(colour_checkers), tuple(clusters), tuple(swatches), image_c
+        )
     else:
         return colour_checkers
 
 
-def extract_colour_checkers_segmentation(image: ArrayLike,
-                                         **kwargs: Any) -> Tuple[NDArray, ...]:
+def extract_colour_checkers_segmentation(
+    image: ArrayLike, **kwargs: Any
+) -> Tuple[NDArray, ...]:
     """
     Extracts the colour checkers sub-images in given image using segmentation.
 
@@ -875,25 +933,29 @@ def extract_colour_checkers_segmentation(image: ArrayLike,
             [ 0.17422497,  0.13277327,  0.07513551]]], dtype=float32),)
     """
 
-    image = cast(NDArray, as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3])
+    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
 
     settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
     settings.update(**kwargs)
 
-    image = adjust_image(image, settings.working_width,
-                         settings.interpolation_method)
+    image = adjust_image(
+        image, settings.working_width, settings.interpolation_method
+    )
 
     colour_checkers = []
     for rectangle in cast(
-            List[NDArray],
-            colour_checkers_coordinates_segmentation(image, **settings)):
+        List[NDArray],
+        colour_checkers_coordinates_segmentation(image, **settings),
+    ):
         colour_checker = crop_and_level_image_with_rectangle(
-            image, cv2.minAreaRect(rectangle), settings.interpolation_method)
+            image, cv2.minAreaRect(rectangle), settings.interpolation_method
+        )
         width, height = (colour_checker.shape[1], colour_checker.shape[0])
 
         if width < height:
-            colour_checker = cv2.rotate(colour_checker,
-                                        cv2.ROTATE_90_CLOCKWISE)
+            colour_checker = cv2.rotate(
+                colour_checker, cv2.ROTATE_90_CLOCKWISE
+            )
 
         colour_checkers.append(colour_checker)
 
@@ -901,10 +963,10 @@ def extract_colour_checkers_segmentation(image: ArrayLike,
 
 
 def detect_colour_checkers_segmentation(
-        image: ArrayLike,
-        samples: Integer = 16,
-        additional_data: Boolean = False,
-        **kwargs: Any
+    image: ArrayLike,
+    samples: Integer = 16,
+    additional_data: Boolean = False,
+    **kwargs: Any
 ) -> Union[Tuple[ColourCheckerSwatchesData, ...], Tuple[NDArray, ...]]:
     """
     Detects the colour checkers swatches in given image using segmentation.
@@ -1008,21 +1070,25 @@ def detect_colour_checkers_segmentation(
            [ 0.1650097...,  0.1345238...,  0.0817438...]], dtype=float32),)
     """
 
-    image = cast(NDArray, as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3])
+    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
 
     settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
     settings.update(**kwargs)
 
-    image = adjust_image(image, settings.working_width,
-                         settings.interpolation_method)
+    image = adjust_image(
+        image, settings.working_width, settings.interpolation_method
+    )
 
-    swatches_h, swatches_v = (settings.swatches_horizontal,
-                              settings.swatches_vertical)
+    swatches_h, swatches_v = (
+        settings.swatches_horizontal,
+        settings.swatches_vertical,
+    )
 
     colour_checkers_colours = []
     colour_checkers_data = []
     for colour_checker in extract_colour_checkers_segmentation(
-            image, **settings):
+        image, **settings
+    ):
         width, height = colour_checker.shape[1], colour_checker.shape[0]
         masks = swatch_masks(width, height, swatches_h, swatches_v, samples)
 
@@ -1030,8 +1096,10 @@ def detect_colour_checkers_segmentation(
         for mask in masks:
             swatch_colours.append(
                 np.mean(
-                    colour_checker[mask[0]:mask[1], mask[2]:mask[3], ...],
-                    axis=(0, 1)))
+                    colour_checker[mask[0] : mask[1], mask[2] : mask[3], ...],
+                    axis=(0, 1),
+                )
+            )
 
         # The colour checker might be flipped: The mean standard deviation
         # of some expected normalised chromatic and achromatic neutral
@@ -1039,25 +1107,28 @@ def detect_colour_checkers_segmentation(
         # achromatic mean, it means that the colour checker is flipped.
         std_means = []
         for slice_ in [
-                settings.swatches_chromatic_slice,
-                settings.swatches_achromatic_slice
+            settings.swatches_chromatic_slice,
+            settings.swatches_achromatic_slice,
         ]:
             swatch_std_mean = as_float_array(swatch_colours[slice_])
-            swatch_std_mean /= (swatch_std_mean[..., 1][..., np.newaxis])
+            swatch_std_mean /= swatch_std_mean[..., 1][..., np.newaxis]
             std_means.append(np.mean(np.std(swatch_std_mean, 0)))
         if std_means[0] < std_means[1]:
-            usage_warning('Colour checker was seemingly flipped,'
-                          ' reversing the samples!')
+            usage_warning(
+                "Colour checker was seemingly flipped,"
+                " reversing the samples!"
+            )
             swatch_colours = swatch_colours[::-1]
 
         colour_checkers_colours.append(np.asarray(swatch_colours))
         colour_checkers_data.append((colour_checker, masks))
 
     if additional_data:
-        return tuple([
+        return tuple(
             ColourCheckerSwatchesData(
-                tuple(colour_checkers_colours[i]), *colour_checkers_data[i])
+                tuple(colour_checkers_colours[i]), *colour_checkers_data[i]
+            )
             for i, colour_checker_colours in enumerate(colour_checkers_colours)
-        ])
+        )
     else:
         return tuple(colour_checkers_colours)
