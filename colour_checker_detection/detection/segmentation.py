@@ -18,10 +18,28 @@ References
 2011/10/opencv-rotation-deskewing/
 """
 
+from __future__ import annotations
+
 import cv2
 import numpy as np
-from collections import namedtuple
+from dataclasses import dataclass
 
+from colour.hints import (
+    Any,
+    ArrayLike,
+    Boolean,
+    Dict,
+    DTypeFloating,
+    Floating,
+    Integer,
+    List,
+    Literal,
+    NDArray,
+    Tuple,
+    Type,
+    Union,
+    cast,
+)
 from colour.models import cctf_encoding
 from colour.utilities import (
     Structure,
@@ -60,7 +78,7 @@ __all__ = [
     'detect_colour_checkers_segmentation',
 ]
 
-SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC = {
+SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC: Dict = {
     'aspect_ratio': 1.5,
     'aspect_ratio_minimum': 1.5 * 0.9,
     'aspect_ratio_maximum': 1.5 * 1.1,
@@ -95,11 +113,9 @@ if is_documentation_building():  # pragma: no cover
     SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC.__doc__ = """
 Settings for the segmentation of the *X-Rite* *ColorChecker Classic* and
 *X-Rite* *ColorChecker Passport*.
-
-SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC : dict
 """
 
-SETTINGS_SEGMENTATION_COLORCHECKER_SG = (
+SETTINGS_SEGMENTATION_COLORCHECKER_SG: Dict = (
     SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC.copy())
 
 SETTINGS_SEGMENTATION_COLORCHECKER_SG.update({
@@ -122,96 +138,98 @@ if is_documentation_building():  # pragma: no cover
         SETTINGS_SEGMENTATION_COLORCHECKER_SG)
     SETTINGS_SEGMENTATION_COLORCHECKER_SG.__doc__ = """
 Settings for the segmentation of the *X-Rite* *ColorChecker SG**.
-
-SETTINGS_SEGMENTATION_COLORCHECKER_SG : dict
 """
 
-FLOAT_DTYPE_DEFAULT = np.float32
+FLOAT_DTYPE_DEFAULT: Type[DTypeFloating] = np.float32
 """
 Dtype used for the computations.
-
-FLOAT_DTYPE_DEFAULT : dtype
 """
 
 
-class ColourCheckersDetectionData(
-        namedtuple(
-            'ColourCheckersDetectionData',
-            ('colour_checkers', 'clusters', 'swatches', 'segmented_image'))):
+@dataclass
+class ColourCheckersDetectionData:
     """
     Colour checkers detection data used for plotting, debugging and further
     analysis.
 
     Parameters
     ----------
-    colour_checkers : array_like
+    colour_checkers
         Colour checker bounding boxes, i.e., the. clusters that have the
         relevant count of swatches.
-    clusters : array_like
+    clusters
         Detected swatches clusters.
-    swatches : array_like
+    swatches
         Detected swatches.
-    segmented_image : numeric or array_like
+    segmented_image
         Thresholded/Segmented image.
     """
 
+    colour_checkers: Tuple[NDArray, ...]
+    clusters: Tuple[NDArray, ...]
+    swatches: Tuple[NDArray, ...]
+    segmented_image: NDArray
 
-class ColourCheckerSwatchesData(
-        namedtuple(
-            'ColourCheckerSwatchesData',
-            ('swatch_colours', 'colour_checker_image', 'swatch_masks'))):
+
+@dataclass
+class ColourCheckerSwatchesData:
     """
     Colour checker swatches data used for plotting, debugging and further
     analysis.
 
     Parameters
     ----------
-    swatch_colours : array_like
+    swatch_colours
         Colour checker swatches colours.
-    colour_checker_image : array_like
+    colour_checker_image
         Cropped and levelled Colour checker image.
-    swatch_masks : array_like
+    swatch_masks
         Colour checker swatches masks.
     """
 
+    swatch_colours: Tuple[NDArray, ...]
+    colour_checker_image: NDArray
+    swatch_masks: Tuple[NDArray, ...]
 
-def swatch_masks(width, height, swatches_h, swatches_v, samples):
+
+def swatch_masks(width: Integer, height: Integer, swatches_h: Integer,
+                 swatches_v: Integer, samples: Integer) -> Tuple[NDArray, ...]:
     """
     Returns swatch masks for given image width and height and swatches count.
 
     Parameters
     ----------
-    width : int
+    width
         Image width.
-    height : height
+    height
         Image height.
-    swatches_h : int
+    swatches_h
         Horizontal swatches count.
-    swatches_v : int
+    swatches_v
         Vertical swatches count.
-    samples : int
+    samples
         Samples count.
 
     Returns
     -------
-    list
-        List of swatch masks.
+    :class:`tuple`
+        Tuple of swatch masks.
 
     Examples
     --------
     >>> from pprint import pprint
     >>> pprint(swatch_masks(16, 8, 4, 2, 1))  # doctest: +ELLIPSIS
-    [array([2, 2, 2, 2]...),
+    (array([2, 2, 2, 2]...),
      array([2, 2, 6, 6]...),
      array([ 2,  2, 10, 10]...),
      array([ 2,  2, 14, 14]...),
      array([6, 6, 2, 2]...),
      array([6, 6, 6, 6]...),
      array([ 6,  6, 10, 10]...),
-     array([ 6,  6, 14, 14]...)]
+     array([ 6,  6, 14, 14]...))
     """
 
-    samples = as_int(samples / 2)
+    samples_half = as_int(samples / 2)
 
     masks = []
     offset_h = width / swatches_h / 2
@@ -219,25 +237,29 @@ def swatch_masks(width, height, swatches_h, swatches_v, samples):
     for j in np.linspace(offset_v, height - offset_v, swatches_v):
         for i in np.linspace(offset_h, width - offset_h, swatches_h):
             masks.append(
-                as_int_array(
-                    [j - samples, j + samples, i - samples, i + samples]))
+                as_int_array([
+                    j - samples_half,
+                    j + samples_half,
+                    i - samples_half,
+                    i + samples_half,
+                ]))
 
-    return masks
+    return tuple(masks)
 
 
-def as_8_bit_BGR_image(image):
+def as_8_bit_BGR_image(image: ArrayLike) -> NDArray:
     """
     Converts and encodes given linear float *RGB* image to 8-bit *BGR* with
     *sRGB* reverse OETF.
 
     Parameters
     ----------
-    image : array_like
+    image
         Image to convert.
 
     Returns
     -------
-    ndarray
+    :class:`numpy.ndarray`
         Converted image.
 
     Notes
@@ -290,36 +312,40 @@ def as_8_bit_BGR_image(image):
             [239, 203,  18]]], dtype=uint8)
     """
 
-    image = np.asarray(image)[..., :3]
+    image = cast(NDArray, np.asarray(image)[..., :3])
 
     if image.dtype == np.uint8:
         return image
 
-    return cv2.cvtColor((cctf_encoding(image) * 255).astype(np.uint8),
-                        cv2.COLOR_RGB2BGR)
+    return cv2.cvtColor(
+        cast(NDArray,
+             cctf_encoding(image) * 255).astype(np.uint8), cv2.COLOR_RGB2BGR)
 
 
-def adjust_image(image, target_width, interpolation_method=cv2.INTER_CUBIC):
+def adjust_image(
+        image: ArrayLike,
+        target_width: Integer,
+        interpolation_method: Literal[cv2.INTER_AREA,  # type: ignore[misc]
+                                      cv2.INTER_BITS, cv2.INTER_BITS2,
+                                      cv2.INTER_CUBIC, cv2.INTER_LANCZOS4,
+                                      cv2.INTER_LINEAR] = cv2.INTER_CUBIC
+) -> NDArray:
     """
     Adjusts given image so that it is horizontal and resizes it to given target
     width.
 
     Parameters
     ----------
-    image : array_like
+    image
         Image to adjust.
-    target_width : int, optional
+    target_width
         Width the image is resized to.
-    interpolation_method : int, optional
-        **{cv2.INTER_CUBIC, cv2.INTER_NEAREST, cv2.INTER_LINEAR,
-        cv2.INTER_AREA, cv2.INTER_LANCZOS4, cv2.INTER_LINEAR_EXACT,
-        cv2.INTER_NEAREST_EXACT, cv2.INTER_MAX, cv2.WARP_FILL_OUTLIERS,
-        cv2.WARP_INVERSE_MAP}**,
+    interpolation_method
         Interpolation method.
 
     Returns
     -------
-    ndarray
+    :class:`numpy.ndarray`
         Resized image.
 
     Examples
@@ -342,7 +368,7 @@ def adjust_image(image, target_width, interpolation_method=cv2.INTER_CUBIC):
             [-0.0526997...,  0.6236685...,  0.8711483...]]], dtype=float32)
     """
 
-    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
+    image = cast(NDArray, as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3])
 
     width, height = image.shape[1], image.shape[0]
     if width < height:
@@ -352,27 +378,27 @@ def adjust_image(image, target_width, interpolation_method=cv2.INTER_CUBIC):
     ratio = width / target_width
 
     if np.allclose(ratio, 1):
-        return image
+        return cast(NDArray, image)
     else:
         return cv2.resize(
             image, (as_int(target_width), as_int(height / ratio)),
             interpolation=interpolation_method)
 
 
-def is_square(contour, tolerance=0.015):
+def is_square(contour: ArrayLike, tolerance: Floating = 0.015) -> Boolean:
     """
     Returns if given contour is a square.
 
     Parameters
     ----------
-    contour : array_like
+    contour
         Shape to test whether it is a square.
-    tolerance : numeric, optional
+    tolerance
         Tolerance under which the contour is considered to be a square.
 
     Returns
     -------
-    bool
+    :class:`bool`
         Whether given contour is a square.
 
     Examples
@@ -389,18 +415,18 @@ def is_square(contour, tolerance=0.015):
                            cv2.CONTOURS_MATCH_I2, 0.0) < tolerance
 
 
-def contour_centroid(contour):
+def contour_centroid(contour: ArrayLike) -> Tuple[Floating, Floating]:
     """
     Returns the centroid of given contour.
 
     Parameters
     ----------
-    contour : array_like
+    contour
         Contour to return the centroid of.
 
     Returns
     -------
-    tuple
+    :class:`tuple`
         Contour centroid.
 
     Notes
@@ -416,26 +442,26 @@ def contour_centroid(contour):
     """
 
     moments = cv2.moments(contour)
-    centroid = np.array(
-        [moments['m10'] / moments['m00'], moments['m01'] / moments['m00']])
+    centroid = (moments['m10'] / moments['m00'],
+                moments['m01'] / moments['m00'])
 
-    return centroid[0], centroid[1]
+    return cast(Tuple[Floating, Floating], centroid)
 
 
-def scale_contour(contour, factor):
+def scale_contour(contour: ArrayLike, factor: Floating) -> NDArray:
     """
     Scales given contour by given scale factor.
 
     Parameters
     ----------
-    contour : array_like
+    contour
         Contour to scale.
-    factor : numeric
+    factor
         Scale factor.
 
     Returns
     -------
-    ndarray
+    :class:`numpy.ndarray`
         Scaled contour.
 
     Examples
@@ -454,28 +480,28 @@ def scale_contour(contour, factor):
     return scaled_contour
 
 
-def crop_and_level_image_with_rectangle(image,
-                                        rectangle,
-                                        interpolation_method=cv2.INTER_CUBIC):
+def crop_and_level_image_with_rectangle(
+        image: ArrayLike,
+        rectangle: Tuple[Tuple, Tuple, Floating],
+        interpolation_method: Literal[cv2.INTER_AREA,  # type: ignore[misc]
+                                      cv2.INTER_BITS, cv2.INTER_BITS2,
+                                      cv2.INTER_CUBIC, cv2.INTER_LANCZOS4,
+                                      cv2.INTER_LINEAR] = cv2.INTER_CUBIC):
     """
     Crops and rotates/levels given image using given rectangle.
 
     Parameters
     ----------
-    image : array_like
+    image
         Image to crop and rotate/level.
-    rectangle : tuple
+    rectangle
         Rectangle used to crop and rotate/level the image.
-    interpolation_method : int, optional
-        **{cv2.INTER_CUBIC, cv2.INTER_NEAREST, cv2.INTER_LINEAR,
-        cv2.INTER_AREA, cv2.INTER_LANCZOS4, cv2.INTER_LINEAR_EXACT,
-        cv2.INTER_NEAREST_EXACT, cv2.INTER_MAX, cv2.WARP_FILL_OUTLIERS,
-        cv2.WARP_INVERSE_MAP}**,
+    interpolation_method
         Interpolation method.
 
     Returns
     -------
-    ndarray
+    :class:`numpy.ndarray`
         Cropped and rotated/levelled image.
 
     References
@@ -503,12 +529,11 @@ def crop_and_level_image_with_rectangle(image,
     (461, 696, 3)
     """
 
-    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
+    image = cast(NDArray, as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3])
 
     width, height = image.shape[1], image.shape[0]
     width_r, height_r = rectangle[1]
     centroid = contour_centroid(cv2.boxPoints(rectangle))
-    centroid = centroid[0], centroid[1]
     angle = rectangle[-1]
 
     if angle < -45:
@@ -526,9 +551,9 @@ def crop_and_level_image_with_rectangle(image,
     return image_c
 
 
-def colour_checkers_coordinates_segmentation(image,
-                                             additional_data=False,
-                                             **kwargs):
+def colour_checkers_coordinates_segmentation(
+        image: ArrayLike, additional_data: Boolean = False, **kwargs: Any
+) -> Union[ColourCheckersDetectionData, Tuple[NDArray, ...]]:
     """
     Detects the colour checkers coordinates in given image :math:`image` using
     segmentation.
@@ -556,66 +581,63 @@ def colour_checkers_coordinates_segmentation(image,
 
     Parameters
     ----------
-    image : array_like
+    image
         Image to detect the colour checkers in.
-    additional_data : bool, optional
+    additional_data
         Whether to output additional data.
 
     Other Parameters
     ----------------
-    aspect_ratio : numeric, optional
+    aspect_ratio
         Colour checker aspect ratio, e.g. 1.5.
-    aspect_ratio_minimum : numeric, optional
+    aspect_ratio_minimum
         Minimum colour checker aspect ratio for detection: projective geometry
         might reduce the colour checker aspect ratio.
-    aspect_ratio_maximum : numeric, optional
+    aspect_ratio_maximum
         Maximum colour checker aspect ratio for detection: projective geometry
         might increase the colour checker aspect ratio.
-    swatches : int, optional
+    swatches
         Colour checker swatches total count.
-    swatches_horizontal : int, optional
+    swatches_horizontal
         Colour checker swatches horizontal columns count.
-    swatches_vertical : int, optional
+    swatches_vertical
         Colour checker swatches vertical row count.
-    swatches_count_minimum : numeric, optional
+    swatches_count_minimum
         Minimum swatches count to be considered for the detection.
-    swatches_count_maximum : numeric, optional
+    swatches_count_maximum
         Maximum swatches count to be considered for the detection.
-    swatches_chromatic_slice : numeric, optional
+    swatches_chromatic_slice
         A `slice` instance defining chromatic swatches used to detect if the
         colour checker is upside down.
-    swatches_achromatic_slice : numeric, optional
+    swatches_achromatic_slice
         A `slice` instance defining achromatic swatches used to detect if the
         colour checker is upside down.
-    swatch_minimum_area_factor : numeric, optional
+    swatch_minimum_area_factor
         Swatch minimum area factor :math:`f` with the minimum area :math:`m_a`
         expressed as follows: :math:`m_a = image_w * image_h / s_c / f` where
         :math:`image_w`, :math:`image_h` and :math:`s_c` are respectively the
         image width, height and the swatches count.
-    swatch_contour_scale : numeric, optional
+    swatch_contour_scale
         As the image is filtered, the swatches area will tend to shrink, the
         generated contours can thus be scaled.
-    cluster_contour_scale : numeric, optional
+    cluster_contour_scale
         As the swatches are clustered, it might be necessary to adjust the
         cluster scale so that the masks are centred better on the swatches.
-    working_width : int, optional
+    working_width
         Size the input image is resized to for detection.
-    fast_non_local_means_denoising_kwargs : dict, optional
+    fast_non_local_means_denoising_kwargs
         Keyword arguments for :func:`cv2.fastNlMeansDenoising` definition.
-    adaptive_threshold_kwargs : dict, optional
+    adaptive_threshold_kwargs
         Keyword arguments for :func:`cv2.adaptiveThreshold` definition.
-    interpolation_method : int, optional
-        **{cv2.INTER_CUBIC, cv2.INTER_NEAREST, cv2.INTER_LINEAR,
-        cv2.INTER_AREA, cv2.INTER_LANCZOS4, cv2.INTER_LINEAR_EXACT,
-        cv2.INTER_NEAREST_EXACT, cv2.INTER_MAX, cv2.WARP_FILL_OUTLIERS,
-        cv2.WARP_INVERSE_MAP}**,
+    interpolation_method
         Interpolation method used when resizing the images, `cv2.INTER_CUBIC`
         and `cv2.INTER_LINEAR` methods are recommended.
 
     Returns
     -------
-    list or ColourCheckersDetectionData
-        List of colour checkers coordinates or
+    :class:`colour_checker_detection.detection.segmentation.\
+ColourCheckersDetectionData` or :class:`tuple`
+        Tuple of colour checkers coordinates or
         :class:`ColourCheckersDetectionData` class instance with additional
         data.
 
@@ -632,14 +654,14 @@ def colour_checkers_coordinates_segmentation(image,
     ...                     'colour_checker_detection', 'detection',
     ...                     'IMG_1967.png')
     >>> image = read_image(path)
-    >>> colour_checkers_coordinates_segmentation(image)  # doctest: +ELLIPSIS
+    >>> colour_checkers_coordinates_segmentation(image)
     [array([[ 369,  688],
-           [ 382,  226],
-           [1078,  246],
-           [1065,  707]]...)]
+           [ 383,  227],
+           [1078,  247],
+           [1065,  707]])]
     """
 
-    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
+    image = cast(NDArray, as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3])
 
     settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
     settings.update(**kwargs)
@@ -675,24 +697,23 @@ def colour_checkers_coordinates_segmentation(image,
                                  True)
         if minimum_area < cv2.contourArea(curve) < maximum_area and is_square(
                 curve):
-            swatches.append(
-                as_int_array(cv2.boxPoints(cv2.minAreaRect(curve))))
+            swatches.append(cv2.boxPoints(cv2.minAreaRect(curve)))
 
     # Clustering squares/swatches.
-    clusters = np.zeros(image.shape, dtype=np.uint8)
+    contours = np.zeros(image.shape, dtype=np.uint8)
     for swatch in [
             as_int_array(scale_contour(swatch, settings.swatch_contour_scale))
             for swatch in swatches
     ]:
-        cv2.drawContours(clusters, [swatch], -1, [255] * 3, -1)
-    clusters = cv2.cvtColor(clusters, cv2.COLOR_RGB2GRAY)
-    clusters, _hierarchy = cv2.findContours(clusters, cv2.RETR_EXTERNAL,
+        cv2.drawContours(contours, [swatch], -1, [255] * 3, -1)
+    contours = cv2.cvtColor(contours, cv2.COLOR_RGB2GRAY)
+    contours, _hierarchy = cv2.findContours(contours, cv2.RETR_EXTERNAL,
                                             cv2.CHAIN_APPROX_NONE)
     clusters = [
         as_int_array(
             scale_contour(
                 cv2.boxPoints(cv2.minAreaRect(cluster)),
-                settings.cluster_contour_scale)) for cluster in clusters
+                settings.cluster_contour_scale)) for cluster in contours
     ]
 
     # Filtering clusters using their aspect ratio.
@@ -704,7 +725,7 @@ def colour_checkers_coordinates_segmentation(image,
         ratio = width / height
         if (settings.aspect_ratio_minimum < ratio <
                 settings.aspect_ratio_maximum):
-            filtered_clusters.append(cluster)
+            filtered_clusters.append(as_int_array(cluster))
     clusters = filtered_clusters
 
     # Filtering swatches within cluster.
@@ -716,84 +737,82 @@ def colour_checkers_coordinates_segmentation(image,
                                     False) == 1:
                 count += 1
         counts.append(count)
-    counts = np.array(counts)
-    indexes = np.where(
-        np.logical_and(counts >= settings.swatches_count_minimum,
-                       counts <= settings.swatches_count_maximum))[0].tolist()
 
-    colour_checkers = [clusters[i] for i in indexes]
+    indexes = np.where(
+        np.logical_and(
+            as_int_array(counts) >= settings.swatches_count_minimum,
+            as_int_array(counts) <= settings.swatches_count_maximum))[0]
+
+    colour_checkers = tuple([clusters[i] for i in indexes])
 
     if additional_data:
-        return ColourCheckersDetectionData(colour_checkers, clusters, swatches,
-                                           image_c)
+        return ColourCheckersDetectionData(
+            tuple(colour_checkers), tuple(clusters), tuple(swatches), image_c)
     else:
         return colour_checkers
 
 
-def extract_colour_checkers_segmentation(image, **kwargs):
+def extract_colour_checkers_segmentation(image: ArrayLike,
+                                         **kwargs: Any) -> Tuple[NDArray, ...]:
     """
     Extracts the colour checkers sub-images in given image using segmentation.
 
     Parameters
     ----------
-    image : array_like
+    image
         Image to extract the colours checkers sub-images from.
 
     Other Parameters
     ----------------
-    aspect_ratio : numeric, optional
+    aspect_ratio
         Colour checker aspect ratio, e.g. 1.5.
-    aspect_ratio_minimum : numeric, optional
+    aspect_ratio_minimum
         Minimum colour checker aspect ratio for detection: projective geometry
         might reduce the colour checker aspect ratio.
-    aspect_ratio_maximum : numeric, optional
+    aspect_ratio_maximum
         Maximum colour checker aspect ratio for detection: projective geometry
         might increase the colour checker aspect ratio.
-    swatches : int, optional
+    swatches
         Colour checker swatches total count.
-    swatches_horizontal : int, optional
+    swatches_horizontal
         Colour checker swatches horizontal columns count.
-    swatches_vertical : int, optional
+    swatches_vertical
         Colour checker swatches vertical row count.
-    swatches_count_minimum : numeric, optional
+    swatches_count_minimum
         Minimum swatches count to be considered for the detection.
-    swatches_count_maximum : numeric, optional
+    swatches_count_maximum
         Maximum swatches count to be considered for the detection.
-    swatches_chromatic_slice : numeric, optional
+    swatches_chromatic_slice
         A `slice` instance defining chromatic swatches used to detect if the
         colour checker is upside down.
-    swatches_achromatic_slice : numeric, optional
+    swatches_achromatic_slice
         A `slice` instance defining achromatic swatches used to detect if the
         colour checker is upside down.
-    swatch_minimum_area_factor : numeric, optional
+    swatch_minimum_area_factor
         Swatch minimum area factor :math:`f` with the minimum area :math:`m_a`
         expressed as follows: :math:`m_a = image_w * image_h / s_c / f` where
         :math:`image_w`, :math:`image_h` and :math:`s_c` are respectively the
         image width, height and the swatches count.
-    swatch_contour_scale : numeric, optional
+    swatch_contour_scale
         As the image is filtered, the swatches area will tend to shrink, the
         generated contours can thus be scaled.
-    cluster_contour_scale : numeric, optional
+    cluster_contour_scale
         As the swatches are clustered, it might be necessary to adjust the
         cluster scale so that the masks are centred better on the swatches.
-    working_width : int, optional
+    working_width
         Size the input image is resized to for detection.
-    fast_non_local_means_denoising_kwargs : dict, optional
+    fast_non_local_means_denoising_kwargs
         Keyword arguments for :func:`cv2.fastNlMeansDenoising` definition.
-    adaptive_threshold_kwargs : dict, optional
+    adaptive_threshold_kwargs
         Keyword arguments for :func:`cv2.adaptiveThreshold` definition.
-    interpolation_method : int, optional
-        **{cv2.INTER_CUBIC, cv2.INTER_NEAREST, cv2.INTER_LINEAR,
-        cv2.INTER_AREA, cv2.INTER_LANCZOS4, cv2.INTER_LINEAR_EXACT,
-        cv2.INTER_NEAREST_EXACT, cv2.INTER_MAX, cv2.WARP_FILL_OUTLIERS,
-        cv2.WARP_INVERSE_MAP}**,
+    interpolation_method
         Interpolation method used when resizing the images, `cv2.INTER_CUBIC`
         and `cv2.INTER_LINEAR` methods are recommended.
 
     Returns
     -------
-    list
-        List of colour checkers sub-images.
+    :class:`tuple`
+        Tuple of colour checkers sub-images.
 
     Examples
     --------
@@ -806,7 +825,7 @@ def extract_colour_checkers_segmentation(image, **kwargs):
     >>> image = read_image(path)
     >>> extract_colour_checkers_segmentation(image)
     ... # doctest: +SKIP
-    [array([[[ 0.17908671,  0.14010708,  0.09243158],
+    (array([[[ 0.17908671,  0.14010708,  0.09243158],
             [ 0.17805016,  0.13058874,  0.09513047],
             [ 0.17175764,  0.13128328,  0.08811688],
             ...,
@@ -853,10 +872,10 @@ def extract_colour_checkers_segmentation(image, **kwargs):
             ...,
             [ 0.18079454,  0.1253967 ,  0.07739887],
             [ 0.17239226,  0.13181566,  0.07806754],
-            [ 0.17422497,  0.13277327,  0.07513551]]], dtype=float32)]
+            [ 0.17422497,  0.13277327,  0.07513551]]], dtype=float32),)
     """
 
-    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
+    image = cast(NDArray, as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3])
 
     settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
     settings.update(**kwargs)
@@ -865,11 +884,11 @@ def extract_colour_checkers_segmentation(image, **kwargs):
                          settings.interpolation_method)
 
     colour_checkers = []
-    for colour_checker in colour_checkers_coordinates_segmentation(
-            image, **settings):
+    for rectangle in cast(
+            List[NDArray],
+            colour_checkers_coordinates_segmentation(image, **settings)):
         colour_checker = crop_and_level_image_with_rectangle(
-            image, cv2.minAreaRect(colour_checker),
-            settings.interpolation_method)
+            image, cv2.minAreaRect(rectangle), settings.interpolation_method)
         width, height = (colour_checker.shape[1], colour_checker.shape[0])
 
         if width < height:
@@ -878,13 +897,15 @@ def extract_colour_checkers_segmentation(image, **kwargs):
 
         colour_checkers.append(colour_checker)
 
-    return colour_checkers
+    return tuple(colour_checkers)
 
 
-def detect_colour_checkers_segmentation(image,
-                                        samples=16,
-                                        additional_data=False,
-                                        **kwargs):
+def detect_colour_checkers_segmentation(
+        image: ArrayLike,
+        samples: Integer = 16,
+        additional_data: Boolean = False,
+        **kwargs: Any
+) -> Union[Tuple[ColourCheckerSwatchesData, ...], Tuple[NDArray, ...]]:
     """
     Detects the colour checkers swatches in given image using segmentation.
 
@@ -900,60 +921,56 @@ def detect_colour_checkers_segmentation(image,
 
     Other Parameters
     ----------------
-    aspect_ratio : numeric, optional
+    aspect_ratio
         Colour checker aspect ratio, e.g. 1.5.
-    aspect_ratio_minimum : numeric, optional
+    aspect_ratio_minimum
         Minimum colour checker aspect ratio for detection: projective geometry
         might reduce the colour checker aspect ratio.
-    aspect_ratio_maximum : numeric, optional
+    aspect_ratio_maximum
         Maximum colour checker aspect ratio for detection: projective geometry
         might increase the colour checker aspect ratio.
-    swatches : int, optional
+    swatches
         Colour checker swatches total count.
-    swatches_horizontal : int, optional
+    swatches_horizontal
         Colour checker swatches horizontal columns count.
-    swatches_vertical : int, optional
+    swatches_vertical
         Colour checker swatches vertical row count.
-    swatches_count_minimum : numeric, optional
+    swatches_count_minimum
         Minimum swatches count to be considered for the detection.
-    swatches_count_maximum : numeric, optional
+    swatches_count_maximum
         Maximum swatches count to be considered for the detection.
-    swatches_chromatic_slice : numeric, optional
+    swatches_chromatic_slice
         A `slice` instance defining chromatic swatches used to detect if the
         colour checker is upside down.
-    swatches_achromatic_slice : numeric, optional
+    swatches_achromatic_slice
         A `slice` instance defining achromatic swatches used to detect if the
         colour checker is upside down.
-    swatch_minimum_area_factor : numeric, optional
+    swatch_minimum_area_factor
         Swatch minimum area factor :math:`f` with the minimum area :math:`m_a`
         expressed as follows: :math:`m_a = image_w * image_h / s_c / f` where
         :math:`image_w`, :math:`image_h` and :math:`s_c` are respectively the
         image width, height and the swatches count.
-    swatch_contour_scale : numeric, optional
+    swatch_contour_scale
         As the image is filtered, the swatches area will tend to shrink, the
         generated contours can thus be scaled.
-    cluster_contour_scale : numeric, optional
+    cluster_contour_scale
         As the swatches are clustered, it might be necessary to adjust the
         cluster scale so that the masks are centred better on the swatches.
-    working_width : int, optional
+    working_width
         Size the input image is resized to for detection.
-    fast_non_local_means_denoising_kwargs : dict, optional
+    fast_non_local_means_denoising_kwargs
         Keyword arguments for :func:`cv2.fastNlMeansDenoising` definition.
-    adaptive_threshold_kwargs : dict, optional
+    adaptive_threshold_kwargs
         Keyword arguments for :func:`cv2.adaptiveThreshold` definition.
-    interpolation_method : int, optional
-        **{cv2.INTER_CUBIC, cv2.INTER_NEAREST, cv2.INTER_LINEAR,
-        cv2.INTER_AREA, cv2.INTER_LANCZOS4, cv2.INTER_LINEAR_EXACT,
-        cv2.INTER_NEAREST_EXACT, cv2.INTER_MAX, cv2.WARP_FILL_OUTLIERS,
-        cv2.WARP_INVERSE_MAP}**,
+    interpolation_method
         Interpolation method used when resizing the images, `cv2.INTER_CUBIC`
         and `cv2.INTER_LINEAR` methods are recommended.
 
     Returns
     -------
-    list
-        List of colour checkers swatches or :class:`ColourCheckerSwatchesData`
-        class instances.
+    :class`tuple`
+        Tuple of :class:`ColourCheckerSwatchesData` class instances or
+        colour checkers swatches.
 
     Examples
     --------
@@ -965,7 +982,7 @@ def detect_colour_checkers_segmentation(image,
     ...                     'IMG_1967.png')
     >>> image = read_image(path)
     >>> detect_colour_checkers_segmentation(image)  # doctest: +ELLIPSIS
-    [array([[ 0.3616269...,  0.2241066...,  0.1187838...],
+    (array([[ 0.3616269...,  0.2241066...,  0.1187838...],
            [ 0.6280594...,  0.3950882...,  0.2434766...],
            [ 0.3326231...,  0.3156182...,  0.2891038...],
            [ 0.3048413...,  0.2738974...,  0.1069985...],
@@ -988,10 +1005,10 @@ def detect_colour_checkers_segmentation(image,
            [ 0.5139589...,  0.4216308...,  0.2992694...],
            [ 0.3704402...,  0.3033927...,  0.2093090...],
            [ 0.2641854...,  0.2154006...,  0.1441268...],
-           [ 0.1650097...,  0.1345238...,  0.0817438...]], dtype=float32)]
+           [ 0.1650097...,  0.1345238...,  0.0817438...]], dtype=float32),)
     """
 
-    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
+    image = cast(NDArray, as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3])
 
     settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
     settings.update(**kwargs)
@@ -1033,16 +1050,14 @@ def detect_colour_checkers_segmentation(image,
                           ' reversing the samples!')
             swatch_colours = swatch_colours[::-1]
 
-        swatch_colours = np.asarray(swatch_colours)
-
-        colour_checkers_colours.append(swatch_colours)
+        colour_checkers_colours.append(np.asarray(swatch_colours))
         colour_checkers_data.append((colour_checker, masks))
 
     if additional_data:
-        return [
-            ColourCheckerSwatchesData(colour_checkers_colours[i],
-                                      *colour_checkers_data[i])
+        return tuple([
+            ColourCheckerSwatchesData(
+                tuple(colour_checkers_colours[i]), *colour_checkers_data[i])
             for i, colour_checker_colours in enumerate(colour_checkers_colours)
-        ]
+        ])
     else:
-        return colour_checkers_colours
+        return tuple(colour_checkers_colours)

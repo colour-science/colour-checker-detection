@@ -10,6 +10,8 @@ Subpackages
 -   detection : Colour checker detection.
 """
 
+from __future__ import annotations
+
 import cv2
 import numpy as np
 import os
@@ -40,10 +42,10 @@ __all__ = [
     'detect_colour_checkers_segmentation',
 ]
 
-RESOURCES_DIRECTORY = os.path.join(os.path.dirname(__file__), 'resources')
-EXAMPLES_RESOURCES_DIRECTORY = os.path.join(
+RESOURCES_DIRECTORY: str = os.path.join(os.path.dirname(__file__), 'resources')
+EXAMPLES_RESOURCES_DIRECTORY: str = os.path.join(
     RESOURCES_DIRECTORY, 'colour-checker-detection-examples-datasets')
-TESTS_RESOURCES_DIRECTORY = os.path.join(
+TESTS_RESOURCES_DIRECTORY: str = os.path.join(
     RESOURCES_DIRECTORY, 'colour-checker-detection-tests-datasets')
 
 __application_name__ = 'Colour - Checker Detection'
@@ -57,17 +59,18 @@ __version__ = '.'.join(
      __change_version__))  # yapf: disable
 
 try:
-    version = subprocess.check_output(  # nosec
+    _version = subprocess.check_output(  # nosec
         ['git', 'describe'],
         cwd=os.path.dirname(__file__),
-        stderr=subprocess.STDOUT).strip()
-    version = version.decode('utf-8')
+        stderr=subprocess.STDOUT).strip().decode('utf-8')
 except Exception:
-    version = __version__
+    _version = __version__
 
 colour.utilities.ANCILLARY_COLOUR_SCIENCE_PACKAGES[
-    'colour-checker-detection'] = version
+    'colour-checker-detection'] = _version
 colour.utilities.ANCILLARY_RUNTIME_PACKAGES['opencv'] = cv2.__version__
+
+del _version
 
 # TODO: Remove legacy printing support when deemed appropriate.
 try:
