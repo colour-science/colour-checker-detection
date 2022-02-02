@@ -13,9 +13,9 @@ body:
     attributes:
       label: Documentation Link
       description: >
-        Please link to any documentation or examples that you are referencing. Suggested improvements should be based on the [development version of the documentation](https://colour.readthedocs.io/en/develop/).
+        Please link to any documentation or examples that you are referencing. Suggested improvements should be based on the [development version of the documentation](http://colour-checker-detection.readthedocs.io/en/develop/).
       placeholder: >
-        << https://colour.readthedocs.io/en/develop/... >>
+        << http://colour-checker-detection.readthedocs.io/en/develop/... >>
     validations:
       required: true
 
