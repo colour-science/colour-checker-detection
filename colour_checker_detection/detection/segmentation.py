@@ -204,7 +204,7 @@ def swatch_masks(
     samples: Integer,
 ) -> Tuple[NDArray, ...]:
     """
-    Returns swatch masks for given image width and height and swatches count.
+    Return swatch masks for given image width and height and swatches count.
 
     Parameters
     ----------
@@ -261,7 +261,7 @@ def swatch_masks(
 
 def as_8_bit_BGR_image(image: ArrayLike) -> NDArray:
     """
-    Converts and encodes given linear float *RGB* image to 8-bit *BGR* with
+    Convert and encodes given linear float *RGB* image to 8-bit *BGR* with
     *sRGB* reverse OETF.
 
     Parameters
@@ -348,7 +348,7 @@ def adjust_image(
     ] = cv2.INTER_CUBIC,
 ) -> NDArray:
     """
-    Adjusts given image so that it is horizontal and resizes it to given target
+    Adjust given image so that it is horizontal and resizes it to given target
     width.
 
     Parameters
@@ -406,7 +406,7 @@ def adjust_image(
 
 def is_square(contour: ArrayLike, tolerance: Floating = 0.015) -> Boolean:
     """
-    Returns if given contour is a square.
+    Return if given contour is a square.
 
     Parameters
     ----------
@@ -443,7 +443,7 @@ def is_square(contour: ArrayLike, tolerance: Floating = 0.015) -> Boolean:
 
 def contour_centroid(contour: ArrayLike) -> Tuple[Floating, Floating]:
     """
-    Returns the centroid of given contour.
+    Return the centroid of given contour.
 
     Parameters
     ----------
@@ -478,7 +478,7 @@ def contour_centroid(contour: ArrayLike) -> Tuple[Floating, Floating]:
 
 def scale_contour(contour: ArrayLike, factor: Floating) -> NDArray:
     """
-    Scales given contour by given scale factor.
+    Scale given contour by given scale factor.
 
     Parameters
     ----------
@@ -521,7 +521,7 @@ def crop_and_level_image_with_rectangle(
     ] = cv2.INTER_CUBIC,
 ):
     """
-    Crops and rotates/levels given image using given rectangle.
+    Crop and rotate/level given image using given rectangle.
 
     Parameters
     ----------
@@ -589,7 +589,7 @@ def colour_checkers_coordinates_segmentation(
     image: ArrayLike, additional_data: Boolean = False, **kwargs: Any
 ) -> Union[ColourCheckersDetectionData, Tuple[NDArray, ...]]:
     """
-    Detects the colour checkers coordinates in given image :math:`image` using
+    Detect the colour checkers coordinates in given image :math:`image` using
     segmentation.
 
     This is the core detection definition. The process is a follows:
@@ -813,7 +813,7 @@ def extract_colour_checkers_segmentation(
     image: ArrayLike, **kwargs: Any
 ) -> Tuple[NDArray, ...]:
     """
-    Extracts the colour checkers sub-images in given image using segmentation.
+    Extract the colour checkers sub-images in given image using segmentation.
 
     Parameters
     ----------
@@ -969,7 +969,7 @@ def detect_colour_checkers_segmentation(
     **kwargs: Any
 ) -> Union[Tuple[ColourCheckerSwatchesData, ...], Tuple[NDArray, ...]]:
     """
-    Detects the colour checkers swatches in given image using segmentation.
+    Detect the colour checkers swatches in given image using segmentation.
 
     Parameters
     ----------
