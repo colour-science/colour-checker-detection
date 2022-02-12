@@ -1,8 +1,6 @@
 Colour Checker Detection
 ========================
 
-.. contents:: :local:
-
 Segmentation
 ------------
 

@@ -31,7 +31,7 @@ It is open source and freely available under the
 
 .. contents:: **Table of Contents**
     :backlinks: none
-    :depth: 3
+    :depth: 2
 
 .. sectnum::
 
@@ -42,8 +42,17 @@ The following colour checker detection algorithms are implemented:
 
 - Segmentation
 
+Examples
+^^^^^^^^
+
+Various usage examples are available from the
+`examples directory <https://github.com/colour-science/colour-checker-detection/tree/master/colour_checker_detection/examples>`__.
+
+User Guide
+----------
+
 Installation
-------------
+^^^^^^^^^^^^
 
 Because of their size, the resources dependencies needed to run the various
 examples and unit tests are not provided within the Pypi package. They are
@@ -53,16 +62,16 @@ when cloning the
 `repository <https://github.com/colour-science/colour-checker-detection>`__.
 
 Primary Dependencies
-^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~
 
 **Colour - Checker Detection** requires various dependencies in order to run:
 
-- `python>=3.5 <https://www.python.org/download/releases/>`__
+- `python >= 3.8, < 4 <https://www.python.org/download/releases/>`__
 - `colour-science <https://pypi.org/project/colour-science/>`__
-- `opencv-python>=4 <https://pypi.org/project/opencv-python/>`__
+- `opencv-python >= 4, < 5 <https://pypi.org/project/opencv-python/>`__
 
 Pypi
-^^^^
+~~~~
 
 Once the dependencies are satisfied, **Colour - Checker Detection** can be installed from
 the `Python Package Index <http://pypi.python.org/pypi/colour-checker-detection>`__ by
@@ -74,34 +83,25 @@ The overall development dependencies are installed as follows::
 
     pip install --user 'colour-checker-detection[development]'
 
-Usage
------
-
-API
-^^^
-
-The main reference for `Colour - Checker Detection <https://github.com/colour-science/colour-checker-detection>`__
-is the `Colour - Checker Detection Manual <https://colour-checker-detection.readthedocs.io/en/latest/manual.html>`__.
-
-Examples
-^^^^^^^^
-
-Various usage examples are available from the
-`examples directory <https://github.com/colour-science/colour-checker-detection/tree/master/colour_checker_detection/examples>`__.
-
 Contributing
-------------
+^^^^^^^^^^^^
 
 If you would like to contribute to `Colour - Checker Detection <https://github.com/colour-science/colour-checker-detection>`__,
 please refer to the following `Contributing <https://www.colour-science.org/contributing/>`__
 guide for `Colour <https://github.com/colour-science/colour>`__.
 
 Bibliography
-------------
+^^^^^^^^^^^^
 
 The bibliography is available in the repository in
 `BibTeX <https://github.com/colour-science/colour-checker-detection/blob/develop/BIBLIOGRAPHY.bib>`__
 format.
+
+API Reference
+-------------
+
+The main technical reference `Colour - Checker Detection <https://github.com/colour-science/colour-checker-detection>`__
+is the `API Reference <https://colour-checker-detection.readthedocs.io/en/latest/reference.html>`__.
 
 Code of Conduct
 ---------------
@@ -115,7 +115,6 @@ Contact & Social
 The *Colour Developers* can be reached via different means:
 
 - `Email <mailto:colour-developers@colour-science.org>`__
-- `Discourse <https://colour-science.discourse.group/>`__
 - `Facebook <https://www.facebook.com/python.colour.science>`__
 - `Github Discussions <https://github.com/colour-science/colour-checker-detection/discussions>`__
 - `Gitter <https://gitter.im/colour-science/colour>`__
