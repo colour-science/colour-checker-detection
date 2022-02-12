@@ -145,9 +145,7 @@ Settings for the segmentation of the *X-Rite* *ColorChecker SG**.
 """
 
 FLOAT_DTYPE_DEFAULT: Type[DTypeFloating] = np.float32
-"""
-Dtype used for the computations.
-"""
+"""Dtype used for the computations."""
 
 
 @dataclass
