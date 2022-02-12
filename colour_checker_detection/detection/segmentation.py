@@ -53,7 +53,7 @@ from colour.utilities.documentation import (
 )
 
 __author__ = "Colour Developers"
-__copyright__ = "Copyright (C) 2018-2021 - Colour Developers"
+__copyright__ = "Copyright 2018 Colour Developers"
 __license__ = "New BSD License - https://opensource.org/licenses/BSD-3-Clause"
 __maintainer__ = "Colour Developers"
 __email__ = "colour-developers@colour-science.org"
@@ -966,7 +966,7 @@ def detect_colour_checkers_segmentation(
     image: ArrayLike,
     samples: Integer = 16,
     additional_data: Boolean = False,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> Union[Tuple[ColourCheckerSwatchesData, ...], Tuple[NDArray, ...]]:
     """
     Detect the colour checkers swatches in given image using segmentation.
