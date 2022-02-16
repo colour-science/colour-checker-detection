@@ -41,6 +41,7 @@ from colour.hints import (
 )
 from colour.models import cctf_encoding
 from colour.utilities import (
+    MixinDataclassIterable,
     Structure,
     as_float_array,
     as_int_array,
@@ -149,7 +150,7 @@ FLOAT_DTYPE_DEFAULT: Type[DTypeFloating] = np.float32
 
 
 @dataclass
-class ColourCheckersDetectionData:
+class ColourCheckersDetectionData(MixinDataclassIterable):
     """
     Colour checkers detection data used for plotting, debugging and further
     analysis.
@@ -174,7 +175,7 @@ class ColourCheckersDetectionData:
 
 
 @dataclass
-class ColourCheckerSwatchesData:
+class ColourCheckerSwatchesData(MixinDataclassIterable):
     """
     Colour checker swatches data used for plotting, debugging and further
     analysis.
