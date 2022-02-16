@@ -741,7 +741,9 @@ ColourCheckersDetectionData` or :class:`tuple`
         if minimum_area < cv2.contourArea(curve) < maximum_area and is_square(
             curve
         ):
-            swatches.append(cv2.boxPoints(cv2.minAreaRect(curve)))
+            swatches.append(
+                as_int_array(cv2.boxPoints(cv2.minAreaRect(curve)))
+            )
 
     # Clustering squares/swatches.
     contours = np.zeros(image.shape, dtype=np.uint8)
