@@ -67,7 +67,7 @@ swatch_masks` definition unit tests methods.
 
     def test_swatch_masks(self):
         """
-    Define :func:`colour_checker_detection.detection.segmentation.\
+        Define :func:`colour_checker_detection.detection.segmentation.\
 swatch_masks` definition unit tests methods.
         """
 
@@ -96,7 +96,7 @@ as_8_bit_BGR_image` definition unit tests methods.
 
     def test_as_8_bit_BGR_image(self):
         """
-    Define :func:`colour_checker_detection.detection.segmentation.\
+        Define :func:`colour_checker_detection.detection.segmentation.\
 as_8_bit_BGR_image` definition unit tests methods.
         """
 
@@ -123,7 +123,7 @@ adjust_image` definition unit tests methods.
 
     def test_adjust_image(self):
         """
-    Define :func:`colour_checker_detection.detection.segmentation.\
+        Define :func:`colour_checker_detection.detection.segmentation.\
 adjust_image` definition unit tests methods.
         """
 
@@ -147,7 +147,7 @@ is_square` definition unit tests methods.
 
     def test_is_square(self):
         """
-    Define :func:`colour_checker_detection.detection.segmentation.\
+        Define :func:`colour_checker_detection.detection.segmentation.\
 is_square` definition unit tests methods.
         """
 
@@ -167,7 +167,7 @@ contour_centroid` definition unit tests methods.
 
     def test_contour_centroid(self):
         """
-    Define :func:`colour_checker_detection.detection.segmentation.\
+        Define :func:`colour_checker_detection.detection.segmentation.\
 contour_centroid` definition unit tests methods.
         """
 
@@ -183,7 +183,7 @@ scale_contour` definition unit tests methods.
 
     def test_scale_contour(self):
         """
-    Define :func:`colour_checker_detection.detection.segmentation.\
+        Define :func:`colour_checker_detection.detection.segmentation.\
 scale_contour` definition unit tests methods.
         """
 
@@ -207,7 +207,7 @@ crop_and_level_image_with_rectangle` definition unit tests methods.
 
     def test_crop_and_level_image_with_rectangle(self):
         """
-    Define :func:`colour_checker_detection.detection.segmentation.\
+        Define :func:`colour_checker_detection.detection.segmentation.\
 crop_and_level_image_with_rectangle` definition unit tests methods.
         """
 
@@ -237,7 +237,7 @@ colour_checkers_coordinates_segmentation` definition unit tests methods.
 
     def test_colour_checkers_coordinates_segmentation(self):
         """
-    Define :func:`colour_checker_detection.detection.segmentation.\
+        Define :func:`colour_checker_detection.detection.segmentation.\
 colour_checkers_coordinates_segmentation` definition unit tests methods.
         """
 
@@ -550,7 +550,7 @@ extract_colour_checkers_segmentation` definition unit tests methods.
 
     def test_extract_colour_checkers_segmentation(self):
         """
-    Define :func:`colour_checker_detection.detection.segmentation.\
+        Define :func:`colour_checker_detection.detection.segmentation.\
 extract_colour_checkers_segmentation` definition unit tests methods.
         """
 
@@ -587,7 +587,7 @@ detect_colour_checkers_segmentation` definition unit tests methods.
 
     def test_detect_colour_checkers_segmentation(self):
         """
-    Define :func:`colour_checker_detection.detection.segmentation.\
+        Define :func:`colour_checker_detection.detection.segmentation.\
 detect_colour_checkers_segmentation` definition unit tests methods.
         """
 
