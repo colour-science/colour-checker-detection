@@ -687,11 +687,11 @@ ColourCheckersDetectionData` or :class:`tuple`
     ...                     'colour_checker_detection', 'detection',
     ...                     'IMG_1967.png')
     >>> image = read_image(path)
-    >>> colour_checkers_coordinates_segmentation(image)
+    >>> colour_checkers_coordinates_segmentation(image)  # doctest: +ELLIPSIS
     (array([[ 369,  688],
            [ 382,  226],
            [1078,  246],
-           [1065,  707]]),)
+           [1065,  707]]...)
     """
 
     image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
@@ -1044,7 +1044,7 @@ def detect_colour_checkers_segmentation(
     ...                     'colour_checker_detection', 'detection',
     ...                     'IMG_1967.png')
     >>> image = read_image(path)
-    >>> detect_colour_checkers_segmentation(image)  # doctest: +ELLIPSIS
+    >>> detect_colour_checkers_segmentation(image)  # doctest: +SKIP
     (array([[ 0.361626... ,  0.2241066...,  0.1187837...],
            [ 0.6280594...,  0.3950883...,  0.2434766...],
            [ 0.3326232...,  0.3156182...,  0.2891038...],
