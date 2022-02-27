@@ -63,7 +63,7 @@ extras_require = {
 
 setup(
     name="colour-checker-detection",
-    version="0.1.2",
+    version="0.1.3",
     description="Colour checker detection with Python",
     long_description=codecs.open("README.rst", encoding="utf8").read(),
     author="Colour Developers",
