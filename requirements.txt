@@ -17,7 +17,7 @@ cfgv==3.3.1
 charset-normalizer==2.0.12
 click==8.0.4
 colorama==0.4.4
-colour-science==0.4.0
+colour-science==0.4.1
 coverage==6.3.2
 coveralls==3.3.1
 cycler==0.11.0
@@ -40,7 +40,7 @@ importlib-metadata==4.11.1
 iniconfig==1.1.1
 invoke==1.6.0
 ipykernel==6.9.1
-ipython==8.0.1
+ipython==8.1.0
 ipython-genutils==0.2.0
 ipywidgets==7.6.5
 jedi==0.18.1
@@ -138,7 +138,7 @@ twine==3.8.0
 types-setuptools==57.4.9
 typing_extensions==4.1.1
 urllib3==1.26.8
-virtualenv==20.13.1
+virtualenv==20.13.2
 wcwidth==0.2.5
 webencodings==0.5.1
 wheel==0.37.1
