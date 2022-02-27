@@ -437,10 +437,12 @@ def virtualise(ctx: Context, tests: Boolean = True):
                 'imageio.plugins.freeimage.download()"'
             )
             if tests:
+                # The test images are not available thus many doctests
+                # cannot be run properly:
+                # "--doctest-modules "
                 ctx.run(
                     "poetry run py.test "
                     "--disable-warnings "
-                    "--doctest-modules "
                     f"--ignore={PYTHON_PACKAGE_NAME}/examples "
                     f"{PYTHON_PACKAGE_NAME}",
                     env={"MPLBACKEND": "AGG"},
