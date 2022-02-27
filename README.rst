@@ -68,7 +68,10 @@ Primary Dependencies
 
 - `python >= 3.8, < 4 <https://www.python.org/download/releases/>`__
 - `colour-science >= 4 <https://pypi.org/project/colour-science/>`__
+- `imageio >= 2, < 3 <https://imageio.github.io/>`__
+- `numpy >= 1.19, < 2 <https://pypi.org/project/numpy/>`__
 - `opencv-python >= 4, < 5 <https://pypi.org/project/opencv-python/>`__
+- `scipy >= 1.5, < 2 <https://pypi.org/project/scipy/>`__
 
 Pypi
 ~~~~
