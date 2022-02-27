@@ -11,7 +11,7 @@ Colour - Checker Detection
 .. |coveralls| image:: http://img.shields.io/coveralls/colour-science/colour-checker-detection/develop.svg?style=flat-square
     :target: https://coveralls.io/r/colour-science/colour-checker-detection
     :alt: Coverage Status
-.. |codacy| image:: https://img.shields.io/codacy/grade/984900e3a85e40239a0f8f633dd1ebcb/develop.svg?style=flat-square
+.. |codacy| image:: https://img.shields.io/codacy/grade/c543bc30229347cdaea00aadd3f79499/develop.svg?style=flat-square
     :target: https://www.codacy.com/app/colour-science/colour-checker-detection
     :alt: Code Grade
 .. |version| image:: https://img.shields.io/pypi/v/colour-checker-detection.svg?style=flat-square
@@ -67,7 +67,7 @@ Primary Dependencies
 **Colour - Checker Detection** requires various dependencies in order to run:
 
 - `python >= 3.8, < 4 <https://www.python.org/download/releases/>`__
-- `colour-science <https://pypi.org/project/colour-science/>`__
+- `colour-science >= 4 <https://pypi.org/project/colour-science/>`__
 - `opencv-python >= 4, < 5 <https://pypi.org/project/opencv-python/>`__
 
 Pypi

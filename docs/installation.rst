@@ -14,7 +14,7 @@ Primary Dependencies
 **Colour - Checker Detection** requires various dependencies in order to run:
 
 - `python >= 3.8, < 4 <https://www.python.org/download/releases/>`__
-- `colour-science <https://pypi.org/project/colour-science/>`__
+- `colour-science >= 4 <https://pypi.org/project/colour-science/>`__
 - `opencv-python >= 4, < 5 <https://pypi.org/project/opencv-python/>`__
 
 Pypi
