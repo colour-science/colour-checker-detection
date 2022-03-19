@@ -46,6 +46,7 @@ from colour.utilities import (
     as_float_array,
     as_int_array,
     as_int,
+    orient,
     usage_warning,
 )
 from colour.utilities.documentation import (
@@ -522,10 +523,6 @@ def crop_and_level_image_with_rectangle(
     centroid = contour_centroid(cv2.boxPoints(rectangle))
     angle = rectangle[-1]
 
-    if angle < -45:
-        angle += 90
-        width_r, height_r = height_r, width_r
-
     width_r, height_r = as_int_array([width_r, height_r])
 
     M_r = cv2.getRotationMatrix2D(centroid, angle, 1)
@@ -534,6 +531,9 @@ def crop_and_level_image_with_rectangle(
     image_c = cv2.getRectSubPix(
         image_r, (width_r, height_r), (centroid[0], centroid[1])
     )
+
+    if image_c.shape[0] > image_c.shape[1]:
+        image_c = orient(image_c, "90 CW")
 
     return image_c
 
