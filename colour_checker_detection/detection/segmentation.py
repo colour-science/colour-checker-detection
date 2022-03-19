@@ -64,8 +64,6 @@ __all__ = [
     "SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC",
     "SETTINGS_SEGMENTATION_COLORCHECKER_SG",
     "FLOAT_DTYPE_DEFAULT",
-    "ColourCheckersDetectionData",
-    "ColourCheckerSwatchesData",
     "swatch_masks",
     "as_8_bit_BGR_image",
     "adjust_image",
@@ -73,8 +71,10 @@ __all__ = [
     "contour_centroid",
     "scale_contour",
     "crop_and_level_image_with_rectangle",
+    "DataColourCheckersCoordinatesSegmentation",
     "colour_checkers_coordinates_segmentation",
     "extract_colour_checkers_segmentation",
+    "DataDetectColourCheckersSegmentation",
     "detect_colour_checkers_segmentation",
 ]
 
@@ -147,52 +147,6 @@ Settings for the segmentation of the *X-Rite* *ColorChecker SG**.
 
 FLOAT_DTYPE_DEFAULT: Type[DTypeFloating] = np.float32
 """Dtype used for the computations."""
-
-
-@dataclass
-class ColourCheckersDetectionData(MixinDataclassIterable):
-    """
-    Colour checkers detection data used for plotting, debugging and further
-    analysis.
-
-    Parameters
-    ----------
-    colour_checkers
-        Colour checker bounding boxes, i.e., the. clusters that have the
-        relevant count of swatches.
-    clusters
-        Detected swatches clusters.
-    swatches
-        Detected swatches.
-    segmented_image
-        Thresholded/Segmented image.
-    """
-
-    colour_checkers: Tuple[NDArray, ...]
-    clusters: Tuple[NDArray, ...]
-    swatches: Tuple[NDArray, ...]
-    segmented_image: NDArray
-
-
-@dataclass
-class ColourCheckerSwatchesData(MixinDataclassIterable):
-    """
-    Colour checker swatches data used for plotting, debugging and further
-    analysis.
-
-    Parameters
-    ----------
-    swatch_colours
-        Colour checker swatches colours.
-    colour_checker_image
-        Cropped and levelled Colour checker image.
-    swatch_masks
-        Colour checker swatches masks.
-    """
-
-    swatch_colours: Tuple[NDArray, ...]
-    colour_checker_image: NDArray
-    swatch_masks: Tuple[NDArray, ...]
 
 
 def swatch_masks(
@@ -584,9 +538,34 @@ def crop_and_level_image_with_rectangle(
     return image_c
 
 
+@dataclass
+class DataColourCheckersCoordinatesSegmentation(MixinDataclassIterable):
+    """
+    Colour checkers detection data used for plotting, debugging and further
+    analysis.
+
+    Parameters
+    ----------
+    colour_checkers
+        Colour checker bounding boxes, i.e., the. clusters that have the
+        relevant count of swatches.
+    clusters
+        Detected swatches clusters.
+    swatches
+        Detected swatches.
+    segmented_image
+        Thresholded/Segmented image.
+    """
+
+    colour_checkers: Tuple[NDArray, ...]
+    clusters: Tuple[NDArray, ...]
+    swatches: Tuple[NDArray, ...]
+    segmented_image: NDArray
+
+
 def colour_checkers_coordinates_segmentation(
     image: ArrayLike, additional_data: Boolean = False, **kwargs: Any
-) -> Union[ColourCheckersDetectionData, Tuple[NDArray, ...]]:
+) -> Union[DataColourCheckersCoordinatesSegmentation, Tuple[NDArray, ...]]:
     """
     Detect the colour checkers coordinates in given image :math:`image` using
     segmentation.
@@ -669,10 +648,10 @@ def colour_checkers_coordinates_segmentation(
     Returns
     -------
     :class:`colour_checker_detection.detection.segmentation.\
-ColourCheckersDetectionData` or :class:`tuple`
+DataColourCheckersCoordinatesSegmentation` or :class:`tuple`
         Tuple of colour checkers coordinates or
-        :class:`ColourCheckersDetectionData` class instance with additional
-        data.
+        :class:`DataColourCheckersCoordinatesSegmentation` class
+        instance with additional data.
 
     Notes
     -----
@@ -803,7 +782,7 @@ ColourCheckersDetectionData` or :class:`tuple`
     colour_checkers = tuple(clusters[i] for i in indexes)
 
     if additional_data:
-        return ColourCheckersDetectionData(
+        return DataColourCheckersCoordinatesSegmentation(
             tuple(colour_checkers), tuple(clusters), tuple(swatches), image_c
         )
     else:
@@ -963,12 +942,36 @@ def extract_colour_checkers_segmentation(
     return tuple(colour_checkers)
 
 
+@dataclass
+class DataDetectColourCheckersSegmentation(MixinDataclassIterable):
+    """
+    Colour checker swatches data used for plotting, debugging and further
+    analysis.
+
+    Parameters
+    ----------
+    swatch_colours
+        Colour checker swatches colours.
+    colour_checker_image
+        Cropped and levelled Colour checker image.
+    swatch_masks
+        Colour checker swatches masks.
+    """
+
+    swatch_colours: Tuple[NDArray, ...]
+    colour_checker_image: NDArray
+    swatch_masks: Tuple[NDArray, ...]
+
+
 def detect_colour_checkers_segmentation(
     image: ArrayLike,
     samples: Integer = 16,
     additional_data: Boolean = False,
     **kwargs: Any,
-) -> Union[Tuple[ColourCheckerSwatchesData, ...], Tuple[NDArray, ...]]:
+) -> Union[
+    Tuple[DataDetectColourCheckersSegmentation, ...],
+    Tuple[NDArray, ...],
+]:
     """
     Detect the colour checkers swatches in given image using segmentation.
 
@@ -1032,8 +1035,8 @@ def detect_colour_checkers_segmentation(
     Returns
     -------
     :class`tuple`
-        Tuple of :class:`ColourCheckerSwatchesData` class instances or
-        colour checkers swatches.
+        Tuple of :class:`DataDetectColourCheckersSegmentation` class
+        instances or colour checkers swatches.
 
     Examples
     --------
@@ -1126,7 +1129,7 @@ def detect_colour_checkers_segmentation(
 
     if additional_data:
         return tuple(
-            ColourCheckerSwatchesData(
+            DataDetectColourCheckersSegmentation(
                 tuple(colour_checkers_colours[i]), *colour_checkers_data[i]
             )
             for i, colour_checker_colours in enumerate(colour_checkers_colours)
