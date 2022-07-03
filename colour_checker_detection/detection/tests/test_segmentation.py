@@ -109,7 +109,7 @@ as_8_bit_BGR_image` definition unit tests methods.
         image_o = as_8_bit_BGR_image(image_i)
 
         self.assertEqual(image_o.dtype, np.uint8)
-        np.testing.assert_almost_equal(
+        np.testing.assert_array_almost_equal(
             image_o[16, 16, ...],
             (cctf_encoding(image_i[16, 16, ::-1]) * 255).astype(np.uint8),
         )
