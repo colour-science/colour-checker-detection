@@ -1115,7 +1115,7 @@ def detect_colour_checkers_segmentation(
             settings.swatches_achromatic_slice,
         ]:
             swatch_std_mean = as_float_array(swatch_colours[slice_])
-            swatch_std_mean /= swatch_std_mean[..., 1][..., np.newaxis]
+            swatch_std_mean /= swatch_std_mean[..., 1][..., None]
             std_means.append(np.mean(np.std(swatch_std_mean, 0)))
         if std_means[0] < std_means[1]:
             usage_warning(
