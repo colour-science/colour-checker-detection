@@ -56,6 +56,7 @@ matplotlib = { version = ">= 3.2, != 3.5.0, != 3.5.1", optional = true }
 
 biblib-simple = { version = "*", optional = true }  # Development dependency.
 black = { version = "*", optional = true }  # Development dependency.
+blackdoc = { version = "*", optional = true }  # Development dependency.
 coverage = { version = "*", optional = true }  # Development dependency.
 coveralls = { version = "*", optional = true }  # Development dependency.
 flake8 = { version = "*", optional = true }  # Development dependency.
@@ -79,6 +80,7 @@ twine = { version = "*", optional = true }  # Development dependency.
 [tool.poetry.dev-dependencies]
 biblib-simple = "*"
 black = "*"
+blackdoc = "*"
 coverage = "!= 6.3"
 coveralls = "*"
 flake8 = "*"
@@ -103,6 +105,7 @@ twine = "*"
 development = [
     "biblib-simple",
     "black",
+    "blackdoc",
     "coverage",
     "coveralls",
     "flake8",
