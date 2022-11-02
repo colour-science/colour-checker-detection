@@ -499,9 +499,9 @@ def crop_and_level_image_with_rectangle(
     --------
     >>> import os
     >>> from colour import read_image
-    >>> from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
+    >>> from colour_checker_detection import ROOT_RESOURCES_TESTS
     >>> path = os.path.join(
-    ...     TESTS_RESOURCES_DIRECTORY,
+    ...     ROOT_RESOURCES_TESTS,
     ...     "colour_checker_detection",
     ...     "detection",
     ...     "IMG_1967.png",
@@ -664,9 +664,9 @@ DataColourCheckersCoordinatesSegmentation` or :class:`tuple`
     --------
     >>> import os
     >>> from colour import read_image
-    >>> from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
+    >>> from colour_checker_detection import ROOT_RESOURCES_TESTS
     >>> path = os.path.join(
-    ...     TESTS_RESOURCES_DIRECTORY,
+    ...     ROOT_RESOURCES_TESTS,
     ...     "colour_checker_detection",
     ...     "detection",
     ...     "IMG_1967.png",
@@ -862,9 +862,9 @@ def extract_colour_checkers_segmentation(
     --------
     >>> import os
     >>> from colour import read_image
-    >>> from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
+    >>> from colour_checker_detection import ROOT_RESOURCES_TESTS
     >>> path = os.path.join(
-    ...     TESTS_RESOURCES_DIRECTORY,
+    ...     ROOT_RESOURCES_TESTS,
     ...     "colour_checker_detection",
     ...     "detection",
     ...     "IMG_1967.png",
@@ -1051,9 +1051,9 @@ def detect_colour_checkers_segmentation(
     --------
     >>> import os
     >>> from colour import read_image
-    >>> from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
+    >>> from colour_checker_detection import ROOT_RESOURCES_TESTS
     >>> path = os.path.join(
-    ...     TESTS_RESOURCES_DIRECTORY,
+    ...     ROOT_RESOURCES_TESTS,
     ...     "colour_checker_detection",
     ...     "detection",
     ...     "IMG_1967.png",
