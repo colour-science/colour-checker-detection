@@ -149,6 +149,7 @@ tomli==2.0.1
 tornado==6.2
 traitlets==5.6.0
 twine==4.0.2
+types-setuptools==65.6.0.1
 typing_extensions==4.4.0
 urllib3==1.26.13
 virtualenv==20.17.0
