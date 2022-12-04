@@ -292,7 +292,7 @@ def as_8_bit_BGR_image(image: ArrayLike) -> NDArray:
 def adjust_image(
     image: ArrayLike,
     target_width: Integer,
-    interpolation_method: Literal[  # type: ignore[misc]
+    interpolation_method: Literal[  # type: ignore[valid-type]
         cv2.INTER_AREA,
         cv2.INTER_BITS,
         cv2.INTER_BITS2,
@@ -465,7 +465,7 @@ def scale_contour(contour: ArrayLike, factor: Floating) -> NDArray:
 def crop_and_level_image_with_rectangle(
     image: ArrayLike,
     rectangle: Tuple[Tuple, Tuple, Floating],
-    interpolation_method: Literal[  # type: ignore[misc]
+    interpolation_method: Literal[  # type: ignore[valid-type]
         cv2.INTER_AREA,
         cv2.INTER_BITS,
         cv2.INTER_BITS2,
