@@ -292,7 +292,7 @@ def as_8_bit_BGR_image(image: ArrayLike) -> NDArray:
 def adjust_image(
     image: ArrayLike,
     target_width: Integer,
-    interpolation_method: Literal[  # type: ignore[misc]
+    interpolation_method: Literal[  # type: ignore[valid-type]
         cv2.INTER_AREA,
         cv2.INTER_BITS,
         cv2.INTER_BITS2,
@@ -465,7 +465,7 @@ def scale_contour(contour: ArrayLike, factor: Floating) -> NDArray:
 def crop_and_level_image_with_rectangle(
     image: ArrayLike,
     rectangle: Tuple[Tuple, Tuple, Floating],
-    interpolation_method: Literal[  # type: ignore[misc]
+    interpolation_method: Literal[  # type: ignore[valid-type]
         cv2.INTER_AREA,
         cv2.INTER_BITS,
         cv2.INTER_BITS2,
@@ -499,10 +499,13 @@ def crop_and_level_image_with_rectangle(
     --------
     >>> import os
     >>> from colour import read_image
-    >>> from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
-    >>> path = os.path.join(TESTS_RESOURCES_DIRECTORY,
-    ...                     'colour_checker_detection', 'detection',
-    ...                     'IMG_1967.png')
+    >>> from colour_checker_detection import ROOT_RESOURCES_TESTS
+    >>> path = os.path.join(
+    ...     ROOT_RESOURCES_TESTS,
+    ...     "colour_checker_detection",
+    ...     "detection",
+    ...     "IMG_1967.png",
+    ... )
     >>> image = adjust_image(read_image(path), 1440)
     >>> rectangle = (
     ...     (723.29608154, 465.50939941),
@@ -661,10 +664,13 @@ DataColourCheckersCoordinatesSegmentation` or :class:`tuple`
     --------
     >>> import os
     >>> from colour import read_image
-    >>> from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
-    >>> path = os.path.join(TESTS_RESOURCES_DIRECTORY,
-    ...                     'colour_checker_detection', 'detection',
-    ...                     'IMG_1967.png')
+    >>> from colour_checker_detection import ROOT_RESOURCES_TESTS
+    >>> path = os.path.join(
+    ...     ROOT_RESOURCES_TESTS,
+    ...     "colour_checker_detection",
+    ...     "detection",
+    ...     "IMG_1967.png",
+    ... )
     >>> image = read_image(path)
     >>> colour_checkers_coordinates_segmentation(image)  # doctest: +ELLIPSIS
     (array([[ 369,  688],
@@ -856,10 +862,13 @@ def extract_colour_checkers_segmentation(
     --------
     >>> import os
     >>> from colour import read_image
-    >>> from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
-    >>> path = os.path.join(TESTS_RESOURCES_DIRECTORY,
-    ...                     'colour_checker_detection', 'detection',
-    ...                     'IMG_1967.png')
+    >>> from colour_checker_detection import ROOT_RESOURCES_TESTS
+    >>> path = os.path.join(
+    ...     ROOT_RESOURCES_TESTS,
+    ...     "colour_checker_detection",
+    ...     "detection",
+    ...     "IMG_1967.png",
+    ... )
     >>> image = read_image(path)
     >>> extract_colour_checkers_segmentation(image)
     ... # doctest: +SKIP
@@ -1042,10 +1051,13 @@ def detect_colour_checkers_segmentation(
     --------
     >>> import os
     >>> from colour import read_image
-    >>> from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
-    >>> path = os.path.join(TESTS_RESOURCES_DIRECTORY,
-    ...                     'colour_checker_detection', 'detection',
-    ...                     'IMG_1967.png')
+    >>> from colour_checker_detection import ROOT_RESOURCES_TESTS
+    >>> path = os.path.join(
+    ...     ROOT_RESOURCES_TESTS,
+    ...     "colour_checker_detection",
+    ...     "detection",
+    ...     "IMG_1967.png",
+    ... )
     >>> image = read_image(path)
     >>> detect_colour_checkers_segmentation(image)  # doctest: +SKIP
     (array([[ 0.361626... ,  0.2241066...,  0.1187837...],
@@ -1115,7 +1127,7 @@ def detect_colour_checkers_segmentation(
             settings.swatches_achromatic_slice,
         ]:
             swatch_std_mean = as_float_array(swatch_colours[slice_])
-            swatch_std_mean /= swatch_std_mean[..., 1][..., np.newaxis]
+            swatch_std_mean /= swatch_std_mean[..., 1][..., None]
             std_means.append(np.mean(np.std(swatch_std_mean, 0)))
         if std_means[0] < std_means[1]:
             usage_warning(

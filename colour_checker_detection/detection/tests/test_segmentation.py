@@ -13,7 +13,7 @@ import unittest
 from colour import read_image
 from colour.models import cctf_encoding
 
-from colour_checker_detection import TESTS_RESOURCES_DIRECTORY
+from colour_checker_detection import ROOT_RESOURCES_TESTS
 from colour_checker_detection.detection.segmentation import (
     SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC,
     swatch_masks,
@@ -53,7 +53,7 @@ __all__ = [
 ]
 
 DETECTION_DIRECTORY = os.path.join(
-    TESTS_RESOURCES_DIRECTORY, "colour_checker_detection", "detection"
+    ROOT_RESOURCES_TESTS, "colour_checker_detection", "detection"
 )
 
 PNG_FILES = glob.glob(os.path.join(DETECTION_DIRECTORY, "*.png"))
