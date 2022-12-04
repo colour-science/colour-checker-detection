@@ -3,12 +3,12 @@ name: Continuous Integration - Quality & Unit Tests
 on: [push, pull_request]
 
 jobs:
-  continuous-integration-package:
+  continuous-integration-quality-unit-tests:
     name: ${{ matrix.os }} - Python ${{ matrix.python-version }}
     strategy:
       matrix:
-        os: [macOS-latest, ubuntu-20.04, windows-2019]
-        python-version: [3.8, 3.9, '3.10']
+        os: [macOS-latest, ubuntu-22.04, windows-2019]
+        python-version: [3.9, '3.10', 3.11]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
@@ -22,14 +22,17 @@ jobs:
         echo "CI_SHA=${{ github.sha }}" >> $GITHUB_ENV
         echo "COVERALLS_REPO_TOKEN=${{ secrets.COVERALLS_REPO_TOKEN }}" >> $GITHUB_ENV
       shell: bash
+    - name: Set up Python 3.9 for Pre-Commit
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.9
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Poetry
       run: |
-        curl -L https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py -o get-poetry.py
-        python get-poetry.py --version 1.1.12
+        curl -sSL https://install.python-poetry.org | POETRY_HOME=$HOME/.poetry python3 -
         echo "$HOME/.poetry/bin" >> $GITHUB_PATH
       shell: bash
     - name: Install Package Dependencies
@@ -48,7 +51,7 @@ jobs:
       shell: bash
     - name: Test with Pytest
       run: |
-        poetry run python -W ignore -m py.test --disable-warnings --doctest-modules --ignore=$CI_PACKAGE/examples --cov=$CI_PACKAGE $CI_PACKAGE
+        poetry run python -W ignore -m pytest --disable-warnings --doctest-modules --ignore=$CI_PACKAGE/examples --cov=$CI_PACKAGE $CI_PACKAGE
       shell: bash
     - name: Upload Coverage to coveralls.io
       run: |
