@@ -71,10 +71,12 @@ try:
 except Exception:
     _version = __version__
 
-colour.utilities.ANCILLARY_COLOUR_SCIENCE_PACKAGES[
+colour.utilities.ANCILLARY_COLOUR_SCIENCE_PACKAGES[  # pyright: ignore
     "colour-checker-detection"
 ] = _version
-colour.utilities.ANCILLARY_RUNTIME_PACKAGES["opencv"] = cv2.__version__
+colour.utilities.ANCILLARY_RUNTIME_PACKAGES[  # pyright: ignore
+    "opencv"
+] = cv2.__version__
 
 del _version
 
