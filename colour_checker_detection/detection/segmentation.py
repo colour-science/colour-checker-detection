@@ -26,14 +26,12 @@ from dataclasses import dataclass
 from colour.hints import (
     Any,
     ArrayLike,
-    Boolean,
     Dict,
-    DTypeFloating,
-    Floating,
-    Integer,
+    DTypeFloat,
     List,
     Literal,
-    NDArray,
+    NDArrayFloat,
+    NDArrayInt,
     Tuple,
     Type,
     Union,
@@ -146,17 +144,17 @@ if is_documentation_building():  # pragma: no cover
 Settings for the segmentation of the *X-Rite* *ColorChecker SG**.
 """
 
-FLOAT_DTYPE_DEFAULT: Type[DTypeFloating] = np.float32
+FLOAT_DTYPE_DEFAULT: Type[DTypeFloat] = np.float32
 """Dtype used for the computations."""
 
 
 def swatch_masks(
-    width: Integer,
-    height: Integer,
-    swatches_h: Integer,
-    swatches_v: Integer,
-    samples: Integer,
-) -> Tuple[NDArray, ...]:
+    width: int,
+    height: int,
+    swatches_h: int,
+    swatches_v: int,
+    samples: int,
+) -> Tuple[NDArrayInt, ...]:
     """
     Return swatch masks for given image width and height and swatches count.
 
@@ -213,7 +211,7 @@ def swatch_masks(
     return tuple(masks)
 
 
-def as_8_bit_BGR_image(image: ArrayLike) -> NDArray:
+def as_8_bit_BGR_image(image: ArrayLike) -> NDArrayFloat:
     """
     Convert and encodes given linear float *RGB* image to 8-bit *BGR* with
     *sRGB* reverse OETF.
@@ -284,23 +282,23 @@ def as_8_bit_BGR_image(image: ArrayLike) -> NDArray:
         return image
 
     return cv2.cvtColor(
-        cast(NDArray, cctf_encoding(image) * 255).astype(np.uint8),
+        cast(NDArrayFloat, cctf_encoding(image) * 255).astype(np.uint8),
         cv2.COLOR_RGB2BGR,
     )
 
 
 def adjust_image(
     image: ArrayLike,
-    target_width: Integer,
-    interpolation_method: Literal[  # type: ignore[valid-type]
-        cv2.INTER_AREA,
-        cv2.INTER_BITS,
-        cv2.INTER_BITS2,
-        cv2.INTER_CUBIC,
-        cv2.INTER_LANCZOS4,
-        cv2.INTER_LINEAR,
+    target_width: int,
+    interpolation_method: Literal[
+        cv2.INTER_AREA,  # pyright: ignore
+        cv2.INTER_BITS,  # pyright: ignore
+        cv2.INTER_BITS2,  # pyright: ignore
+        cv2.INTER_CUBIC,  # pyright: ignore
+        cv2.INTER_LANCZOS4,  # pyright: ignore
+        cv2.INTER_LINEAR,  # pyright: ignore
     ] = cv2.INTER_CUBIC,
-) -> NDArray:
+) -> NDArrayFloat:
     """
     Adjust given image so that it is horizontal and resizes it to given target
     width.
@@ -349,7 +347,7 @@ def adjust_image(
     ratio = width / target_width
 
     if np.allclose(ratio, 1):
-        return cast(NDArray, image)
+        return cast(NDArrayFloat, image)
     else:
         return cv2.resize(
             image,
@@ -358,7 +356,7 @@ def adjust_image(
         )
 
 
-def is_square(contour: ArrayLike, tolerance: Floating = 0.015) -> Boolean:
+def is_square(contour: ArrayLike, tolerance: float = 0.015) -> bool:
     """
     Return if given contour is a square.
 
@@ -395,7 +393,7 @@ def is_square(contour: ArrayLike, tolerance: Floating = 0.015) -> Boolean:
     )
 
 
-def contour_centroid(contour: ArrayLike) -> Tuple[Floating, Floating]:
+def contour_centroid(contour: ArrayLike) -> Tuple[float, float]:
     """
     Return the centroid of given contour.
 
@@ -427,10 +425,10 @@ def contour_centroid(contour: ArrayLike) -> Tuple[Floating, Floating]:
         moments["m01"] / moments["m00"],
     )
 
-    return cast(Tuple[Floating, Floating], centroid)
+    return cast(Tuple[float, float], centroid)
 
 
-def scale_contour(contour: ArrayLike, factor: Floating) -> NDArray:
+def scale_contour(contour: ArrayLike, factor: float) -> NDArrayFloat:
     """
     Scale given contour by given scale factor.
 
@@ -464,16 +462,16 @@ def scale_contour(contour: ArrayLike, factor: Floating) -> NDArray:
 
 def crop_and_level_image_with_rectangle(
     image: ArrayLike,
-    rectangle: Tuple[Tuple, Tuple, Floating],
-    interpolation_method: Literal[  # type: ignore[valid-type]
-        cv2.INTER_AREA,
-        cv2.INTER_BITS,
-        cv2.INTER_BITS2,
-        cv2.INTER_CUBIC,
-        cv2.INTER_LANCZOS4,
-        cv2.INTER_LINEAR,
+    rectangle: Tuple[Tuple, Tuple, float],
+    interpolation_method: Literal[
+        cv2.INTER_AREA,  # pyright: ignore
+        cv2.INTER_BITS,  # pyright: ignore
+        cv2.INTER_BITS2,  # pyright: ignore
+        cv2.INTER_CUBIC,  # pyright: ignore
+        cv2.INTER_LANCZOS4,  # pyright: ignore
+        cv2.INTER_LINEAR,  # pyright: ignore
     ] = cv2.INTER_CUBIC,
-):
+) -> NDArrayFloat:
     """
     Crop and rotate/level given image using given rectangle.
 
@@ -560,15 +558,15 @@ class DataColourCheckersCoordinatesSegmentation(MixinDataclassIterable):
         Thresholded/Segmented image.
     """
 
-    colour_checkers: Tuple[NDArray, ...]
-    clusters: Tuple[NDArray, ...]
-    swatches: Tuple[NDArray, ...]
-    segmented_image: NDArray
+    colour_checkers: Tuple[NDArrayInt, ...]
+    clusters: Tuple[NDArrayInt, ...]
+    swatches: Tuple[NDArrayInt, ...]
+    segmented_image: NDArrayFloat
 
 
 def colour_checkers_coordinates_segmentation(
-    image: ArrayLike, additional_data: Boolean = False, **kwargs: Any
-) -> Union[DataColourCheckersCoordinatesSegmentation, Tuple[NDArray, ...]]:
+    image: ArrayLike, additional_data: bool = False, **kwargs: Any
+) -> Union[DataColourCheckersCoordinatesSegmentation, Tuple[NDArrayInt, ...]]:
     """
     Detect the colour checkers coordinates in given image :math:`image` using
     segmentation.
@@ -797,7 +795,7 @@ DataColourCheckersCoordinatesSegmentation` or :class:`tuple`
 
 def extract_colour_checkers_segmentation(
     image: ArrayLike, **kwargs: Any
-) -> Tuple[NDArray, ...]:
+) -> Tuple[NDArrayFloat, ...]:
     """
     Extract the colour checkers sub-images in given image using segmentation.
 
@@ -933,7 +931,7 @@ def extract_colour_checkers_segmentation(
 
     colour_checkers = []
     for rectangle in cast(
-        List[NDArray],
+        List[NDArrayFloat],
         colour_checkers_coordinates_segmentation(image, **settings),
     ):
         colour_checker = crop_and_level_image_with_rectangle(
@@ -967,19 +965,19 @@ class DataDetectColourCheckersSegmentation(MixinDataclassIterable):
         Colour checker swatches masks.
     """
 
-    swatch_colours: Tuple[NDArray, ...]
-    colour_checker_image: NDArray
-    swatch_masks: Tuple[NDArray, ...]
+    swatch_colours: Tuple[NDArrayFloat, ...]
+    colour_checker_image: NDArrayFloat
+    swatch_masks: Tuple[NDArrayInt, ...]
 
 
 def detect_colour_checkers_segmentation(
     image: ArrayLike,
-    samples: Integer = 16,
-    additional_data: Boolean = False,
+    samples: int = 16,
+    additional_data: bool = False,
     **kwargs: Any,
 ) -> Union[
     Tuple[DataDetectColourCheckersSegmentation, ...],
-    Tuple[NDArray, ...],
+    Tuple[NDArrayFloat, ...],
 ]:
     """
     Detect the colour checkers swatches in given image using segmentation.
