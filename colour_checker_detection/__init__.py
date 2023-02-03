@@ -11,6 +11,7 @@ Subpackages
 
 from __future__ import annotations
 
+import contextlib
 import cv2
 import numpy as np
 import os
@@ -81,7 +82,5 @@ colour.utilities.ANCILLARY_RUNTIME_PACKAGES[  # pyright: ignore
 del _version
 
 # TODO: Remove legacy printing support when deemed appropriate.
-try:
+with contextlib.suppress(TypeError):
     np.set_printoptions(legacy="1.13")
-except TypeError:
-    pass
