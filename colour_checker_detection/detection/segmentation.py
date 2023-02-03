@@ -34,7 +34,6 @@ from colour.hints import (
     NDArrayInt,
     Tuple,
     Type,
-    Union,
     cast,
 )
 from colour.models import cctf_encoding
@@ -566,7 +565,7 @@ class DataColourCheckersCoordinatesSegmentation(MixinDataclassIterable):
 
 def colour_checkers_coordinates_segmentation(
     image: ArrayLike, additional_data: bool = False, **kwargs: Any
-) -> Union[DataColourCheckersCoordinatesSegmentation, Tuple[NDArrayInt, ...]]:
+) -> DataColourCheckersCoordinatesSegmentation | Tuple[NDArrayInt, ...]:
     """
     Detect the colour checkers coordinates in given image :math:`image` using
     segmentation.
@@ -975,9 +974,8 @@ def detect_colour_checkers_segmentation(
     samples: int = 16,
     additional_data: bool = False,
     **kwargs: Any,
-) -> Union[
-    Tuple[DataDetectColourCheckersSegmentation, ...],
-    Tuple[NDArrayFloat, ...],
+) -> Tuple[DataDetectColourCheckersSegmentation, ...] | Tuple[
+    NDArrayFloat, ...
 ]:
     """
     Detect the colour checkers swatches in given image using segmentation.
