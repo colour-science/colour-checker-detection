@@ -15,7 +15,7 @@ import contextlib
 import cv2
 import numpy as np
 import os
-import subprocess  # nosec
+import subprocess
 
 import colour
 
@@ -61,7 +61,7 @@ __version__ = ".".join(
 
 try:
     _version = (
-        subprocess.check_output(  # nosec
+        subprocess.check_output(
             ["git", "describe"],
             cwd=os.path.dirname(__file__),
             stderr=subprocess.STDOUT,
