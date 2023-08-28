@@ -21,7 +21,7 @@ Colour - Checker Detection
 .. end-badges
 
 
-A `Python <https://www.python.org/>`__ package implementing various colour
+A `Python <https://www.python.org>`__ package implementing various colour
 checker detection algorithms and related utilities.
 
 It is open source and freely available under the
@@ -66,12 +66,12 @@ Primary Dependencies
 
 **Colour - Checker Detection** requires various dependencies in order to run:
 
-- `python >= 3.8, < 4 <https://www.python.org/download/releases/>`__
-- `colour-science >= 4 <https://pypi.org/project/colour-science/>`__
-- `imageio >= 2, < 3 <https://imageio.github.io/>`__
-- `numpy >= 1.19, < 2 <https://pypi.org/project/numpy/>`__
-- `opencv-python >= 4, < 5 <https://pypi.org/project/opencv-python/>`__
-- `scipy >= 1.5, < 2 <https://pypi.org/project/scipy/>`__
+- `python >= 3.8, < 4 <https://www.python.org/download/releases>`__
+- `colour-science >= 4 <https://pypi.org/project/colour-science>`__
+- `imageio >= 2, < 3 <https://imageio.github.io>`__
+- `numpy >= 1.19, < 2 <https://pypi.org/project/numpy>`__
+- `opencv-python >= 4, < 5 <https://pypi.org/project/opencv-python>`__
+- `scipy >= 1.5, < 2 <https://pypi.org/project/scipy>`__
 
 Pypi
 ~~~~
@@ -90,7 +90,7 @@ Contributing
 ^^^^^^^^^^^^
 
 If you would like to contribute to `Colour - Checker Detection <https://github.com/colour-science/colour-checker-detection>`__,
-please refer to the following `Contributing <https://www.colour-science.org/contributing/>`__
+please refer to the following `Contributing <https://www.colour-science.org/contributing>`__
 guide for `Colour <https://github.com/colour-science/colour>`__.
 
 Bibliography
@@ -110,7 +110,7 @@ Code of Conduct
 ---------------
 
 The *Code of Conduct*, adapted from the `Contributor Covenant 1.4 <https://www.contributor-covenant.org/version/1/4/code-of-conduct.html>`__,
-is available on the `Code of Conduct <https://www.colour-science.org/code-of-conduct/>`__ page.
+is available on the `Code of Conduct <https://www.colour-science.org/code-of-conduct>`__ page.
 
 Contact & Social
 ----------------

@@ -1,7 +1,7 @@
 Colour - Checker Detection
 ==========================
 
-A `Python <https://www.python.org/>`__ package implementing various colour
+A `Python <https://www.python.org>`__ package implementing various colour
 checker detection algorithms and related utilities.
 
 It is open source and freely available under the
@@ -44,7 +44,7 @@ Code of Conduct
 ---------------
 
 The *Code of Conduct*, adapted from the `Contributor Covenant 1.4 <https://www.contributor-covenant.org/version/1/4/code-of-conduct.html>`__,
-is available on the `Code of Conduct <https://www.colour-science.org/code-of-conduct/>`__ page.
+is available on the `Code of Conduct <https://www.colour-science.org/code-of-conduct>`__ page.
 
 Contact & Social
 ----------------
