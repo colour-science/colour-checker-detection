@@ -62,7 +62,7 @@ __version__ = ".".join(
 try:
     _version = (
         subprocess.check_output(
-            ["git", "describe"],
+            ["git", "describe"],  # noqa: S603, S607
             cwd=os.path.dirname(__file__),
             stderr=subprocess.STDOUT,
         )
