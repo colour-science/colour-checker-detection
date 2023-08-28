@@ -45,7 +45,7 @@ exclude = [
 
 [tool.poetry.dependencies]
 python = ">= 3.9, < 3.12"
-colour-science = ">= 0.4.2"
+colour-science = ">= 0.4.3"
 imageio = ">= 2, < 3"
 numpy = ">= 1.22, < 2"
 opencv-python = ">= 4, < 5"
@@ -76,7 +76,7 @@ twine = "*"
 biblib-simple = "*"
 pydata-sphinx-theme = "*"
 restructuredtext-lint = "*"
-sphinx = ">= 4, < 5"
+sphinx = "*"
 sphinxcontrib-bibtex = "*"
 
 [tool.black]
