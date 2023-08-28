@@ -11,10 +11,11 @@ Subpackages
 
 from __future__ import annotations
 
+import contextlib
 import cv2
 import numpy as np
 import os
-import subprocess  # nosec
+import subprocess
 
 import colour
 
@@ -28,7 +29,7 @@ from .detection import (
 
 __author__ = "Colour Developers"
 __copyright__ = "Copyright 2018 Colour Developers"
-__license__ = "New BSD License - https://opensource.org/licenses/BSD-3-Clause"
+__license__ = "BSD-3-Clause - https://opensource.org/licenses/BSD-3-Clause"
 __maintainer__ = "Colour Developers"
 __email__ = "colour-developers@colour-science.org"
 __status__ = "Production"
@@ -53,15 +54,15 @@ __application_name__ = "Colour - Checker Detection"
 
 __major_version__ = "0"
 __minor_version__ = "1"
-__change_version__ = "4"
+__change_version__ = "5"
 __version__ = ".".join(
     (__major_version__, __minor_version__, __change_version__)
 )
 
 try:
     _version = (
-        subprocess.check_output(  # nosec
-            ["git", "describe"],
+        subprocess.check_output(
+            ["git", "describe"],  # noqa: S603, S607
             cwd=os.path.dirname(__file__),
             stderr=subprocess.STDOUT,
         )
@@ -71,15 +72,15 @@ try:
 except Exception:
     _version = __version__
 
-colour.utilities.ANCILLARY_COLOUR_SCIENCE_PACKAGES[
+colour.utilities.ANCILLARY_COLOUR_SCIENCE_PACKAGES[  # pyright: ignore
     "colour-checker-detection"
 ] = _version
-colour.utilities.ANCILLARY_RUNTIME_PACKAGES["opencv"] = cv2.__version__
+colour.utilities.ANCILLARY_RUNTIME_PACKAGES[  # pyright: ignore
+    "opencv"
+] = cv2.__version__  # pyright: ignore
 
 del _version
 
 # TODO: Remove legacy printing support when deemed appropriate.
-try:
+with contextlib.suppress(TypeError):
     np.set_printoptions(legacy="1.13")
-except TypeError:
-    pass

@@ -5,7 +5,7 @@ Colour - Checker Detection
 
 |actions| |coveralls| |codacy| |version|
 
-.. |actions| image:: https://img.shields.io/github/workflow/status/colour-science/colour-checker-detection/Continuous%20Integration%20-%20Quality%20&%20Unit%20Tests?label=actions&logo=github&style=flat-square
+.. |actions| image:: https://img.shields.io/github/actions/workflow/status/colour-science/colour-checker-detection/.github/workflows/continuous-integration-quality-unit-tests.yml?branch=develop&style=flat-square
     :target: https://github.com/colour-science/colour-checker-detection/actions
     :alt: Develop Build Status
 .. |coveralls| image:: http://img.shields.io/coveralls/colour-science/colour-checker-detection/develop.svg?style=flat-square
@@ -21,11 +21,11 @@ Colour - Checker Detection
 .. end-badges
 
 
-A `Python <https://www.python.org/>`__ package implementing various colour
+A `Python <https://www.python.org>`__ package implementing various colour
 checker detection algorithms and related utilities.
 
 It is open source and freely available under the
-`New BSD License <https://opensource.org/licenses/BSD-3-Clause>`__ terms.
+`BSD-3-Clause <https://opensource.org/licenses/BSD-3-Clause>`__ terms.
 
 ..  image:: https://raw.githubusercontent.com/colour-science/colour-checker-detection/master/docs/_static/ColourCheckerDetection_001.png
 
@@ -66,12 +66,12 @@ Primary Dependencies
 
 **Colour - Checker Detection** requires various dependencies in order to run:
 
-- `python >= 3.8, < 4 <https://www.python.org/download/releases/>`__
-- `colour-science >= 4 <https://pypi.org/project/colour-science/>`__
-- `imageio >= 2, < 3 <https://imageio.github.io/>`__
-- `numpy >= 1.19, < 2 <https://pypi.org/project/numpy/>`__
-- `opencv-python >= 4, < 5 <https://pypi.org/project/opencv-python/>`__
-- `scipy >= 1.5, < 2 <https://pypi.org/project/scipy/>`__
+- `python >= 3.9, < 4 <https://www.python.org/download/releases>`__
+- `colour-science >= 4.3 <https://pypi.org/project/colour-science>`__
+- `imageio >= 2, < 3 <https://imageio.github.io>`__
+- `numpy >= 1.22, < 2 <https://pypi.org/project/numpy>`__
+- `opencv-python >= 4, < 5 <https://pypi.org/project/opencv-python>`__
+- `scipy >= 1.8, < 2 <https://pypi.org/project/scipy>`__
 
 Pypi
 ~~~~
@@ -90,7 +90,7 @@ Contributing
 ^^^^^^^^^^^^
 
 If you would like to contribute to `Colour - Checker Detection <https://github.com/colour-science/colour-checker-detection>`__,
-please refer to the following `Contributing <https://www.colour-science.org/contributing/>`__
+please refer to the following `Contributing <https://www.colour-science.org/contributing>`__
 guide for `Colour <https://github.com/colour-science/colour>`__.
 
 Bibliography
@@ -110,7 +110,7 @@ Code of Conduct
 ---------------
 
 The *Code of Conduct*, adapted from the `Contributor Covenant 1.4 <https://www.contributor-covenant.org/version/1/4/code-of-conduct.html>`__,
-is available on the `Code of Conduct <https://www.colour-science.org/code-of-conduct/>`__ page.
+is available on the `Code of Conduct <https://www.colour-science.org/code-of-conduct>`__ page.
 
 Contact & Social
 ----------------
@@ -128,5 +128,5 @@ About
 
 | **Colour - Checker Detection** by Colour Developers
 | Copyright 2018 Colour Developers – `colour-developers@colour-science.org <colour-developers@colour-science.org>`__
-| This software is released under terms of New BSD License: https://opensource.org/licenses/BSD-3-Clause
+| This software is released under terms of BSD-3-Clause: https://opensource.org/licenses/BSD-3-Clause
 | `https://github.com/colour-science/colour-checker-detection <https://github.com/colour-science/colour-checker-detection>`__
