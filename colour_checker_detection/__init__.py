@@ -77,7 +77,7 @@ colour.utilities.ANCILLARY_COLOUR_SCIENCE_PACKAGES[  # pyright: ignore
 ] = _version
 colour.utilities.ANCILLARY_RUNTIME_PACKAGES[  # pyright: ignore
     "opencv"
-] = cv2.__version__
+] = cv2.__version__  # pyright: ignore
 
 del _version
 

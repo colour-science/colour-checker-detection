@@ -41,8 +41,9 @@ from colour.utilities import (
     MixinDataclassIterable,
     Structure,
     as_float_array,
-    as_int_array,
     as_int,
+    as_int_array,
+    as_int_scalar,
     orient,
     usage_warning,
 )
@@ -210,7 +211,7 @@ def swatch_masks(
     return tuple(masks)
 
 
-def as_8_bit_BGR_image(image: ArrayLike) -> NDArrayFloat:
+def as_8_bit_BGR_image(image: ArrayLike) -> NDArrayInt:
     """
     Convert and encodes given linear float *RGB* image to 8-bit *BGR* with
     *sRGB* reverse OETF.
@@ -280,7 +281,7 @@ def as_8_bit_BGR_image(image: ArrayLike) -> NDArrayFloat:
     if image.dtype == np.uint8:
         return image
 
-    return cv2.cvtColor(
+    return cv2.cvtColor(  # pyright: ignore
         cast(NDArrayFloat, cctf_encoding(image) * 255).astype(np.uint8),
         cv2.COLOR_RGB2BGR,
     )
@@ -346,11 +347,11 @@ def adjust_image(
     ratio = width / target_width
 
     if np.allclose(ratio, 1):
-        return cast(NDArrayFloat, image)
+        return image
     else:
-        return cv2.resize(
+        return cv2.resize(  # pyright: ignore
             image,
-            (as_int(target_width), as_int(height / ratio)),
+            (as_int_scalar(target_width), as_int_scalar(height / ratio)),
             interpolation=interpolation_method,
         )
 
@@ -383,7 +384,7 @@ def is_square(contour: ArrayLike, tolerance: float = 0.015) -> bool:
 
     return (
         cv2.matchShapes(
-            contour,
+            contour,  # pyright: ignore
             np.array([[0, 0], [1, 0], [1, 1], [0, 1]]),
             cv2.CONTOURS_MATCH_I2,
             0.0,
@@ -418,7 +419,7 @@ def contour_centroid(contour: ArrayLike) -> Tuple[float, float]:
     (0.5, 0.5)
     """
 
-    moments = cv2.moments(contour)
+    moments = cv2.moments(contour)  # pyright: ignore
     centroid = (
         moments["m10"] / moments["m00"],
         moments["m01"] / moments["m00"],
@@ -535,7 +536,7 @@ def crop_and_level_image_with_rectangle(
     if image_c.shape[0] > image_c.shape[1]:
         image_c = orient(image_c, "90 CW")
 
-    return image_c
+    return image_c  # pyright: ignore
 
 
 @dataclass
@@ -786,7 +787,10 @@ DataColourCheckersCoordinatesSegmentation` or :class:`tuple`
 
     if additional_data:
         return DataColourCheckersCoordinatesSegmentation(
-            tuple(colour_checkers), tuple(clusters), tuple(swatches), image_c
+            tuple(colour_checkers),
+            tuple(clusters),
+            tuple(swatches),
+            image_c,  # pyright: ignore
         )
     else:
         return colour_checkers
@@ -934,7 +938,9 @@ def extract_colour_checkers_segmentation(
         colour_checkers_coordinates_segmentation(image, **settings),
     ):
         colour_checker = crop_and_level_image_with_rectangle(
-            image, cv2.minAreaRect(rectangle), settings.interpolation_method
+            image,
+            cv2.minAreaRect(rectangle),  # pyright: ignore
+            settings.interpolation_method,
         )
         width, height = (colour_checker.shape[1], colour_checker.shape[0])
 
@@ -974,9 +980,9 @@ def detect_colour_checkers_segmentation(
     samples: int = 16,
     additional_data: bool = False,
     **kwargs: Any,
-) -> Tuple[DataDetectColourCheckersSegmentation, ...] | Tuple[
-    NDArrayFloat, ...
-]:
+) -> (
+    Tuple[DataDetectColourCheckersSegmentation, ...] | Tuple[NDArrayFloat, ...]
+):
     """
     Detect the colour checkers swatches in given image using segmentation.
 
