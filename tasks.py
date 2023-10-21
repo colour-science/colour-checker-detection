@@ -4,23 +4,23 @@
 
 from __future__ import annotations
 
-import biblib.bib
 import contextlib
 import fnmatch
+import inspect
 import os
 import re
 import uuid
 
-import colour_checker_detection
+import biblib.bib
 from colour.utilities import message_box
 
-import inspect
+import colour_checker_detection
 
 if not hasattr(inspect, "getargspec"):
     inspect.getargspec = inspect.getfullargspec  # pyright: ignore
 
-from invoke.tasks import task
 from invoke.context import Context
+from invoke.tasks import task
 
 __author__ = "Colour Developers"
 __copyright__ = "Copyright 2018 Colour Developers"

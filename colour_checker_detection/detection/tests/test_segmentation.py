@@ -5,29 +5,29 @@ Define the unit tests for the
 """
 
 import glob
-import numpy as np
 import os
 import platform
 import unittest
 
+import numpy as np
 from colour import read_image
 from colour.models import cctf_encoding
 
 from colour_checker_detection import ROOT_RESOURCES_TESTS
-from colour_checker_detection.detection.segmentation import (
-    SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC,
-    swatch_masks,
-    as_8_bit_BGR_image,
-    adjust_image,
-    is_square,
-    contour_centroid,
-    scale_contour,
-    crop_and_level_image_with_rectangle,
-)
 from colour_checker_detection.detection import (
     colour_checkers_coordinates_segmentation,
-    extract_colour_checkers_segmentation,
     detect_colour_checkers_segmentation,
+    extract_colour_checkers_segmentation,
+)
+from colour_checker_detection.detection.segmentation import (
+    SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC,
+    adjust_image,
+    as_8_bit_BGR_image,
+    contour_centroid,
+    crop_and_level_image_with_rectangle,
+    is_square,
+    scale_contour,
+    swatch_masks,
 )
 
 __author__ = "Colour Developers"
