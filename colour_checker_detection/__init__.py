@@ -12,19 +12,19 @@ Subpackages
 from __future__ import annotations
 
 import contextlib
-import cv2
-import numpy as np
 import os
 import subprocess
 
 import colour
+import cv2
+import numpy as np
 
 from .detection import (
     SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC,
     SETTINGS_SEGMENTATION_COLORCHECKER_SG,
     colour_checkers_coordinates_segmentation,
-    extract_colour_checkers_segmentation,
     detect_colour_checkers_segmentation,
+    extract_colour_checkers_segmentation,
 )
 
 __author__ = "Colour Developers"

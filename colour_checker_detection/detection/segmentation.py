@@ -19,10 +19,10 @@ References
 
 from __future__ import annotations
 
-import cv2
-import numpy as np
 from dataclasses import dataclass
 
+import cv2
+import numpy as np
 from colour.hints import (
     Any,
     ArrayLike,
@@ -548,7 +548,7 @@ class DataColourCheckersCoordinatesSegmentation(MixinDataclassIterable):
     Parameters
     ----------
     colour_checkers
-        Colour checker bounding boxes, i.e., the. clusters that have the
+        Colour checker bounding boxes, i.e., the clusters that have the
         relevant count of swatches.
     clusters
         Detected swatches clusters.

@@ -45,7 +45,7 @@ exclude = [
 
 [tool.poetry.dependencies]
 python = ">= 3.9, < 3.12"
-colour-science = ">= 0.4.2"
+colour-science = ">= 0.4.3"
 imageio = ">= 2, < 3"
 numpy = ">= 1.22, < 2"
 opencv-python = ">= 4, < 5"
@@ -63,7 +63,7 @@ coveralls = "*"
 flynt = "*"
 invoke = "*"
 jupyter = "*"
-pre-commit = "*"
+pre-commit = ">= 3.5"
 pyright = "*"
 pytest = "*"
 pytest-cov = "*"
@@ -76,7 +76,7 @@ twine = "*"
 biblib-simple = "*"
 pydata-sphinx-theme = "*"
 restructuredtext-lint = "*"
-sphinx = ">= 4, < 5"
+sphinx = "*"
 sphinxcontrib-bibtex = "*"
 
 [tool.black]
@@ -91,6 +91,16 @@ exclude = '''
 
 [tool.flynt]
 line_length=999
+
+[tool.isort]
+ensure_newline_before_comments = true
+force_grid_wrap = 0
+include_trailing_comma = true
+line_length = 88
+multi_line_output = 3
+skip_glob = ["colour_checker_detection/**/__init__.py"]
+split_on_trailing_comma = true
+use_parentheses = true
 
 [tool.pyright]
 reportMissingImports = false
