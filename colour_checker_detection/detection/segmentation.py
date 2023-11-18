@@ -511,7 +511,7 @@ def crop_and_level_image_with_rectangle(
     ...     -88.18692780,
     ... )
     >>> print(image.shape)
-    (958, 1440, 3)
+    (959, 1440, 3)
     >>> image = crop_and_level_image_with_rectangle(image, rectangle)
     >>> print(image.shape)
     (461, 696, 3)
@@ -671,10 +671,10 @@ DataColourCheckersCoordinatesSegmentation` or :class:`tuple`
     ... )
     >>> image = read_image(path)
     >>> colour_checkers_coordinates_segmentation(image)  # doctest: +ELLIPSIS
-    (array([[ 369,  688],
-           [ 382,  226],
-           [1078,  246],
-           [1065,  707]]...)
+    (array([[ 365,  685],
+           [ 382,  222],
+           [1078,  247],
+           [1061,  710]]...)
     """
 
     image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
