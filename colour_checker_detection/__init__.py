@@ -12,19 +12,19 @@ Subpackages
 from __future__ import annotations
 
 import contextlib
-import cv2
-import numpy as np
 import os
 import subprocess
 
 import colour
+import cv2
+import numpy as np
 
 from .detection import (
     SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC,
     SETTINGS_SEGMENTATION_COLORCHECKER_SG,
     colour_checkers_coordinates_segmentation,
-    extract_colour_checkers_segmentation,
     detect_colour_checkers_segmentation,
+    extract_colour_checkers_segmentation,
 )
 
 __author__ = "Colour Developers"
@@ -54,7 +54,7 @@ __application_name__ = "Colour - Checker Detection"
 
 __major_version__ = "0"
 __minor_version__ = "1"
-__change_version__ = "5"
+__change_version__ = "6"
 __version__ = ".".join(
     (__major_version__, __minor_version__, __change_version__)
 )

@@ -20,7 +20,6 @@ Colour - Checker Detection
 
 .. end-badges
 
-
 A `Python <https://www.python.org>`__ package implementing various colour
 checker detection algorithms and related utilities.
 
