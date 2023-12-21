@@ -347,7 +347,7 @@ def adjust_image(
     ratio = width / target_width
 
     if np.allclose(ratio, 1):
-        return image
+        return cast(NDArrayFloat, image)
     else:
         return cv2.resize(  # pyright: ignore
             image,
@@ -980,9 +980,7 @@ def detect_colour_checkers_segmentation(
     samples: int = 16,
     additional_data: bool = False,
     **kwargs: Any,
-) -> (
-    Tuple[DataDetectColourCheckersSegmentation, ...] | Tuple[NDArrayFloat, ...]
-):
+) -> Tuple[DataDetectColourCheckersSegmentation | NDArrayFloat, ...]:
     """
     Detect the colour checkers swatches in given image using segmentation.
 
