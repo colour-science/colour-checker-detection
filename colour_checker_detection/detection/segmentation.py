@@ -337,7 +337,10 @@ def adjust_image(
             [-0.0526997...,  0.6236685...,  0.8711483...]]], dtype=float32)
     """
 
-    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
+    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)
+
+    if image.ndim == 3:
+        image = image[..., :3]
 
     width, height = image.shape[1], image.shape[0]
     if width < height:
