@@ -16,7 +16,16 @@ Features
 
 The following colour checker detection algorithms are implemented:
 
-- Segmentation
+-   Segmentation
+-   Machine learning inference via `Ultralytics YOLOv8 <https://github.com/ultralytics/ultralytics>`__
+
+    -   The model is published on `HuggingFace <https://huggingface.co/colour-science/colour-checker-detection-models>`__,
+        and was trained on a purposely constructed `dataset <https://huggingface.co/datasets/colour-science/colour-checker-detection-dataset>`__.
+    -   The model has only been trained on *ColorChecker Classic 24* images and will not work with *ColorChecker Nano* or *ColorChecker SG* images.
+    -   Inference is performed by a script licensed under the terms of the
+        *GNU Affero General Public License v3.0* as it uses the
+        *Ultralytics YOLOv8* API which is incompatible with the
+        *BSD-3-Clause*.
 
 Examples
 ^^^^^^^^

@@ -18,16 +18,16 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
+from time import perf_counter
 
 import click
 import cv2
 import numpy as np
 from colour import read_image
 from colour.hints import List, Literal, NDArray, Tuple
+from colour.io import convert_bit_depth
 from ultralytics import YOLO
 from ultralytics.utils.downloads import download
-
-from colour_checker_detection.detection.common import as_8_bit_BGR_image
 
 __author__ = "Colour Developers"
 __copyright__ = "Copyright 2024 Colour Developers"
@@ -103,6 +103,12 @@ def inference(
 
     for result in model(source, show=show, **kwargs):
         show and cv2.waitKey(0) == ord("n")
+
+        if result.boxes is None:
+            continue
+
+        if result.masks is None:
+            continue
 
         data_boxes = result.boxes.data
         data_masks = result.masks.data
@@ -193,6 +199,8 @@ def segmentation(
         Inference results.
     """
 
+    time_start = perf_counter()
+
     logging.getLogger().setLevel(getattr(logging, logging_level.upper()))
 
     if model is None:
@@ -209,14 +217,23 @@ def segmentation(
         source = np.load(input)
     else:
         logging.debug('Reading "%s" image...', input)
-        source = as_8_bit_BGR_image(read_image(input))
+        source = convert_bit_depth(
+            read_image(input)[..., :3], np.uint8.__name__  # pyright: ignore
+        )
 
-    results = np.array(inference(source, YOLO(model), show), dtype=object)
+    # NOTE: YOLOv8 expects "BGR" arrays.
+    results = np.array(
+        inference(source[..., ::-1], YOLO(model), show), dtype=object
+    )
 
     if output is None:
         output = f"{input}.npz"
 
-    np.savez(output, results)
+    np.savez(output, results=results)
+
+    logging.debug(
+        'Total segmentation time: "%s" seconds.', perf_counter() - time_start
+    )
 
     return results
 

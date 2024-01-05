@@ -20,6 +20,11 @@ Primary Dependencies
 - `opencv-python >= 4, < 5 <https://pypi.org/project/opencv-python>`__
 - `scipy >= 1.8, < 2 <https://pypi.org/project/scipy>`__
 
+Secondary Dependencies
+~~~~~~~~~~~~~~~~~~~~~~
+
+- `ultralytics >= 8, < 9 <https://pypi.org/project/ultralytics>`__
+
 Pypi
 ----
 
