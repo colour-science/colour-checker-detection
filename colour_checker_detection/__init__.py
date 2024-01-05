@@ -20,11 +20,15 @@ import cv2
 import numpy as np
 
 from .detection import (
+    SETTINGS_INFERENCE_COLORCHECKER_CLASSIC,
+    SETTINGS_INFERENCE_COLORCHECKER_CLASSIC_MINI,
     SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC,
+    SETTINGS_SEGMENTATION_COLORCHECKER_NANO,
     SETTINGS_SEGMENTATION_COLORCHECKER_SG,
-    colour_checkers_coordinates_segmentation,
+    detect_colour_checkers_inference,
     detect_colour_checkers_segmentation,
-    extract_colour_checkers_segmentation,
+    inferencer_default,
+    segmenter_default,
 )
 
 __author__ = "Colour Developers"
@@ -35,11 +39,15 @@ __email__ = "colour-developers@colour-science.org"
 __status__ = "Production"
 
 __all__ = [
+    "SETTINGS_INFERENCE_COLORCHECKER_CLASSIC",
+    "SETTINGS_INFERENCE_COLORCHECKER_CLASSIC_MINI",
     "SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC",
+    "SETTINGS_SEGMENTATION_COLORCHECKER_NANO",
     "SETTINGS_SEGMENTATION_COLORCHECKER_SG",
-    "colour_checkers_coordinates_segmentation",
-    "extract_colour_checkers_segmentation",
+    "detect_colour_checkers_inference",
     "detect_colour_checkers_segmentation",
+    "inferencer_default",
+    "segmenter_default",
 ]
 
 ROOT_RESOURCES: str = os.path.join(os.path.dirname(__file__), "resources")
