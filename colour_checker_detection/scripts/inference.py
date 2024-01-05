@@ -27,7 +27,7 @@ from colour.hints import List, Literal, NDArray, Tuple
 from ultralytics import YOLO
 from ultralytics.utils.downloads import download
 
-from colour_checker_detection.detection.segmentation import as_8_bit_BGR_image
+from colour_checker_detection.detection.common import as_8_bit_BGR_image
 
 __author__ = "Colour Developers"
 __copyright__ = "Copyright 2024 Colour Developers"

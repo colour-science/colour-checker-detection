@@ -33,8 +33,6 @@ from colour.hints import (
     Tuple,
     cast,
 )
-from colour.io import convert_bit_depth
-from colour.models import cctf_encoding
 from colour.utilities import (
     MixinDataclassIterable,
     Structure,
@@ -50,8 +48,9 @@ from colour.utilities.documentation import (
 from colour_checker_detection.detection.common import (
     FLOAT_DTYPE_DEFAULT,
     adjust_image,
+    as_8_bit_BGR_image,
     contour_centroid,
-    crop_with_rectangle,
+    crop_and_level_image_with_rectangle,
     is_square,
     scale_contour,
     swatch_masks,
@@ -275,21 +274,21 @@ DataColourCheckersCoordinatesSegmentation` or :class:`tuple`
     ... )
     >>> image = read_image(path)
     >>> colour_checkers_coordinates_segmentation(image)  # doctest: +ELLIPSIS
-    (array([[ 366,  684],
-           [ 383,  223],
-           [1077,  248],
-           [1061,  709]])...)
+    (array([[ 365,  684],
+           [ 382,  221],
+           [1077,  247],
+           [1060,  710]]...)
     """
+
+    image = as_float_array(image, FLOAT_DTYPE_DEFAULT)[..., :3]
 
     settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
     settings.update(**kwargs)
 
-    image = convert_bit_depth(
-        cctf_encoding(image[..., :3]), np.uint8.__name__
-    )[..., ::-1]
-
-    image = adjust_image(
-        image, settings.working_width, settings.interpolation_method
+    image = as_8_bit_BGR_image(
+        adjust_image(
+            image, settings.working_width, settings.interpolation_method
+        )
     )
 
     width, height = image.shape[1], image.shape[0]
@@ -302,7 +301,7 @@ DataColourCheckersCoordinatesSegmentation` or :class:`tuple`
     )
 
     # Thresholding/Segmentation.
-    image_g = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    image_g = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     image_g = cv2.fastNlMeansDenoising(
         image_g, None, **settings.fast_non_local_means_denoising_kwargs
     )
@@ -541,7 +540,7 @@ def extract_colour_checkers_segmentation(
         List[NDArrayFloat],
         colour_checkers_coordinates_segmentation(image, **settings),
     ):
-        colour_checker = crop_with_rectangle(
+        colour_checker = crop_and_level_image_with_rectangle(
             image,
             cv2.minAreaRect(rectangle),  # pyright: ignore
             settings.interpolation_method,
