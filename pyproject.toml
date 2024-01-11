@@ -1,10 +1,10 @@
 [tool.poetry]
 name = "colour-checker-detection"
-version = "0.1.6"
+version = "0.2.0"
 description = "Colour checker detection with Python"
 license = "BSD-3-Clause"
-authors = [ "Colour Developers <colour-developers@colour-science.org>" ]
-maintainers = [ "Colour Developers <colour-developers@colour-science.org>" ]
+authors = ["Colour Developers <colour-developers@colour-science.org>"]
+maintainers = ["Colour Developers <colour-developers@colour-science.org>"]
 readme = 'README.rst'
 repository = "https://github.com/colour-science/colour-checker-detection"
 homepage = "https://www.colour-science.org/"
@@ -43,6 +43,9 @@ exclude = [
     "colour_checker_detection/resources/colour-checker-detection-tests-datasets/colour_checker_detection/detection/*",
 ]
 
+[tool.poetry.scripts]
+colour-checker-detection-inference = 'colour_checker_detection.scripts.inference:segmentation'
+
 [tool.poetry.dependencies]
 python = ">= 3.9, < 3.13"
 colour-science = ">= 0.4.4"
@@ -54,6 +57,10 @@ typing-extensions = ">= 4, < 5"
 
 [tool.poetry.group.optional.dependencies]
 matplotlib = ">= 3.5, != 3.5.0, != 3.5.1"
+
+[tool.poetry.group.ultralytics.dependencies]
+click = { version = ">= 8, < 9", python = "< 3.12" }
+ultralytics = { version = ">= 8, < 9", python = "< 3.12" }
 
 [tool.poetry.group.dev.dependencies]
 coverage = "!= 6.3"
@@ -86,7 +93,7 @@ exclude = '''
 '''
 
 [tool.flynt]
-line_length=999
+line_length = 999
 
 [tool.isort]
 ensure_newline_before_comments = true
@@ -203,5 +210,5 @@ convention = "numpy"
 "utilities/unicode_to_ascii.py" = ["RUF001"]
 
 [build-system]
-requires = [ "poetry_core>=1.0.0" ]
+requires = ["poetry_core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
