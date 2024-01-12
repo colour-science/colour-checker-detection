@@ -1,5 +1,5 @@
-Colour Checker Detection
-========================
+Detection
+=========
 
 Inference
 ---------
@@ -31,3 +31,34 @@ Segmentation
     SETTINGS_SEGMENTATION_COLORCHECKER_NANO
     segmenter_default
     detect_colour_checkers_segmentation
+
+Common Utilities
+----------------
+
+``colour_checker_detection.detection``
+
+.. currentmodule:: colour_checker_detection.detection
+
+.. autosummary::
+    :toctree: generated/
+
+    DTYPE_INT_DEFAULT
+    DTYPE_FLOAT_DEFAULT
+    SETTINGS_DETECTION_COLORCHECKER_CLASSIC
+    SETTINGS_DETECTION_COLORCHECKER_SG
+    SETTINGS_CONTOUR_DETECTION_DEFAULT
+    as_int32_array
+    as_float32_array
+    swatch_masks
+    swatch_colours
+    reformat_image
+    transform_image
+    detect_contours
+    is_square
+    contour_centroid
+    scale_contour
+    approximate_contour
+    quadrilateralise_contours
+    remove_stacked_contours
+    DataDetectionColourChecker
+    sample_colour_checker
