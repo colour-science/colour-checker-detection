@@ -63,7 +63,7 @@ click = { version = ">= 8, < 9", python = "< 3.12" }
 ultralytics = { version = ">= 8, < 9", python = "< 3.12" }
 
 [tool.poetry.group.dev.dependencies]
-coverage = "!= 6.3"
+coverage = ">= 6, < 7"
 coveralls = "*"
 invoke = "*"
 jupyter = "*"
