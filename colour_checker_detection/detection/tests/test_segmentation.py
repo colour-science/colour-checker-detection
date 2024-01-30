@@ -80,9 +80,7 @@ segmenter_default` definition unit tests methods.
             clusters,
             swatches,
             segmented_image,
-        ) = segmenter_default(
-            read_image(PNG_FILES[0]), additional_data=True
-        ).values
+        ) = segmenter_default(read_image(PNG_FILES[0]), additional_data=True).values
 
         np.testing.assert_array_equal(
             colour_checkers,
@@ -348,9 +346,7 @@ detect_colour_checkers_segmentation` definition unit tests methods.
             colour_checker,
         ) = detect_colour_checkers_segmentation(
             read_image(PNG_FILES[0]), additional_data=True
-        )[
-            0
-        ].values
+        )[0].values
 
         np.testing.assert_allclose(
             swatch_colours,

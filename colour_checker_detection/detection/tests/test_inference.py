@@ -37,9 +37,7 @@ DETECTION_DIRECTORY = os.path.join(
     ROOT_RESOURCES_TESTS, "colour_checker_detection", "detection"
 )
 
-PNG_FILES = sorted(
-    glob.glob(os.path.join(DETECTION_DIRECTORY, "IMG_19*.png"))
-)[:-2]
+PNG_FILES = sorted(glob.glob(os.path.join(DETECTION_DIRECTORY, "IMG_19*.png")))[:-2]
 
 
 class TestInferencerDefault(unittest.TestCase):
@@ -229,9 +227,7 @@ detect_colour_checkers_inference` definition unit tests methods.
             ),
         ]
 
-        np.set_printoptions(
-            formatter={"float": "{:0.8f}".format}, suppress=True
-        )
+        np.set_printoptions(formatter={"float": "{:0.8f}".format}, suppress=True)
         for i, png_file in enumerate(PNG_FILES):
             np.testing.assert_allclose(
                 detect_colour_checkers_inference(read_image(png_file)),
@@ -245,9 +241,7 @@ detect_colour_checkers_inference` definition unit tests methods.
             colour_checker,
         ) = detect_colour_checkers_inference(
             read_image(PNG_FILES[0]), additional_data=True
-        )[
-            0
-        ].values
+        )[0].values
 
         np.testing.assert_allclose(
             swatch_colours,

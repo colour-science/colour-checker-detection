@@ -401,9 +401,7 @@ sample_colour_checker` definition unit tests methods.
 
         path = next(png_file for png_file in PNG_FILES if "1967" in png_file)
 
-        quadrilateral = np.array(
-            [[358, 691], [373, 219], [1086, 242], [1071, 713]]
-        )
+        quadrilateral = np.array([[358, 691], [373, 219], [1086, 242], [1071, 713]])
         rectangle = np.array([[1440, 0], [1440, 960], [0, 960], [0, 0]])
         colour_checkers_data = sample_colour_checker(
             read_image(path), quadrilateral, rectangle
@@ -443,9 +441,7 @@ sample_colour_checker` definition unit tests methods.
         )
 
         self.assertTupleEqual(colour_checkers_data.swatch_masks.shape, (24, 4))
-        self.assertTupleEqual(
-            colour_checkers_data.colour_checker.shape, (960, 1440, 3)
-        )
+        self.assertTupleEqual(colour_checkers_data.colour_checker.shape, (960, 1440, 3))
 
 
 if __name__ == "__main__":
