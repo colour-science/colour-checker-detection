@@ -1126,10 +1126,11 @@ def sample_colour_checker(
         )
     else:
         reference_mse = metric_mse(settings.reference_values, sampled_colours)
+        candidate_quadrilateral = np.copy(quadrilateral)
         for _ in range(3):
-            quadrilateral = np.roll(quadrilateral, 1, 0)
+            candidate_quadrilateral = np.roll(candidate_quadrilateral, 1, 0)
             transform = cv2.getPerspectiveTransform(
-                quadrilateral,
+                candidate_quadrilateral,
                 rectangle,
             )
             colour_checker_candidate = cv2.warpPerspective(
@@ -1152,6 +1153,7 @@ def sample_colour_checker(
                 reference_mse = candidate_mse
                 sampled_colours = candidate_sampled_colours
                 colour_checker = colour_checker_candidate
+                quadrilateral = candidate_quadrilateral
 
     colour_checker = cast(NDArrayFloat, colour_checker)
 
