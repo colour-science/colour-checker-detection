@@ -985,11 +985,14 @@ class DataDetectionColourChecker(MixinDataclassIterable):
         Colour checker swatches masks.
     colour_checker
         Cropped and levelled Colour checker image.
+    quadrilateral
+        Source quadrilateral where the colour checker has been detected.
     """
 
     swatch_colours: NDArrayFloat
     swatch_masks: NDArrayInt
     colour_checker: NDArrayFloat
+    quadrilateral: NDArrayFloat
 
 
 def sample_colour_checker(
@@ -1004,7 +1007,7 @@ def sample_colour_checker(
     image
         Image to sample from.
     quadrilateral
-        Detected source quadrilateral where the colour checker has been detected.
+        Source quadrilateral where the colour checker has been detected.
     rectangle
         Target rectangle to warp the detected source quadrilateral onto.
     samples
@@ -1152,4 +1155,6 @@ def sample_colour_checker(
 
     colour_checker = cast(NDArrayFloat, colour_checker)
 
-    return DataDetectionColourChecker(sampled_colours, masks, colour_checker)
+    return DataDetectionColourChecker(
+        sampled_colours, masks, colour_checker, quadrilateral
+    )

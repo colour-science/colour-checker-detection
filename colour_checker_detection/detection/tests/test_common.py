@@ -442,6 +442,9 @@ sample_colour_checker` definition unit tests methods.
 
         self.assertTupleEqual(colour_checkers_data.swatch_masks.shape, (24, 4))
         self.assertTupleEqual(colour_checkers_data.colour_checker.shape, (960, 1440, 3))
+        self.assertTupleEqual(
+            colour_checkers_data.quadrilateral.shape, quadrilateral.shape
+        )
 
 
 if __name__ == "__main__":
