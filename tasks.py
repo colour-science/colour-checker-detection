@@ -132,9 +132,7 @@ def formatting(
         message_box('Cleaning up "BibTeX" file...')
         bibtex_path = BIBLIOGRAPHY_NAME
         with open(bibtex_path) as bibtex_file:
-            entries = (
-                biblib.bib.Parser().parse(bibtex_file.read()).get_entries()
-            )
+            entries = biblib.bib.Parser().parse(bibtex_file.read()).get_entries()
 
         for entry in sorted(entries.values(), key=lambda x: x.key):
             with contextlib.suppress(KeyError):
@@ -258,9 +256,7 @@ def docs(ctx: Context, html: bool = True, pdf: bool = True):
         Whether to build the *PDF* documentation.
     """
 
-    with ctx.prefix("export COLOUR_SCIENCE__DOCUMENTATION_BUILD=True"), ctx.cd(
-        "docs"
-    ):
+    with ctx.prefix("export COLOUR_SCIENCE__DOCUMENTATION_BUILD=True"), ctx.cd("docs"):
         if html:
             message_box('Building "HTML" documentation...')
             ctx.run("make html")
@@ -348,10 +344,7 @@ def virtualise(ctx: Context, tests: bool = True):
         with ctx.cd(unique_name):
             ctx.run("poetry install")
             ctx.run("source $(poetry env info -p)/bin/activate")
-            ctx.run(
-                'python -c "import imageio;'
-                'imageio.plugins.freeimage.download()"'
-            )
+            ctx.run('python -c "import imageio;imageio.plugins.freeimage.download()"')
             if tests:
                 # The test images are not available thus many doctests
                 # cannot be run properly:
@@ -403,9 +396,7 @@ def tag(ctx: Context):
         remote_tags = result.stdout.strip().split("\n")  # pyright: ignore
         tags = set()
         for remote_tag in remote_tags:
-            tags.add(
-                remote_tag.split("refs/tags/")[1].replace("refs/tags/", "^{}")
-            )
+            tags.add(remote_tag.split("refs/tags/")[1].replace("refs/tags/", "^{}"))
         version_tags = sorted(tags)
         if f"v{version}" in version_tags:
             raise RuntimeError(

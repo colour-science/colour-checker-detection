@@ -12,7 +12,7 @@ Colour - Checker Detection
     :target: https://coveralls.io/r/colour-science/colour-checker-detection
     :alt: Coverage Status
 .. |codacy| image:: https://img.shields.io/codacy/grade/c543bc30229347cdaea00aadd3f79499/develop.svg?style=flat-square
-    :target: https://www.codacy.com/app/colour-science/colour-checker-detection
+    :target: https://app.codacy.com/gh/colour-science/colour-checker-detection
     :alt: Code Grade
 .. |version| image:: https://img.shields.io/pypi/v/colour-checker-detection.svg?style=flat-square
     :target: https://pypi.org/project/colour-checker-detection

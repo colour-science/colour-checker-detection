@@ -370,7 +370,8 @@ def detect_colour_checkers_inference(
         image = read_image(cast(str, image))
     else:
         image = convert_bit_depth(
-            image, DTYPE_FLOAT_DEFAULT.__name__  # pyright: ignore
+            image,
+            DTYPE_FLOAT_DEFAULT.__name__,  # pyright: ignore
         )
 
     if apply_cctf_decoding:
@@ -412,9 +413,7 @@ def detect_colour_checkers_inference(
             )
 
             if show:
-                colour_checker = np.copy(
-                    colour_checkers_data[-1].colour_checker
-                )
+                colour_checker = np.copy(colour_checkers_data[-1].colour_checker)
                 for swatch_mask in colour_checkers_data[-1].swatch_masks:
                     colour_checker[
                         swatch_mask[0] : swatch_mask[1],
