@@ -344,6 +344,7 @@ detect_colour_checkers_segmentation` definition unit tests methods.
             swatch_colours,
             swatch_masks,
             colour_checker,
+            quadrilateral,
         ) = detect_colour_checkers_segmentation(
             read_image(PNG_FILES[0]), additional_data=True
         )[0].values
@@ -390,6 +391,8 @@ detect_colour_checkers_segmentation` definition unit tests methods.
                 ]
             ),
         )
+
+        self.assertTupleEqual(quadrilateral.shape, (4, 2))
 
 
 if __name__ == "__main__":
