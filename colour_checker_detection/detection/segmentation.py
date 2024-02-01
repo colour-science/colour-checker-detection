@@ -313,9 +313,7 @@ def segmenter_default(
     )
     maximum_area = width * height / settings.swatches
 
-    contours, image_k = detect_contours(  # pyright: ignore
-        image, True, **settings
-    )
+    contours, image_k = detect_contours(image, True, **settings)  # pyright: ignore
 
     # Filtering squares/swatches contours.
     squares = []
