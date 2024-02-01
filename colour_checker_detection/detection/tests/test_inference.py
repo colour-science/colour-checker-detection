@@ -227,7 +227,6 @@ detect_colour_checkers_inference` definition unit tests methods.
             ),
         ]
 
-        np.set_printoptions(formatter={"float": "{:0.8f}".format}, suppress=True)
         for i, png_file in enumerate(PNG_FILES):
             np.testing.assert_allclose(
                 detect_colour_checkers_inference(read_image(png_file)),
