@@ -374,7 +374,7 @@ def reformat_image(
 
     Examples
     --------
-    >>> image = np.arange(24).reshape([2, 4, 3])
+    >>> image = np.reshape(np.arange(24), (2, 4, 3))
     >>> image  # doctest: +ELLIPSIS
     array([[[ 0,  1,  2],
             [ 3,  4,  5],
@@ -480,7 +480,7 @@ def transform_image(
 
     Examples
     --------
-    >>> image = np.arange(24).reshape([2, 4, 3])
+    >>> image = np.reshape(np.arange(24), (2, 4, 3))
     >>> image  # doctest: +ELLIPSIS
     array([[[ 0,  1,  2],
             [ 3,  4,  5],
