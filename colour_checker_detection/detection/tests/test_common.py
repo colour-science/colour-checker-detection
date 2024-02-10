@@ -165,7 +165,7 @@ class TestTransformImage(unittest.TestCase):
         definition unit tests methods.
         """
 
-        image = as_float32_array(np.arange(96)).reshape([4, 8, 3])
+        image = np.reshape(as_float32_array(np.arange(96)), (4, 8, 3))
 
         np.testing.assert_allclose(
             transform_image(image, np.array([2, 4]), 45, np.array([2, 3])),
