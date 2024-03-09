@@ -232,4 +232,4 @@ def segmentation(
 if __name__ == "__main__":
     logging.basicConfig()
 
-    segmentation()
+    segmentation()  # pyright: ignore
