@@ -994,7 +994,7 @@ def remove_stacked_contours(
     array([[[ 0,  0],
             [10,  0],
             [10, 10],
-            [ 0, 10]]])
+            [ 0, 10]]], dtype=int32)
     """
 
     contours = as_int32_array(contours)

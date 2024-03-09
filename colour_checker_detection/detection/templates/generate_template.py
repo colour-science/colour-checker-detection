@@ -11,12 +11,15 @@ Generates a template for a colour checker.
 """
 
 import json
+import os
 from dataclasses import dataclass
 from itertools import combinations, permutations
 
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+
+from colour_checker_detection import ROOT_DETECTION_TEMPLATES
 
 
 @dataclass
@@ -117,10 +120,12 @@ def generate_template(
     )
     template.correspondences = valid_correspondences
 
-    with open(f"template_{name}.json", "w") as f:
+    with open(
+        os.path.join(ROOT_DETECTION_TEMPLATES, f"template_{name}.json"), "w"
+    ) as f:
         template.swatch_centroids = template.swatch_centroids.tolist()
         template.colours = template.colours.tolist()
-        json.dump(template.__dict__, f, indent=4)
+        json.dump(template.__dict__, f, indent=2)
 
     if visualize:
         template_adjacency_matrix = np.zeros(
