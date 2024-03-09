@@ -79,6 +79,8 @@ __all__ = [
     "scale_contour",
     "approximate_contour",
     "quadrilateralise_contours",
+    "largest_convex_quadrilateral",
+    "is_convex_quadrilateral",
     "remove_stacked_contours",
     "DataDetectionColourChecker",
     "sample_colour_checker",
@@ -89,7 +91,6 @@ DTYPE_INT_DEFAULT: Type[DTypeInt] = np.int32
 
 DTYPE_FLOAT_DEFAULT: Type[DTypeFloat] = np.float32
 """Default floating point number dtype."""
-
 
 _COLOURCHECKER = CCS_COLOURCHECKERS["ColorChecker24 - After November 2014"]
 _COLOURCHECKER_VALUES = XYZ_to_RGB(
@@ -880,9 +881,81 @@ def quadrilateralise_contours(contours: ArrayLike) -> Tuple[NDArrayInt, ...]:
     )
 
 
+def largest_convex_quadrilateral(contour: np.ndarray) -> Tuple[NDArrayInt, bool]:
+    """
+    Return the largest convex quadrilateral contained in the given contour.
+
+    Parameters
+    ----------
+    contour
+        Contour to process.
+
+    Returns
+    -------
+    :class:`tuple`
+        (contour of the largest convex quadrilateral, convexity)
+
+    Example:
+    >>> contour = np.array(
+    ...     [[0, 0], [0, 1], [1, 1], [1, 0], [0.5, 0.5]], dtype=np.float32
+    ... )
+    >>> largest_convex_quadrilateral(contour)
+    (array([[          0,           0],
+           [          0,           1],
+           [          1,           1],
+           [          1,           0]], dtype=float32), True)
+    """
+    while len(contour) > 4:
+        areas = {
+            i: cv2.contourArea(np.delete(contour, i, axis=0))
+            for i in range(len(contour))
+        }
+        areas = dict(sorted(areas.items(), key=lambda item: item[1]))
+
+        # delete pt, which, if excluded leaves the largest area
+        contour = np.delete(contour, list(areas.keys())[-1], axis=0)
+
+    return contour, cv2.isContourConvex(contour)
+
+
+def is_convex_quadrilateral(contour: np.ndarray, tolerance: float = 0.1) -> bool:
+    """
+    Return True if the given contour is a convex quadrilateral.
+
+    Parameters
+    ----------
+    contour
+        Contour to process.
+    tolerance
+        Tolerance for the ratio of the areas between the trimmed contour
+        and the original contour.
+
+    Returns
+    -------
+    :class:`bool`
+        True if the given contour is a convex quadrilateral.
+
+    Example:
+    >>> contour = np.array(
+    ...     [[0, 0], [0, 1], [1, 1], [1, 0], [0.5, 0.5]], dtype=np.float32
+    ... )
+    >>> is_convex_quadrilateral(contour)
+    False
+    """
+    if len(contour) >= 4:
+        original_area = cv2.contourArea(contour)
+        convex_contour, convexity = largest_convex_quadrilateral(contour)
+        if convexity:
+            convex_area = cv2.contourArea(convex_contour)
+            ratio = convex_area / original_area
+            return np.abs(ratio - 1) < tolerance
+
+    return False
+
+
 def remove_stacked_contours(
     contours: ArrayLike, keep_smallest: bool = True
-) -> Tuple[NDArrayInt, ...]:
+) -> NDArrayInt:
     """
     Remove amd filter out the stacked contours from given contours keeping
     either the smallest or the largest ones.
@@ -912,16 +985,16 @@ def remove_stacked_contours(
     ...         [[0, 0], [10, 0], [10, 10], [0, 10]],
     ...     ]
     ... )
-    >>> remove_stacked_contours(contours)  # doctest: +ELLIPSIS
-    (array([[0, 0],
-           [7, 0],
-           [7, 7],
-           [0, 7]]...)
-    >>> remove_stacked_contours(contours, False)  # doctest: +ELLIPSIS
-    (array([[ 0,  0],
-           [10,  0],
-           [10, 10],
-           [ 0, 10]]...)
+    >>> remove_stacked_contours(contours)
+    array([[[0, 0],
+            [7, 0],
+            [7, 7],
+            [0, 7]]])
+    >>> remove_stacked_contours(contours, False)
+    array([[[ 0,  0],
+            [10,  0],
+            [10, 10],
+            [ 0, 10]]])
     """
 
     contours = as_int32_array(contours)
@@ -966,8 +1039,8 @@ def remove_stacked_contours(
 
                 filtered_contours[index] = contour
 
-    return tuple(
-        as_int32_array(filtered_contour) for filtered_contour in filtered_contours
+    return as_int32_array(
+        [as_int32_array(filtered_contour) for filtered_contour in filtered_contours]
     )
 
 
@@ -991,8 +1064,8 @@ class DataDetectionColourChecker(MixinDataclassIterable):
 
     swatch_colours: NDArrayFloat
     swatch_masks: NDArrayInt
-    colour_checker: NDArrayFloat
-    quadrilateral: NDArrayFloat
+    colour_checker: NDArrayInt
+    quadrilateral: NDArrayInt
 
 
 def sample_colour_checker(
@@ -1158,5 +1231,8 @@ def sample_colour_checker(
     colour_checker = cast(NDArrayFloat, colour_checker)
 
     return DataDetectionColourChecker(
-        sampled_colours, masks, colour_checker, quadrilateral
+        sampled_colours,
+        masks,
+        as_int32_array(colour_checker),
+        as_int32_array(quadrilateral),
     )
