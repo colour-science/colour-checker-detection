@@ -261,7 +261,7 @@ def filter_contours(
     array([[[100, 100],
             [200, 100],
             [200, 200],
-            [100, 200]]])
+            [100, 200]]], dtype=int32)
     """
     width, height = image.shape[1], image.shape[0]
     minimum_area = width * height / swatches / swatch_minimum_area_factor
@@ -442,7 +442,7 @@ def cluster_swatches(
            [[ 75,  75],
             [225,  75],
             [225, 225],
-            [ 75, 225]]])
+            [ 75, 225]]], dtype=int32)
     """
     scaled_swatches = [
         scale_contour(swatch, swatch_contour_scale) for swatch in swatches
@@ -500,7 +500,7 @@ def filter_clusters(
     array([[[100, 100],
             [200, 100],
             [200, 200],
-            [100, 200]]])
+            [100, 200]]], dtype=int32)
     """
     filtered_clusters = []
     for cluster in clusters[:]:
@@ -629,7 +629,7 @@ def group_swatches(
     ... )
     >>> group_swatches(clusters, swatches, template)
     array([[[150, 150],
-            [150, 150]]])
+            [150, 150]]], dtype=int32)
     """
 
     clustered_centroids = []
@@ -680,7 +680,7 @@ def order_centroids(clustered_centroids: NDArrayInt) -> NDArrayInt:
     array([[[100, 100],
             [200, 100],
             [200, 200],
-            [100, 200]]])
+            [100, 200]]], dtype=int32)
     """
     starting_pts = []
     for centroids_in_cluster in clustered_centroids:
@@ -781,9 +781,9 @@ def determine_best_transformation(
     ...     dtype=np.float32,
     ... )
     >>> determine_best_transformation(template, clustered_centroids, starting_pts, 10)
-    array([[          1,  3.3961e-32, -4.2633e-14],
-           [ 2.1316e-16,           1, -4.2633e-14],
-           [ 2.1316e-18,  1.9387e-34,           1]])
+    array([[  1.00000000e+00,   3.39609879e-32,  -4.26325641e-14],
+           [  2.13162821e-16,   1.00000000e+00,  -4.26325641e-14],
+           [  2.13162821e-18,   1.93870456e-34,   1.00000000e+00]])
     """
     warping_data = [
         WarpingData(cluster_id) for cluster_id in range(len(clustered_centroids))
@@ -853,10 +853,10 @@ def extract_colours(warped_image: ArrayLike, template: Template) -> NDArrayFloat
     >>> warped_image = np.zeros((600, 900, 3))
     >>> warped_image[100:200, 100:200] = 0.2
     >>> extract_colours(warped_image, template)
-    array([[       0.05,        0.05,        0.05],
-           [       0.05,        0.05,        0.05],
-           [       0.05,        0.05,        0.05],
-           [       0.05,        0.05,        0.05]])
+    array([[ 0.05,  0.05,  0.05],
+           [ 0.05,  0.05,  0.05],
+           [ 0.05,  0.05,  0.05],
+           [ 0.05,  0.05,  0.05]])
     """
     swatch_colours = []
 
@@ -894,8 +894,8 @@ def correct_flipped(swatch_colours: NDArrayFloat) -> NDArrayFloat:
     ...     ]
     ... )
     >>> correct_flipped(swatch_colours)
-    array([[          1,         0.5,         0.1],
-           [          0,           0,           0]])
+    array([[ 1. ,  0.5,  0.1],
+           [ 0. ,  0. ,  0. ]])
     """
     chromatic_std = np.std(swatch_colours[0])
     achromatic_std = np.std(swatch_colours[-1])
@@ -942,8 +942,8 @@ def check_residuals(swatch_colours: NDArrayFloat, template: Template) -> NDArray
     ...     ]
     ... )
     >>> check_residuals(swatch_colours, template)
-    array([[          0,           0,           0],
-           [          1,         0.5,         0.1]])
+    array([[ 0. ,  0. ,  0. ],
+           [ 1. ,  0.5,  0.1]])
     """
     residual = [
         np.abs(r - m) for r, m in zip(template.colours, np.array(swatch_colours))
@@ -1662,30 +1662,30 @@ def extractor_default(
     >>> extractor_default(
     ...     image, segmentation_colour_checkers_data
     ... )  # doctest: +ELLIPSIS
-    (array([[    0.36001,     0.22311,     0.11761],
-           [    0.62583,     0.39449,     0.24167],
-           [    0.33198,       0.316,     0.28867],
-           [     0.3046,     0.27332,     0.10487],
-           [    0.41751,     0.31914,     0.30789],
-           [    0.34866,     0.43935,     0.29126],
-           [    0.67984,     0.35237,    0.069972],
-           [    0.27119,     0.25353,     0.33079],
-           [    0.62092,     0.27034,     0.18653],
-           [    0.30716,     0.17979,     0.19182],
-           [    0.48547,     0.45856,    0.032949],
-           [    0.65077,     0.40023,    0.016077],
-           [    0.19286,     0.18585,     0.27459],
-           [    0.28055,     0.38513,     0.12244],
-           [    0.55454,     0.21436,     0.12549],
-           [    0.72069,     0.51494,   0.0054873],
-           [    0.57729,     0.25772,     0.26856],
-           [    0.17289,     0.31638,     0.29509],
-           [    0.73941,     0.60953,     0.43831],
-           [    0.62817,      0.5176,     0.37216],
-           [    0.51361,     0.42049,     0.29857],
-           [    0.36953,     0.30218,     0.20827],
-           [    0.26287,     0.21493,     0.14277],
-           [    0.16103,     0.13382,    0.080474]], dtype=float32),)
+    (array([[ 0.36000502,  0.22310828,  0.11760838],
+           [ 0.62583095,  0.39448658,  0.24166538],
+           [ 0.33197987,  0.31600383,  0.28866863],
+           [ 0.30460072,  0.27332103,  0.10486546],
+           [ 0.4175137 ,  0.3191403 ,  0.30789143],
+           [ 0.34866208,  0.43934605,  0.29126382],
+           [ 0.6798398 ,  0.35236537,  0.06997224],
+           [ 0.27118534,  0.25352538,  0.3307873 ],
+           [ 0.6209186 ,  0.27034152,  0.18652563],
+           [ 0.30716118,  0.1797888 ,  0.19181633],
+           [ 0.48547122,  0.45855856,  0.03294946],
+           [ 0.6507675 ,  0.40023163,  0.01607687],
+           [ 0.19286261,  0.18585184,  0.27459192],
+           [ 0.28054565,  0.3851303 ,  0.12244403],
+           [ 0.554543  ,  0.21436104,  0.1254918 ],
+           [ 0.7206889 ,  0.51493937,  0.00548728],
+           [ 0.5772922 ,  0.25771797,  0.2685552 ],
+           [ 0.1728921 ,  0.3163792 ,  0.2950853 ],
+           [ 0.7394083 ,  0.60953134,  0.43830705],
+           [ 0.6281669 ,  0.5175997 ,  0.37215674],
+           [ 0.51360977,  0.42048815,  0.298571  ],
+           [ 0.36953208,  0.30218396,  0.20827033],
+           [ 0.26286718,  0.21493256,  0.14277342],
+           [ 0.16102536,  0.13381618,  0.08047408]], dtype=float32),)
     """
     settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
     settings.update(**kwargs)

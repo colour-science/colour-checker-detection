@@ -900,10 +900,10 @@ def largest_convex_quadrilateral(contour: np.ndarray) -> Tuple[NDArrayInt, bool]
     ...     [[0, 0], [0, 1], [1, 1], [1, 0], [0.5, 0.5]], dtype=np.float32
     ... )
     >>> largest_convex_quadrilateral(contour)
-    (array([[          0,           0],
-           [          0,           1],
-           [          1,           1],
-           [          1,           0]], dtype=float32), True)
+    (array([[ 0.,  0.],
+           [ 0.,  1.],
+           [ 1.,  1.],
+           [ 1.,  0.]], dtype=float32), True)
     """
     while len(contour) > 4:
         areas = {
@@ -989,7 +989,7 @@ def remove_stacked_contours(
     array([[[0, 0],
             [7, 0],
             [7, 7],
-            [0, 7]]])
+            [0, 7]]], dtype=int32)
     >>> remove_stacked_contours(contours, False)
     array([[[ 0,  0],
             [10,  0],
