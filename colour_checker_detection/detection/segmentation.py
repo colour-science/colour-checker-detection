@@ -1138,7 +1138,9 @@ def plot_colours_warped(
     ... )
     >>> template = Template(
     ...     **json.load(
-    ...         open(os.path.join(ROOT_DETECTION_TEMPLATES, "template_colour.pkl"), "r")
+    ...         open(
+    ...             os.path.join(ROOT_DETECTION_TEMPLATES, "template_colour.json"), "r"
+    ...         )
     ...     )
     ... )
     >>> warped_image = np.zeros((600, 900, 3))
