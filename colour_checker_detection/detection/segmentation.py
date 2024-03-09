@@ -1070,7 +1070,6 @@ def plot_colours(
     Examples
     --------
     >>> import os
-    >>> import pickle
     >>> import numpy as np
     >>> from colour_checker_detection.detection.common import DataDetectionColourChecker
     >>> from colour_checker_detection import plot_colours
@@ -1129,7 +1128,8 @@ def plot_colours_warped(
     Examples
     --------
     >>> import os
-    >>> import pickle
+    >>> import json
+    >>> import colour_checker_detection.detection.templates.template_colour
     >>> import numpy as np
     >>> from colour_checker_detection import (
     ...     ROOT_DETECTION_TEMPLATES,
@@ -1137,10 +1137,8 @@ def plot_colours_warped(
     ...     plot_colours_warped,
     ... )
     >>> template = Template(
-    ...     **pickle.load(
-    ...         open(
-    ...             os.path.join(ROOT_DETECTION_TEMPLATES, "template_colour.pkl"), "rb"
-    ...         )
+    ...     **json.load(
+    ...         open(os.path.join(ROOT_DETECTION_TEMPLATES, "template_colour.pkl"), "r")
     ...     )
     ... )
     >>> warped_image = np.zeros((600, 900, 3))
@@ -1854,8 +1852,9 @@ def extractor_warped(
     Examples
     --------
     >>> import os
-    >>> import pickle
+    >>> import json
     >>> from colour import read_image
+    >>> import colour_checker_detection.detection.templates.template_colour
     >>> from colour_checker_detection import (
     ...     ROOT_RESOURCES_TESTS,
     ...     ROOT_DETECTION_TEMPLATES,
@@ -1871,9 +1870,9 @@ def extractor_warped(
     ... )
     >>> image = read_image(path)
     >>> template = Template(
-    ...     **pickle.load(
+    ...     **json.load(
     ...         open(
-    ...             os.path.join(ROOT_DETECTION_TEMPLATES, "template_colour.pkl"), "rb"
+    ...             os.path.join(ROOT_DETECTION_TEMPLATES, "template_colour.json"), "r"
     ...         )
     ...     )
     ... )
@@ -1888,6 +1887,8 @@ def extractor_warped(
 
     if apply_cctf_decoding:
         image = cctf_decoding(image)
+
+    image = cast(NDArrayFloat, image)
 
     clustered_centroids = group_swatches(
         segmentation_colour_checkers_data.clusters,

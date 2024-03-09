@@ -10,7 +10,7 @@ Generates a template for a colour checker.
 
 """
 
-import pickle
+import json
 from dataclasses import dataclass
 from itertools import combinations, permutations
 
@@ -107,7 +107,7 @@ def generate_template(
         angle_difference = np.diff(angle)
 
         if np.all(angle_difference > 0) and are_three_collinear(points):
-            valid_correspondences.append(correspondence)
+            valid_correspondences.append(list(correspondence))
 
     # Sort by area as a means to reach promising combinations earlier
     valid_correspondences = sorted(
@@ -117,8 +117,10 @@ def generate_template(
     )
     template.correspondences = valid_correspondences
 
-    with open(f"template_{name}.pkl", "wb") as f:
-        pickle.dump(template.__dict__, f)
+    with open(f"template_{name}.json", "w") as f:
+        template.swatch_centroids = template.swatch_centroids.tolist()
+        template.colours = template.colours.tolist()
+        json.dump(template.__dict__, f, indent=4)
 
     if visualize:
         template_adjacency_matrix = np.zeros(
@@ -146,7 +148,7 @@ def generate_template(
                         image,
                         swatch_centroids[r],
                         swatch_centroids[c],
-                        255,
+                        (255, 255, 255),
                         thickness=2,
                     )  # pyright: ignore
         plt.imshow(image, cmap="gray")
