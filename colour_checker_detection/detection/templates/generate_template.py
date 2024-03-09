@@ -19,8 +19,6 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
-from colour_checker_detection import ROOT_DETECTION_TEMPLATES
-
 
 @dataclass
 class Template:
@@ -121,7 +119,10 @@ def generate_template(
     template.correspondences = valid_correspondences
 
     with open(
-        os.path.join(ROOT_DETECTION_TEMPLATES, f"template_{name}.json"), "w"
+        os.path.join(
+            os.path.dirname(os.path.realpath(__file__)), f"template_{name}.json"
+        ),
+        "w",
     ) as f:
         template.swatch_centroids = template.swatch_centroids.tolist()
         template.colours = template.colours.tolist()
