@@ -25,10 +25,18 @@ from .detection import (
     SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC,
     SETTINGS_SEGMENTATION_COLORCHECKER_NANO,
     SETTINGS_SEGMENTATION_COLORCHECKER_SG,
+    Template,
     detect_colour_checkers_inference,
     detect_colour_checkers_segmentation,
+    extractor_default,
+    extractor_warped,
     inferencer_default,
+    plot_colours,
+    plot_colours_warped,
+    plot_contours,
+    plot_swatches_and_clusters,
     segmenter_default,
+    segmenter_warped,
 )
 
 __author__ = "Colour Developers"
@@ -48,6 +56,14 @@ __all__ = [
     "detect_colour_checkers_segmentation",
     "inferencer_default",
     "segmenter_default",
+    "segmenter_warped",
+    "extractor_default",
+    "extractor_warped",
+    "Template",
+    "plot_contours",
+    "plot_swatches_and_clusters",
+    "plot_colours",
+    "plot_colours_warped",
 ]
 
 ROOT_RESOURCES: str = os.path.join(os.path.dirname(__file__), "resources")
@@ -57,6 +73,9 @@ ROOT_RESOURCES_EXAMPLES: str = os.path.join(
 ROOT_RESOURCES_TESTS: str = os.path.join(
     ROOT_RESOURCES, "colour-checker-detection-tests-datasets"
 )
+
+ROOT_DETECTION: str = os.path.join(os.path.dirname(__file__), "detection")
+ROOT_DETECTION_TEMPLATES: str = os.path.join(ROOT_DETECTION, "templates")
 
 __application_name__ = "Colour - Checker Detection"
 
