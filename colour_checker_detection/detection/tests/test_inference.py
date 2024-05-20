@@ -1,4 +1,3 @@
-# !/usr/bin/env python
 """
 Define the unit tests for the
 :mod:`colour_checker_detection.detection.inference` module.
@@ -8,7 +7,6 @@ import glob
 import os
 import platform
 import sys
-import unittest
 
 import numpy as np
 from colour import read_image
@@ -40,7 +38,7 @@ DETECTION_DIRECTORY = os.path.join(
 PNG_FILES = sorted(glob.glob(os.path.join(DETECTION_DIRECTORY, "IMG_19*.png")))[:-2]
 
 
-class TestInferencerDefault(unittest.TestCase):
+class TestInferencerDefault:
     """
     Define :func:`colour_checker_detection.detection.inference.\
 inferencer_default` definition unit tests methods.
@@ -74,12 +72,12 @@ inferencer_default` definition unit tests methods.
 
         for i, png_file in enumerate(PNG_FILES):
             results = inferencer_default(png_file)
-            self.assertTrue(results[0][0] > 0.85)
-            self.assertEqual(int(results[0][1]), 0)
-            self.assertTupleEqual(results[0][2].shape, shapes[i])
+            assert results[0][0] > 0.85
+            assert int(results[0][1]) == 0
+            assert results[0][2].shape == shapes[i]
 
 
-class TestDetectColourCheckersInference(unittest.TestCase):
+class TestDetectColourCheckersInference:
     """
     Define :func:`colour_checker_detection.detection.inference.\
 detect_colour_checkers_inference` definition unit tests methods.
@@ -286,8 +284,4 @@ detect_colour_checkers_inference` definition unit tests methods.
             ),
         )
 
-        self.assertTupleEqual(quadrilateral.shape, (4, 2))
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert quadrilateral.shape == (4, 2)
