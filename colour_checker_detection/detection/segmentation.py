@@ -2,7 +2,7 @@
 Colour Checker Detection - Segmentation
 =======================================
 
-Defines the objects for colour checker detection using segmentation:
+Define the objects for colour checker detection using segmentation:
 
 -   :attr:`colour_checker_detection.SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC`
 -   :attr:`colour_checker_detection.SETTINGS_SEGMENTATION_COLORCHECKER_SG`
