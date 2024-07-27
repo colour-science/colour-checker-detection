@@ -3,7 +3,7 @@
 Colour Checker Detection - Inference
 ====================================
 
-Defines the scripts for colour checker detection using inference based on
+Define the scripts for colour checker detection using inference based on
 *Ultralytics YOLOv8* machine learning model.
 
 Warnings

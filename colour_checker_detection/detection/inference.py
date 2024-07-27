@@ -2,7 +2,7 @@
 Colour Checker Detection - Inference
 ====================================
 
-Defines the objects for colour checker detection using inference based on
+Define the objects for colour checker detection using inference based on
 *Ultralytics YOLOv8* machine learning model.
 
 -   :attr:`colour_checker_detection.SETTINGS_INFERENCE_COLORCHECKER_CLASSIC`
