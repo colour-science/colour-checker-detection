@@ -50,7 +50,7 @@ inferencer_default` definition unit tests methods.
 inferencer_default` definition unit tests methods.
         """
 
-        # Skipping unit test when "png" files are missing, e.g. when testing
+        # Skipping unit test when "png" files are missing, e.g., when testing
         # the distributed "Python" package.
         if len(PNG_FILES) == 0:
             return
@@ -89,7 +89,7 @@ detect_colour_checkers_inference` definition unit tests methods.
 detect_colour_checkers_inference` definition unit tests methods.
         """
 
-        # Skipping unit test when "png" files are missing, e.g. when testing
+        # Skipping unit test when "png" files are missing, e.g., when testing
         # the distributed "Python" package.
         if len(PNG_FILES) == 0:
             return

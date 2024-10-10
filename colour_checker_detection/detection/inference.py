@@ -267,7 +267,7 @@ def detect_colour_checkers_inference(
     Other Parameters
     ----------------
     aspect_ratio
-        Colour checker aspect ratio, e.g. 1.5.
+        Colour checker aspect ratio, e.g., 1.5.
     aspect_ratio_minimum
         Minimum colour checker aspect ratio for detection: projective geometry
         might reduce the colour checker aspect ratio.

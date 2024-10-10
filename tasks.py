@@ -81,7 +81,7 @@ def clean(
     docs
         Whether to clean the *docs* directory.
     bytecode
-        Whether to clean the bytecode files, e.g. *.pyc* files.
+        Whether to clean the bytecode files, e.g., *.pyc* files.
     pytest
         Whether to clean the *Pytest* cache directory.
     """
