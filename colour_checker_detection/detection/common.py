@@ -999,7 +999,7 @@ def sample_colour_checker(
     image: ArrayLike, quadrilateral, rectangle, samples=32, **kwargs
 ) -> DataDetectionColourChecker:
     """
-    Sample the colour checker using the given source quadrilateral, i.e.
+    Sample the colour checker using the given source quadrilateral, i.e.,
     detected colour checker in the image, and the given target rectangle.
 
     Parameters

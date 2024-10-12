@@ -40,7 +40,6 @@ from colour.plotting import CONSTANTS_COLOUR_STYLE, plot_image
 from colour.utilities import (
     MixinDataclassIterable,
     Structure,
-    is_string,
 )
 from colour.utilities.documentation import (
     DocstringDict,
@@ -218,7 +217,7 @@ def segmenter_default(
     adaptive_threshold_kwargs
         Keyword arguments for :func:`cv2.adaptiveThreshold` definition.
     aspect_ratio
-        Colour checker aspect ratio, e.g. 1.5.
+        Colour checker aspect ratio, e.g., 1.5.
     aspect_ratio_minimum
         Minimum colour checker aspect ratio for detection: projective geometry
         might reduce the colour checker aspect ratio.
@@ -433,7 +432,7 @@ def detect_colour_checkers_segmentation(
     adaptive_threshold_kwargs
         Keyword arguments for :func:`cv2.adaptiveThreshold` definition.
     aspect_ratio
-        Colour checker aspect ratio, e.g. 1.5.
+        Colour checker aspect ratio, e.g., 1.5.
     aspect_ratio_minimum
         Minimum colour checker aspect ratio for detection: projective geometry
         might reduce the colour checker aspect ratio.
@@ -541,8 +540,8 @@ def detect_colour_checkers_segmentation(
     working_width = settings.working_width
     working_height = int(working_width / settings.aspect_ratio)
 
-    if is_string(image):
-        image = read_image(cast(str, image))
+    if isinstance(image, str):
+        image = read_image(image)
     else:
         image = convert_bit_depth(
             image,

@@ -1,13 +1,16 @@
-[tool.poetry]
+[project]
 name = "colour-checker-detection"
 version = "0.2.0"
 description = "Colour checker detection with Python"
-license = "BSD-3-Clause"
-authors = ["Colour Developers <colour-developers@colour-science.org>"]
-maintainers = ["Colour Developers <colour-developers@colour-science.org>"]
-readme = 'README.rst'
-repository = "https://github.com/colour-science/colour-checker-detection"
-homepage = "https://www.colour-science.org/"
+readme = "README.rst"
+requires-python = ">=3.10,<3.14"
+authors = [
+    { name = "Colour Developers", email = "colour-developers@colour-science.org" },
+]
+maintainers = [
+    { name = "Colour Developers", email = "colour-developers@colour-science.org" }
+]
+license = { text = "BSD-3-Clause" }
 keywords = [
     "color",
     "color-science",
@@ -38,52 +41,73 @@ classifiers = [
     "Topic :: Scientific/Engineering",
     "Topic :: Software Development"
 ]
+dependencies = [
+    "colour-science>=0.4.4",
+    "imageio>=2,<3",
+    "numpy>=1.24,<3",
+    "opencv-python>=4,<5",
+    "scipy>=1.10,<2",
+    "typing-extensions>=4,<5",
+]
+
+[project.optional-dependencies]
+optional = [
+    "matplotlib>=3.7",
+]
+docs = [
+    "biblib-simple",
+    "pydata-sphinx-theme",
+    "restructuredtext-lint",
+    "sphinx",
+    "sphinxcontrib-bibtex",
+]
+ultralytics = [
+    "click>=8,<9; python_version<'3.13'",
+    "ultralytics>=8,<9; python_version<'3.13'",
+]
+
+[project.urls]
+Homepage = "https://www.colour-science.org"
+Documentation = "https://colour-checker-detection.readthedocs.org"
+Repository = "https://github.com/colour-science/colour-checker-detection"
+Issues = "https://github.com/colour-science/colour-checker-detection/issues"
+Changelog = "https://github.com/colour-science/colour-checker-detection/releases"
+
+[tool.uv]
+package = true
+dev-dependencies = [
+    "coverage",
+    "coveralls",
+    "hatch",
+    "invoke",
+    "jupyter",
+    "pre-commit",
+    "pyright",
+    "pytest",
+    "pytest-cov",
+    "pytest-xdist",
+    "toml",
+    "twine",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = [ "colour_checker_detection" ]
+
+[tool.hatch.build.targets.sdist]
 exclude = [
     "colour_checker_detection/resources/colour-checker-detection-examples-datasets/detection/*",
     "colour_checker_detection/resources/colour-checker-detection-tests-datasets/colour_checker_detection/detection/*",
 ]
 
-[tool.poetry.scripts]
-colour-checker-detection-inference = 'colour_checker_detection.scripts.inference:segmentation'
-
-[tool.poetry.dependencies]
-python = ">= 3.9, < 3.13"
-colour-science = ">= 0.4.4"
-imageio = ">= 2, < 3"
-numpy = ">= 1.22, < 2"
-opencv-python = ">= 4, < 5"
-scipy = ">= 1.8, < 2"
-typing-extensions = ">= 4, < 5"
-
-[tool.poetry.group.optional.dependencies]
-matplotlib = ">= 3.5, != 3.5.0, != 3.5.1"
-
-[tool.poetry.group.ultralytics.dependencies]
-click = { version = ">= 8, < 9", python = "< 3.12" }
-ultralytics = { version = ">= 8, < 9", python = "< 3.12" }
-
-[tool.poetry.group.dev.dependencies]
-coverage = ">= 6, < 7"
-coveralls = "*"
-invoke = "*"
-jupyter = "*"
-pre-commit = ">= 3.5"
-pyright = "*"
-pytest = "*"
-pytest-cov = "*"
-pytest-xdist = "*"
-toml = "*"
-twine = "*"
-
-[tool.poetry.group.docs.dependencies]
-biblib-simple = "*"
-pydata-sphinx-theme = "*"
-restructuredtext-lint = "*"
-sphinx = "*"
-sphinxcontrib-bibtex = "*"
+[project.scripts]
+colour-checker-detection-inference = "colour_checker_detection.scripts.inference:segmentation"
 
 [tool.codespell]
-skip = 'BIBLIOGRAPHY.bib,CONTRIBUTORS.rst,*.ipynb'
+skip = "BIBLIOGRAPHY.bib,CONTRIBUTORS.rst,*.ipynb"
 
 [tool.flynt]
 line_length = 999
@@ -205,7 +229,3 @@ convention = "numpy"
 
 [tool.ruff.format]
 docstring-code-format = true
-
-[build-system]
-requires = ["poetry_core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"

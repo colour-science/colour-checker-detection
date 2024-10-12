@@ -58,6 +58,8 @@ ROOT_RESOURCES_TESTS: str = os.path.join(
     ROOT_RESOURCES, "colour-checker-detection-tests-datasets"
 )
 
+__all__ += ["ROOT_RESOURCES", "ROOT_RESOURCES_EXAMPLES", "ROOT_RESOURCES_TESTS"]
+
 __application_name__ = "Colour - Checker Detection"
 
 __major_version__ = "0"

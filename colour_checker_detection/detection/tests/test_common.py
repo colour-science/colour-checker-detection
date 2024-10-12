@@ -138,7 +138,7 @@ class TestReformatImage:
         definition unit tests methods.
         """
 
-        # Skipping unit test when "png" files are missing, e.g. when testing
+        # Skipping unit test when "png" files are missing, e.g., when testing
         # the distributed "Python" package.
         if len(PNG_FILES) == 0:
             return
@@ -392,7 +392,7 @@ remove_stacked_contours` definition unit tests methods.
 sample_colour_checker` definition unit tests methods.
         """
 
-        # Skipping unit test when "png" files are missing, e.g. when testing
+        # Skipping unit test when "png" files are missing, e.g., when testing
         # the distributed "Python" package.
         if len(PNG_FILES) == 0:
             return

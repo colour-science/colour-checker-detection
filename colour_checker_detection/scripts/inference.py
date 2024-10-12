@@ -26,8 +26,6 @@ import numpy as np
 from colour import read_image
 from colour.hints import List, Literal, NDArray, Tuple
 from colour.io import convert_bit_depth
-from ultralytics import YOLO
-from ultralytics.utils.downloads import download
 
 __author__ = "Colour Developers"
 __copyright__ = "Copyright 2024 Colour Developers"
@@ -71,7 +69,10 @@ URL_MODEL_FILE_DEFAULT: str = (
 
 
 def inference(
-    source: str | Path | NDArray, model: YOLO, show: bool = False, **kwargs
+    source: str | Path | NDArray,
+    model: YOLO,  # noqa: F821 # pyright: ignore
+    show: bool = False,
+    **kwargs,
 ) -> List[Tuple[NDArray, NDArray, NDArray]]:
     """
     Run the inference on the provided source.
@@ -195,6 +196,9 @@ def segmentation(
         Inference results.
     """
 
+    from ultralytics import YOLO
+    from ultralytics.utils.downloads import download
+
     time_start = perf_counter()
 
     logging.getLogger().setLevel(getattr(logging, logging_level.upper()))
@@ -232,4 +236,4 @@ def segmentation(
 if __name__ == "__main__":
     logging.basicConfig()
 
-    segmentation()  # pyright: ignore
+    segmentation()

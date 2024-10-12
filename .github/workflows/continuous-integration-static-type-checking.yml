@@ -18,12 +18,12 @@ jobs:
           echo "CI_PACKAGE=colour_checker_detection" >> $GITHUB_ENV
         shell: bash
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Package Dependencies
         run: |
-          pip install -r requirements.txt
+          cat requirements.txt | grep -Eo '(^[^#]+)' | xargs -n 1 pip install || true
       - name: Static Type Checking
         run: |
-          pyright --skipunannotated
+          pyright --threads --skipunannotated
