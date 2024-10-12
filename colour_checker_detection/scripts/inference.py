@@ -3,7 +3,7 @@
 Colour Checker Detection - Inference
 ====================================
 
-Defines the scripts for colour checker detection using inference based on
+Define the scripts for colour checker detection using inference based on
 *Ultralytics YOLOv8* machine learning model.
 
 Warnings
@@ -26,8 +26,6 @@ import numpy as np
 from colour import read_image
 from colour.hints import List, Literal, NDArray, Tuple
 from colour.io import convert_bit_depth
-from ultralytics import YOLO
-from ultralytics.utils.downloads import download
 
 __author__ = "Colour Developers"
 __copyright__ = "Copyright 2024 Colour Developers"
@@ -61,9 +59,7 @@ ROOT_REPOSITORY: str = os.environ.get(
 )
 """Root of the local repository to download the hosted models to."""
 
-URL_BASE: str = (
-    "https://huggingface.co/colour-science/colour-checker-detection-models"
-)
+URL_BASE: str = "https://huggingface.co/colour-science/colour-checker-detection-models"
 """URL of the remote repository to download the models from."""
 
 URL_MODEL_FILE_DEFAULT: str = (
@@ -73,7 +69,10 @@ URL_MODEL_FILE_DEFAULT: str = (
 
 
 def inference(
-    source: str | Path | NDArray, model: YOLO, show: bool = False, **kwargs
+    source: str | Path | NDArray,
+    model: YOLO,  # noqa: F821 # pyright: ignore
+    show: bool = False,
+    **kwargs,
 ) -> List[Tuple[NDArray, NDArray, NDArray]]:
     """
     Run the inference on the provided source.
@@ -171,9 +170,7 @@ def segmentation(
     output: str | None = None,
     model: str | None = None,
     show: bool = False,
-    logging_level: Literal[
-        "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"
-    ] = "INFO",
+    logging_level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO",
 ) -> NDArray:
     """
     Run the segmentation model on the given input file and save the results to
@@ -199,14 +196,15 @@ def segmentation(
         Inference results.
     """
 
+    from ultralytics import YOLO
+    from ultralytics.utils.downloads import download
+
     time_start = perf_counter()
 
     logging.getLogger().setLevel(getattr(logging, logging_level.upper()))
 
     if model is None:
-        model = os.path.join(
-            ROOT_REPOSITORY, os.path.basename(URL_MODEL_FILE_DEFAULT)
-        )
+        model = os.path.join(ROOT_REPOSITORY, os.path.basename(URL_MODEL_FILE_DEFAULT))
         logging.debug('Using "%s" default model.', model)
         if not os.path.exists(model):
             logging.info('Downloading "%s" model...', URL_MODEL_FILE_DEFAULT)
@@ -218,22 +216,19 @@ def segmentation(
     else:
         logging.debug('Reading "%s" image...', input)
         source = convert_bit_depth(
-            read_image(input)[..., :3], np.uint8.__name__  # pyright: ignore
+            read_image(input)[..., :3],
+            np.uint8.__name__,  # pyright: ignore
         )
 
     # NOTE: YOLOv8 expects "BGR" arrays.
-    results = np.array(
-        inference(source[..., ::-1], YOLO(model), show), dtype=object
-    )
+    results = np.array(inference(source[..., ::-1], YOLO(model), show), dtype=object)
 
     if output is None:
         output = f"{input}.npz"
 
     np.savez(output, results=results)
 
-    logging.debug(
-        'Total segmentation time: "%s" seconds.', perf_counter() - time_start
-    )
+    logging.debug('Total segmentation time: "%s" seconds.', perf_counter() - time_start)
 
     return results
 
@@ -241,4 +236,4 @@ def segmentation(
 if __name__ == "__main__":
     logging.basicConfig()
 
-    segmentation()  # pyright: ignore
+    segmentation()

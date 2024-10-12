@@ -2,7 +2,7 @@
 Colour Checker Detection - Segmentation
 =======================================
 
-Defines the objects for colour checker detection using segmentation:
+Define the objects for colour checker detection using segmentation:
 
 -   :attr:`colour_checker_detection.SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC`
 -   :attr:`colour_checker_detection.SETTINGS_SEGMENTATION_COLORCHECKER_SG`
@@ -40,7 +40,6 @@ from colour.plotting import CONSTANTS_COLOUR_STYLE, plot_image
 from colour.utilities import (
     MixinDataclassIterable,
     Structure,
-    is_string,
 )
 from colour.utilities.documentation import (
     DocstringDict,
@@ -102,9 +101,7 @@ Settings for the segmentation of the *X-Rite* *ColorChecker Classic* and
 *X-Rite* *ColorChecker Passport*.
 """
 
-SETTINGS_SEGMENTATION_COLORCHECKER_SG: Dict = (
-    SETTINGS_DETECTION_COLORCHECKER_SG.copy()
-)
+SETTINGS_SEGMENTATION_COLORCHECKER_SG: Dict = SETTINGS_DETECTION_COLORCHECKER_SG.copy()
 
 SETTINGS_SEGMENTATION_COLORCHECKER_SG.update(
     {
@@ -220,7 +217,7 @@ def segmenter_default(
     adaptive_threshold_kwargs
         Keyword arguments for :func:`cv2.adaptiveThreshold` definition.
     aspect_ratio
-        Colour checker aspect ratio, e.g. 1.5.
+        Colour checker aspect ratio, e.g., 1.5.
     aspect_ratio_minimum
         Minimum colour checker aspect ratio for detection: projective geometry
         might reduce the colour checker aspect ratio.
@@ -307,29 +304,22 @@ def segmenter_default(
     if apply_cctf_encoding:
         image = cctf_encoding(image)
 
-    image = reformat_image(
-        image, settings.working_width, settings.interpolation_method
-    )
+    image = reformat_image(image, settings.working_width, settings.interpolation_method)
 
     width, height = image.shape[1], image.shape[0]
     minimum_area = (
-        width
-        * height
-        / settings.swatches
-        / settings.swatch_minimum_area_factor
+        width * height / settings.swatches / settings.swatch_minimum_area_factor
     )
     maximum_area = width * height / settings.swatches
 
-    contours, image_k = detect_contours(  # pyright: ignore
-        image, True, **settings
-    )
+    contours, image_k = detect_contours(image, True, **settings)  # pyright: ignore
 
     # Filtering squares/swatches contours.
     squares = []
     for swatch_contour in quadrilateralise_contours(contours):
-        if minimum_area < cv2.contourArea(
+        if minimum_area < cv2.contourArea(swatch_contour) < maximum_area and is_square(
             swatch_contour
-        ) < maximum_area and is_square(swatch_contour):
+        ):
             squares.append(
                 as_int32_array(cv2.boxPoints(cv2.minAreaRect(swatch_contour)))
             )
@@ -339,12 +329,15 @@ def segmenter_default(
 
     # Clustering swatches.
     swatches = [
-        scale_contour(square, settings.swatch_contour_scale)
-        for square in squares
+        scale_contour(square, settings.swatch_contour_scale) for square in squares
     ]
     image_c = np.zeros(image.shape, dtype=np.uint8)
     cv2.drawContours(
-        image_c, as_int32_array(swatches), -1, [255] * 3, -1  # pyright: ignore
+        image_c,
+        as_int32_array(swatches),  # pyright: ignore
+        -1,
+        [255] * 3,
+        -1,
     )
     image_c = cv2.cvtColor(image_c, cv2.COLOR_RGB2GRAY)
 
@@ -363,11 +356,7 @@ def segmenter_default(
         height = min(rectangle[1][0], rectangle[1][1])
         ratio = width / height
 
-        if (
-            settings.aspect_ratio_minimum
-            < ratio
-            < settings.aspect_ratio_maximum
-        ):
+        if settings.aspect_ratio_minimum < ratio < settings.aspect_ratio_maximum:
             filtered_clusters.append(as_int32_array(cluster))
     clusters = as_int32_array(filtered_clusters)
 
@@ -376,10 +365,7 @@ def segmenter_default(
     for cluster in clusters:
         count = 0
         for swatch in swatches:
-            if (
-                cv2.pointPolygonTest(cluster, contour_centroid(swatch), False)
-                == 1
-            ):
+            if cv2.pointPolygonTest(cluster, contour_centroid(swatch), False) == 1:
                 count += 1
         counts.append(count)
 
@@ -446,7 +432,7 @@ def detect_colour_checkers_segmentation(
     adaptive_threshold_kwargs
         Keyword arguments for :func:`cv2.adaptiveThreshold` definition.
     aspect_ratio
-        Colour checker aspect ratio, e.g. 1.5.
+        Colour checker aspect ratio, e.g., 1.5.
     aspect_ratio_minimum
         Minimum colour checker aspect ratio for detection: projective geometry
         might reduce the colour checker aspect ratio.
@@ -554,11 +540,12 @@ def detect_colour_checkers_segmentation(
     working_width = settings.working_width
     working_height = int(working_width / settings.aspect_ratio)
 
-    if is_string(image):
-        image = read_image(cast(str, image))
+    if isinstance(image, str):
+        image = read_image(image)
     else:
         image = convert_bit_depth(
-            image, DTYPE_FLOAT_DEFAULT.__name__  # pyright: ignore
+            image,
+            DTYPE_FLOAT_DEFAULT.__name__,  # pyright: ignore
         )
 
     if apply_cctf_decoding:
@@ -566,9 +553,7 @@ def detect_colour_checkers_segmentation(
 
     image = cast(Union[NDArrayInt, NDArrayFloat], image)
 
-    image = reformat_image(
-        image, settings.working_width, settings.interpolation_method
-    )
+    image = reformat_image(image, settings.working_width, settings.interpolation_method)
 
     rectangle = as_int32_array(
         [
@@ -586,9 +571,7 @@ def detect_colour_checkers_segmentation(
     colour_checkers_data = []
     for quadrilateral in segmentation_colour_checkers_data.rectangles:
         colour_checkers_data.append(
-            sample_colour_checker(
-                image, quadrilateral, rectangle, samples, **settings
-            )
+            sample_colour_checker(image, quadrilateral, rectangle, samples, **settings)
         )
 
         if show:
@@ -601,9 +584,7 @@ def detect_colour_checkers_segmentation(
                 ] = 0
 
             plot_image(
-                CONSTANTS_COLOUR_STYLE.colour.colourspace.cctf_encoding(
-                    colour_checker
-                ),
+                CONSTANTS_COLOUR_STYLE.colour.colourspace.cctf_encoding(colour_checker),
             )
 
             plot_image(

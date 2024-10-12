@@ -12,7 +12,7 @@ Colour - Checker Detection
     :target: https://coveralls.io/r/colour-science/colour-checker-detection
     :alt: Coverage Status
 .. |codacy| image:: https://img.shields.io/codacy/grade/c543bc30229347cdaea00aadd3f79499/develop.svg?style=flat-square
-    :target: https://www.codacy.com/app/colour-science/colour-checker-detection
+    :target: https://app.codacy.com/gh/colour-science/colour-checker-detection
     :alt: Code Grade
 .. |version| image:: https://img.shields.io/pypi/v/colour-checker-detection.svg?style=flat-square
     :target: https://pypi.org/project/colour-checker-detection
@@ -44,7 +44,8 @@ The following colour checker detection algorithms are implemented:
 
     -   The model is published on `HuggingFace <https://huggingface.co/colour-science/colour-checker-detection-models>`__,
         and was trained on a purposely constructed `dataset <https://huggingface.co/datasets/colour-science/colour-checker-detection-dataset>`__.
-    -   The model has only been trained on *ColorChecker Classic 24* images and will not work with *ColorChecker Nano* or *ColorChecker SG* images.
+    -   The model has only been trained on *ColorChecker Classic 24* images and
+        will not work with *ColorChecker Nano* or *ColorChecker SG* images.
     -   Inference is performed by a script licensed under the terms of the
         *GNU Affero General Public License v3.0* as it uses the
         *Ultralytics YOLOv8* API which is incompatible with the
@@ -74,16 +75,17 @@ Primary Dependencies
 
 **Colour - Checker Detection** requires various dependencies in order to run:
 
-- `python >= 3.9, < 4 <https://www.python.org/download/releases>`__
-- `colour-science >= 4.3 <https://pypi.org/project/colour-science>`__
+- `python >= 3.10, < 3.14 <https://www.python.org/download/releases>`__
+- `colour-science >= 4.5 <https://pypi.org/project/colour-science>`__
 - `imageio >= 2, < 3 <https://imageio.github.io>`__
-- `numpy >= 1.22, < 2 <https://pypi.org/project/numpy>`__
+- `numpy >= 1.24, < 3 <https://pypi.org/project/numpy>`__
 - `opencv-python >= 4, < 5 <https://pypi.org/project/opencv-python>`__
-- `scipy >= 1.8, < 2 <https://pypi.org/project/scipy>`__
+- `scipy >= 1.10, < 2 <https://pypi.org/project/scipy>`__
 
 Secondary Dependencies
 ~~~~~~~~~~~~~~~~~~~~~~
 
+- `click >= 8, < 9 <https://pypi.org/project/click>`__
 - `ultralytics >= 8, < 9 <https://pypi.org/project/ultralytics>`__
 
 Pypi

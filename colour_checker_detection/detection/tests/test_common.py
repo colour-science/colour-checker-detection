@@ -1,4 +1,3 @@
-# !/usr/bin/env python
 """
 Define the unit tests for the
 :mod:`colour_checker_detection.detection.common` module.
@@ -6,7 +5,6 @@ Define the unit tests for the
 
 import glob
 import os
-import unittest
 
 import numpy as np
 from colour import read_image
@@ -64,7 +62,7 @@ DETECTION_DIRECTORY = os.path.join(
 PNG_FILES = sorted(glob.glob(os.path.join(DETECTION_DIRECTORY, "IMG_19*.png")))
 
 
-class TestSwatchMasks(unittest.TestCase):
+class TestSwatchMasks:
     """
     Define :func:`colour_checker_detection.detection.common.swatch_masks`
     definition unit tests methods.
@@ -93,7 +91,7 @@ class TestSwatchMasks(unittest.TestCase):
         )
 
 
-class TestSwatchColours(unittest.TestCase):
+class TestSwatchColours:
     """
     Define :func:`colour_checker_detection.detection.common.swatch_colours`
     definition unit tests methods.
@@ -128,7 +126,7 @@ class TestSwatchColours(unittest.TestCase):
         )
 
 
-class TestReformatImage(unittest.TestCase):
+class TestReformatImage:
     """
     Define :func:`colour_checker_detection.detection.common.reformat_image`
     definition unit tests methods.
@@ -140,20 +138,20 @@ class TestReformatImage(unittest.TestCase):
         definition unit tests methods.
         """
 
-        # Skipping unit test when "png" files are missing, e.g. when testing
+        # Skipping unit test when "png" files are missing, e.g., when testing
         # the distributed "Python" package.
         if len(PNG_FILES) == 0:
             return
 
         path = next(png_file for png_file in PNG_FILES if "1970" in png_file)
 
-        self.assertEqual(
-            reformat_image(read_image(path), 1440).shape[1],
-            SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC["working_width"],
+        assert (
+            reformat_image(read_image(path), 1440).shape[1]
+            == SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC["working_width"]
         )
 
 
-class TestTransformImage(unittest.TestCase):
+class TestTransformImage:
     """
     Define :func:`colour_checker_detection.detection.common.transform_image`
     definition unit tests methods.
@@ -165,7 +163,7 @@ class TestTransformImage(unittest.TestCase):
         definition unit tests methods.
         """
 
-        image = as_float32_array(np.arange(96)).reshape([4, 8, 3])
+        image = np.reshape(as_float32_array(np.arange(96)), (4, 8, 3))
 
         np.testing.assert_allclose(
             transform_image(image, np.array([2, 4]), 45, np.array([2, 3])),
@@ -217,7 +215,7 @@ class TestTransformImage(unittest.TestCase):
         )
 
 
-class TestDetectContours(unittest.TestCase):
+class TestDetectContours:
     """
     Define :func:`colour_checker_detection.detection.common.detect_contours`
     definition unit tests methods.
@@ -233,10 +231,10 @@ class TestDetectContours(unittest.TestCase):
         image[100:140, 50:90] = 1
         image[150:190, 140:180] = 1
 
-        self.assertEqual(len(detect_contours(image)), 5)
+        assert len(detect_contours(image)) == 5
 
 
-class TestIsSquare(unittest.TestCase):
+class TestIsSquare:
     """
     Define :func:`colour_checker_detection.detection.common.is_square`
     definition unit tests methods.
@@ -249,14 +247,14 @@ class TestIsSquare(unittest.TestCase):
         """
 
         shape = np.array([[0, 0], [1, 0], [1, 1], [0, 1]])
-        self.assertTrue(is_square(shape))
+        assert is_square(shape)
 
         shape = np.array([[0, 0.5], [1, 0], [1, 1], [0, 1]])
-        self.assertFalse(is_square(shape))
-        self.assertTrue(is_square(shape, 0.5))
+        assert not is_square(shape)
+        assert is_square(shape, 0.5)
 
 
-class TestContourCentroid(unittest.TestCase):
+class TestContourCentroid:
     """
     Define :func:`colour_checker_detection.detection.common.contour_centroid`
     definition unit tests methods.
@@ -272,7 +270,7 @@ class TestContourCentroid(unittest.TestCase):
         np.testing.assert_array_equal(contour_centroid(contour), (0.5, 0.5))
 
 
-class TestScaleContour(unittest.TestCase):
+class TestScaleContour:
     """
     Define :func:`colour_checker_detection.detection.common.scale_contour`
     definition unit tests methods.
@@ -296,7 +294,7 @@ class TestScaleContour(unittest.TestCase):
         )
 
 
-class TestApproximateContour(unittest.TestCase):
+class TestApproximateContour:
     """
     Define :func:`colour_checker_detection.detection.common.approximate_contour`
     definition unit tests methods.
@@ -321,7 +319,7 @@ class TestApproximateContour(unittest.TestCase):
         )
 
 
-class TestQuadrilateraliseContours(unittest.TestCase):
+class TestQuadrilateraliseContours:
     """
     Define :func:`colour_checker_detection.detection.common.\
 quadrilateralise_contours` definition unit tests methods.
@@ -351,7 +349,7 @@ quadrilateralise_contours` definition unit tests methods.
         )
 
 
-class TestRemoveStackedContours(unittest.TestCase):
+class TestRemoveStackedContours:
     """
     Define :func:`colour_checker_detection.detection.common.\
 remove_stacked_contours` definition unit tests methods.
@@ -382,7 +380,7 @@ remove_stacked_contours` definition unit tests methods.
         )
 
 
-class TestSampleColourChecker(unittest.TestCase):
+class TestSampleColourChecker:
     """
     Define :func:`colour_checker_detection.detection.common.\
 remove_stacked_contours` definition unit tests methods.
@@ -394,16 +392,14 @@ remove_stacked_contours` definition unit tests methods.
 sample_colour_checker` definition unit tests methods.
         """
 
-        # Skipping unit test when "png" files are missing, e.g. when testing
+        # Skipping unit test when "png" files are missing, e.g., when testing
         # the distributed "Python" package.
         if len(PNG_FILES) == 0:
             return
 
         path = next(png_file for png_file in PNG_FILES if "1967" in png_file)
 
-        quadrilateral = np.array(
-            [[358, 691], [373, 219], [1086, 242], [1071, 713]]
-        )
+        quadrilateral = np.array([[358, 691], [373, 219], [1086, 242], [1071, 713]])
         rectangle = np.array([[1440, 0], [1440, 960], [0, 960], [0, 0]])
         colour_checkers_data = sample_colour_checker(
             read_image(path), quadrilateral, rectangle
@@ -442,11 +438,6 @@ sample_colour_checker` definition unit tests methods.
             atol=TOLERANCE_ABSOLUTE_TESTS,
         )
 
-        self.assertTupleEqual(colour_checkers_data.swatch_masks.shape, (24, 4))
-        self.assertTupleEqual(
-            colour_checkers_data.colour_checker.shape, (960, 1440, 3)
-        )
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert colour_checkers_data.swatch_masks.shape == (24, 4)
+        assert colour_checkers_data.colour_checker.shape == (960, 1440, 3)
+        assert colour_checkers_data.quadrilateral.shape == quadrilateral.shape

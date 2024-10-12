@@ -1,4 +1,3 @@
-# !/usr/bin/env python
 """
 Define the unit tests for the
 :mod:`colour_checker_detection.detection.segmentation` module.
@@ -7,7 +6,6 @@ Define the unit tests for the
 import glob
 import os
 import platform
-import unittest
 
 import numpy as np
 from colour import read_image
@@ -39,7 +37,7 @@ DETECTION_DIRECTORY = os.path.join(
 PNG_FILES = sorted(glob.glob(os.path.join(DETECTION_DIRECTORY, "IMG_19*.png")))
 
 
-class TestSegmenterDefault(unittest.TestCase):
+class TestSegmenterDefault:
     """
     Define :func:`colour_checker_detection.detection.segmentation.\
 segmenter_default` definition unit tests methods.
@@ -51,7 +49,7 @@ segmenter_default` definition unit tests methods.
 segmenter_default` definition unit tests methods.
         """
 
-        # Skipping unit test when "png" files are missing, e.g. when testing
+        # Skipping unit test when "png" files are missing, e.g., when testing
         # the distributed "Python" package.
         if len(PNG_FILES) == 0:
             return
@@ -80,9 +78,7 @@ segmenter_default` definition unit tests methods.
             clusters,
             swatches,
             segmented_image,
-        ) = segmenter_default(
-            read_image(PNG_FILES[0]), additional_data=True
-        ).values
+        ) = segmenter_default(read_image(PNG_FILES[0]), additional_data=True).values
 
         np.testing.assert_array_equal(
             colour_checkers,
@@ -131,7 +127,7 @@ segmenter_default` definition unit tests methods.
         )
 
 
-class TestDetectColourCheckersSegmentation(unittest.TestCase):
+class TestDetectColourCheckersSegmentation:
     """
     Define :func:`colour_checker_detection.detection.segmentation.\
 detect_colour_checkers_segmentation` definition unit tests methods.
@@ -143,7 +139,7 @@ detect_colour_checkers_segmentation` definition unit tests methods.
 detect_colour_checkers_segmentation` definition unit tests methods.
         """
 
-        # Skipping unit test when "png" files are missing, e.g. when testing
+        # Skipping unit test when "png" files are missing, e.g., when testing
         # the distributed "Python" package.
         if len(PNG_FILES) == 0:
             return
@@ -346,11 +342,10 @@ detect_colour_checkers_segmentation` definition unit tests methods.
             swatch_colours,
             swatch_masks,
             colour_checker,
+            quadrilateral,
         ) = detect_colour_checkers_segmentation(
             read_image(PNG_FILES[0]), additional_data=True
-        )[
-            0
-        ].values
+        )[0].values
 
         np.testing.assert_allclose(
             swatch_colours,
@@ -395,6 +390,4 @@ detect_colour_checkers_segmentation` definition unit tests methods.
             ),
         )
 
-
-if __name__ == "__main__":
-    unittest.main()
+        assert quadrilateral.shape == (4, 2)

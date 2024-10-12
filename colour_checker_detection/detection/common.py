@@ -2,7 +2,7 @@
 Common Utilities
 ================
 
-Defines the common utilities objects that don't fall in any specific category.
+Define the common utilities objects that don't fall in any specific category.
 
 References
 ----------
@@ -374,7 +374,7 @@ def reformat_image(
 
     Examples
     --------
-    >>> image = np.arange(24).reshape([2, 4, 3])
+    >>> image = np.reshape(np.arange(24), (2, 4, 3))
     >>> image  # doctest: +ELLIPSIS
     array([[[ 0,  1,  2],
             [ 3,  4,  5],
@@ -390,7 +390,7 @@ def reformat_image(
     # for integer images.
 
     >>> reformat_image(image, 6, interpolation_method=cv2.INTER_LINEAR_EXACT)
-    ...   # doctest: +ELLIPSIS
+    ... # doctest: +ELLIPSIS
     array([[[ 0,  1,  2],
             [ 2,  3,  4],
             [ 4,  5,  6],
@@ -480,7 +480,7 @@ def transform_image(
 
     Examples
     --------
-    >>> image = np.arange(24).reshape([2, 4, 3])
+    >>> image = np.reshape(np.arange(24), (2, 4, 3))
     >>> image  # doctest: +ELLIPSIS
     array([[[ 0,  1,  2],
             [ 3,  4,  5],
@@ -495,9 +495,7 @@ def transform_image(
     # NOTE: Need to use `cv2.INTER_NEAREST` for integer images.
 
     >>> transform_image(
-    ...     image,
-    ...     translation=np.array([1, 0]),
-    ...     interpolation_method=cv2.INTER_NEAREST
+    ...     image, translation=np.array([1, 0]), interpolation_method=cv2.INTER_NEAREST
     ... )  # doctest: +ELLIPSIS
     array([[[ 0,  1,  2],
             [ 0,  1,  2],
@@ -509,9 +507,7 @@ def transform_image(
             [15, 16, 17],
             [18, 19, 20]]]...)
     >>> transform_image(
-    ...     image,
-    ...     rotation=90,
-    ...     interpolation_method=cv2.INTER_NEAREST
+    ...     image, rotation=90, interpolation_method=cv2.INTER_NEAREST
     ... )  # doctest: +ELLIPSIS
     array([[[15, 16, 17],
             [15, 16, 17],
@@ -523,9 +519,7 @@ def transform_image(
             [18, 19, 20],
             [ 6,  7,  8]]]...)
     >>> transform_image(
-    ...     image,
-    ...     scale=np.array([2, 0.5]),
-    ...     interpolation_method=cv2.INTER_NEAREST
+    ...     image, scale=np.array([2, 0.5]), interpolation_method=cv2.INTER_NEAREST
     ... )  # doctest: +ELLIPSIS
     array([[[ 3,  4,  5],
             [ 6,  7,  8],
@@ -550,9 +544,7 @@ def transform_image(
     )
     scale_transform = np.vstack((scale_transform, [0, 0, 1]))
 
-    rotation_transform = cv2.getRotationMatrix2D(
-        (center_x, center_y), -rotation, 1
-    )
+    rotation_transform = cv2.getRotationMatrix2D((center_x, center_y), -rotation, 1)
     rotation_transform = np.vstack((rotation_transform, [0, 0, 1]))
 
     transform = np.dot(rotation_transform, scale_transform)[:2, ...]
@@ -634,21 +626,16 @@ def detect_contours(
 
     # Normalisation
     image_g = (
-        linear_conversion(image_g, (np.min(image_g), np.max(image_g)), (0, 1))
-        * 255
+        linear_conversion(image_g, (np.min(image_g), np.max(image_g)), (0, 1)) * 255
     ).astype(np.uint8)
 
     # Denoising
     image_d = image_g
     for _ in range(settings.bilateral_filter_iterations):
-        image_d = cv2.bilateralFilter(
-            image_d, -1, **settings.bilateral_filter_kwargs
-        )
+        image_d = cv2.bilateralFilter(image_d, -1, **settings.bilateral_filter_kwargs)
 
     # Thresholding
-    image_t = cv2.adaptiveThreshold(
-        image_d, **settings.adaptive_threshold_kwargs
-    )
+    image_t = cv2.adaptiveThreshold(image_d, **settings.adaptive_threshold_kwargs)
 
     # Erosion / Dilation
     image_k = cv2.erode(
@@ -821,9 +808,7 @@ def approximate_contour(
 
     Examples
     --------
-    >>> contour = np.array(
-    ...     [[0, 0], [1, 0], [1, 1], [1, 2], [0, 1]]
-    ... )
+    >>> contour = np.array([[0, 0], [1, 0], [1, 1], [1, 2], [0, 1]])
     >>> approximate_contour(contour, 4)  # doctest: +ELLIPSIS
     array([[0, 0],
            [1, 0],
@@ -872,10 +857,12 @@ def quadrilateralise_contours(contours: ArrayLike) -> Tuple[NDArrayInt, ...]:
 
     Examples
     --------
-    >>> contours = np.array([
-    ...     [[0, 0], [1, 0], [1, 1], [1, 2], [0, 1]],
-    ...     [[0, 0], [1, 2], [1, 0], [1, 1], [0, 1]]
-    ... ])
+    >>> contours = np.array(
+    ...     [
+    ...         [[0, 0], [1, 0], [1, 1], [1, 2], [0, 1]],
+    ...         [[0, 0], [1, 2], [1, 0], [1, 1], [0, 1]],
+    ...     ]
+    ... )
     >>> quadrilateralise_contours(contours)  # doctest: +ELLIPSIS
     (array([[0, 0],
            [1, 0],
@@ -918,11 +905,13 @@ def remove_stacked_contours(
 
     Examples
     --------
-    >>> contours = np.array([
-    ...     [[0, 0], [7, 0], [7, 7], [0, 7]],
-    ...     [[0, 0], [8, 0], [8, 8], [0, 8]],
-    ...     [[0, 0], [10, 0], [10, 10], [0, 10]],
-    ... ])
+    >>> contours = np.array(
+    ...     [
+    ...         [[0, 0], [7, 0], [7, 7], [0, 7]],
+    ...         [[0, 0], [8, 0], [8, 8], [0, 8]],
+    ...         [[0, 0], [10, 0], [10, 10], [0, 10]],
+    ...     ]
+    ... )
     >>> remove_stacked_contours(contours)  # doctest: +ELLIPSIS
     (array([[0, 0],
            [7, 0],
@@ -966,9 +955,7 @@ def remove_stacked_contours(
                 index = -1
 
             if result:
-                stacked_contour = as_int32_array(stacked_contours)[
-                    np.argsort(areas)
-                ][0]
+                stacked_contour = as_int32_array(stacked_contours)[np.argsort(areas)][0]
 
                 index = np.argwhere(
                     np.all(
@@ -980,8 +967,7 @@ def remove_stacked_contours(
                 filtered_contours[index] = contour
 
     return tuple(
-        as_int32_array(filtered_contour)
-        for filtered_contour in filtered_contours
+        as_int32_array(filtered_contour) for filtered_contour in filtered_contours
     )
 
 
@@ -999,18 +985,21 @@ class DataDetectionColourChecker(MixinDataclassIterable):
         Colour checker swatches masks.
     colour_checker
         Cropped and levelled Colour checker image.
+    quadrilateral
+        Source quadrilateral where the colour checker has been detected.
     """
 
     swatch_colours: NDArrayFloat
     swatch_masks: NDArrayInt
     colour_checker: NDArrayFloat
+    quadrilateral: NDArrayFloat
 
 
 def sample_colour_checker(
     image: ArrayLike, quadrilateral, rectangle, samples=32, **kwargs
 ) -> DataDetectionColourChecker:
     """
-    Sample the colour checker using the given source quadrilateral, i.e.
+    Sample the colour checker using the given source quadrilateral, i.e.,
     detected colour checker in the image, and the given target rectangle.
 
     Parameters
@@ -1018,7 +1007,7 @@ def sample_colour_checker(
     image
         Image to sample from.
     quadrilateral
-        Detected source quadrilateral where the colour checker has been detected.
+        Source quadrilateral where the colour checker has been detected.
     rectangle
         Target rectangle to warp the detected source quadrilateral onto.
     samples
@@ -1137,10 +1126,11 @@ def sample_colour_checker(
         )
     else:
         reference_mse = metric_mse(settings.reference_values, sampled_colours)
+        candidate_quadrilateral = np.copy(quadrilateral)
         for _ in range(3):
-            quadrilateral = np.roll(quadrilateral, 1, 0)
+            candidate_quadrilateral = np.roll(candidate_quadrilateral, 1, 0)
             transform = cv2.getPerspectiveTransform(
-                quadrilateral,
+                candidate_quadrilateral,
                 rectangle,
             )
             colour_checker_candidate = cv2.warpPerspective(
@@ -1155,9 +1145,7 @@ def sample_colour_checker(
                     colour_checker_candidate, **settings.transform
                 )
 
-            candidate_sampled_colours = swatch_colours(
-                colour_checker_candidate, masks
-            )
+            candidate_sampled_colours = swatch_colours(colour_checker_candidate, masks)
             candidate_mse = metric_mse(
                 settings.reference_values, candidate_sampled_colours
             )
@@ -1165,7 +1153,10 @@ def sample_colour_checker(
                 reference_mse = candidate_mse
                 sampled_colours = candidate_sampled_colours
                 colour_checker = colour_checker_candidate
+                quadrilateral = candidate_quadrilateral
 
     colour_checker = cast(NDArrayFloat, colour_checker)
 
-    return DataDetectionColourChecker(sampled_colours, masks, colour_checker)
+    return DataDetectionColourChecker(
+        sampled_colours, masks, colour_checker, quadrilateral
+    )
