@@ -40,7 +40,6 @@ from colour.plotting import CONSTANTS_COLOUR_STYLE, plot_image
 from colour.utilities import (
     MixinDataclassIterable,
     Structure,
-    is_string,
 )
 from colour.utilities.documentation import (
     DocstringDict,
@@ -541,8 +540,8 @@ def detect_colour_checkers_segmentation(
     working_width = settings.working_width
     working_height = int(working_width / settings.aspect_ratio)
 
-    if is_string(image):
-        image = read_image(cast(str, image))
+    if isinstance(image, str):
+        image = read_image(image)
     else:
         image = convert_bit_depth(
             image,

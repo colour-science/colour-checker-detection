@@ -168,7 +168,7 @@ def quality(
 
     if pyright:
         message_box('Checking codebase with "Pyright"...')
-        ctx.run("pyright --skipunannotated --level warning")
+        ctx.run("pyright --threads --skipunannotated --level warning")
 
     if rstlint:
         message_box('Linting "README.rst" file...')
@@ -293,19 +293,12 @@ def requirements(ctx: Context):
     """
 
     message_box('Exporting "requirements.txt" file...')
-    ctx.run(
-        "poetry export -f requirements.txt "
-        "--without-hashes "
-        "--with dev,docs,optional "
-        "--output requirements.txt"
-    )
+    ctx.run('uv export --no-hashes --all-extras | grep -v "-e \\." > requirements.txt')
 
     message_box('Exporting "docs/requirements.txt" file...')
     ctx.run(
-        "poetry export -f requirements.txt "
-        "--without-hashes "
-        "--with docs,optional "
-        "--output docs/requirements.txt"
+        'uv export --no-hashes --all-extras --no-dev | grep -v "-e \\." > '
+        "docs/requirements.txt"
     )
 
 
@@ -321,7 +314,7 @@ def build(ctx: Context):
     """
 
     message_box("Building...")
-    ctx.run("poetry build")
+    ctx.run("uv build")
     ctx.run("twine check dist/*")
 
 
@@ -341,18 +334,26 @@ def virtualise(ctx: Context, tests: bool = True):
     with ctx.cd("dist"):
         ctx.run(f"tar -xvf {PYPI_ARCHIVE_NAME}-{APPLICATION_VERSION}.tar.gz")
         ctx.run(f"mv {PYPI_ARCHIVE_NAME}-{APPLICATION_VERSION} {unique_name}")
+        ctx.run(f"rm -rf {unique_name}/{PYTHON_PACKAGE_NAME}/resources")
+        ctx.run(
+            "ln -s ../../../{0}/resources {1}/{0}".format(
+                PYTHON_PACKAGE_NAME, unique_name
+            )
+        )
+
         with ctx.cd(unique_name):
-            ctx.run("poetry install")
-            ctx.run("source $(poetry env info -p)/bin/activate")
-            ctx.run('python -c "import imageio;imageio.plugins.freeimage.download()"')
+            ctx.run("uv sync --all-extras --no-dev")
+            ctx.run(
+                'uv run python -c "import imageio;imageio.plugins.freeimage.download()"'
+            )
             if tests:
-                # The test images are not available thus many doctests
-                # cannot be run properly:
-                # "--doctest-modules "
                 ctx.run(
-                    "poetry run pytest "
+                    "source .venv/bin/activate && "
+                    "uv run pytest "
+                    "--doctest-modules "
                     f"--ignore={PYTHON_PACKAGE_NAME}/examples "
                     f"{PYTHON_PACKAGE_NAME}",
+                    env={"MPLBACKEND": "AGG"},
                 )
 
 

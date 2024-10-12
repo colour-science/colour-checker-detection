@@ -37,7 +37,6 @@ from colour.plotting import CONSTANTS_COLOUR_STYLE, plot_image
 from colour.utilities import (
     Structure,
     as_int_scalar,
-    is_string,
 )
 from colour.utilities.documentation import (
     DocstringDict,
@@ -193,7 +192,7 @@ def inferencer_default(
     temp_directory = tempfile.mkdtemp()
 
     try:
-        if not is_string(image):
+        if not isinstance(image, str):
             input_image = os.path.join(temp_directory, "input-image.png")
 
             if apply_cctf_encoding:
@@ -366,8 +365,8 @@ def detect_colour_checkers_inference(
 
     results = inferencer(image, **inferencer_kwargs)
 
-    if is_string(image):
-        image = read_image(cast(str, image))
+    if isinstance(image, str):
+        image = read_image(image)
     else:
         image = convert_bit_depth(
             image,
