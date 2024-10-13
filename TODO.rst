@@ -20,7 +20,7 @@ TODO
     -   Line 58 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
     -   Line 62 : # TODO: Enable when "torch" is available on Python 3.12.
     -   Line 97 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
-    -   Line 101 : # TODO: Enable when "torch" is available on Python 3.12.
+    -   Line 101 : # TODO: Enable when "torch" is available on Python 3.13.
 
 
 -   colour_checker_detection/detection/tests/test_segmentation.py
