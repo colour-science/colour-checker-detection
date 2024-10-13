@@ -28,7 +28,6 @@ from colour.hints import (
     NDArrayFloat,
     NDArrayInt,
     Tuple,
-    Union,
     cast,
 )
 from colour.io import convert_bit_depth, read_image, write_image
@@ -376,7 +375,7 @@ def detect_colour_checkers_inference(
     if apply_cctf_decoding:
         image = cctf_decoding(image)
 
-    image = cast(Union[NDArrayInt, NDArrayFloat], image)
+    image = cast(NDArrayInt | NDArrayFloat, image)
 
     rectangle = as_int32_array(
         [

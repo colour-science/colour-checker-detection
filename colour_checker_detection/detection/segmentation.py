@@ -31,7 +31,6 @@ from colour.hints import (
     NDArrayFloat,
     NDArrayInt,
     Tuple,
-    Union,
     cast,
 )
 from colour.io import convert_bit_depth, read_image
@@ -551,7 +550,7 @@ def detect_colour_checkers_segmentation(
     if apply_cctf_decoding:
         image = cctf_decoding(image)
 
-    image = cast(Union[NDArrayInt, NDArrayFloat], image)
+    image = cast(NDArrayInt | NDArrayFloat, image)
 
     image = reformat_image(image, settings.working_width, settings.interpolation_method)
 

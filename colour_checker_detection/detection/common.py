@@ -36,7 +36,6 @@ from colour.hints import (
     NDArrayInt,
     Tuple,
     Type,
-    Union,
     cast,
 )
 from colour.models import XYZ_to_RGB, xyY_to_XYZ
@@ -551,7 +550,7 @@ def transform_image(
     transform += as_float32_array([[0, 0, t_x], [0, 0, t_y]])
 
     return cast(
-        Union[NDArrayInt, NDArrayFloat],
+        NDArrayInt | NDArrayFloat,
         cv2.warpAffine(
             image,
             transform,
@@ -649,7 +648,7 @@ def detect_contours(
         iterations=settings.convolution_iterations,
     )
 
-    image_k = cast(Union[NDArrayInt, NDArrayFloat], image_k)
+    image_k = cast(NDArrayInt | NDArrayFloat, image_k)
 
     # Detecting contours.
     contours, _hierarchy = cv2.findContours(
