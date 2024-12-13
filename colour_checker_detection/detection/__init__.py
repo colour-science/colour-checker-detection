@@ -1,3 +1,5 @@
+# isort: skip_file
+
 from .common import (
     DTYPE_INT_DEFAULT,
     DTYPE_FLOAT_DEFAULT,

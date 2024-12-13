@@ -9,6 +9,8 @@ Subpackages
 -   detection : Colour checker detection.
 """
 
+# isort: skip_file
+
 from __future__ import annotations
 
 import contextlib
