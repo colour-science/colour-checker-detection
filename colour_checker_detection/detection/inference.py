@@ -202,8 +202,8 @@ def inferencer_default(
             input_image = image
 
         output_results = os.path.join(temp_directory, "output-results.npz")
-        subprocess.call(
-            [  # noqa: S603
+        subprocess.call(  # noqa: S603
+            [
                 sys.executable,
                 PATH_INFERENCE_SCRIPT_DEFAULT,
                 "--input",
