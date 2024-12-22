@@ -17,19 +17,23 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import typing
 
 import cv2
 import numpy as np
-from colour.hints import (
-    Any,
-    ArrayLike,
-    Callable,
-    Dict,
-    NDArrayFloat,
-    NDArrayInt,
-    Tuple,
-    cast,
-)
+
+if typing.TYPE_CHECKING:
+    from colour.hints import (
+        Any,
+        ArrayLike,
+        Callable,
+        Dict,
+        Literal,
+        NDArrayFloat,
+        Tuple,
+    )
+
+from colour.hints import NDArrayReal, cast
 from colour.io import convert_bit_depth, read_image, write_image
 from colour.models import eotf_inverse_sRGB, eotf_sRGB
 from colour.plotting import CONSTANTS_COLOUR_STYLE, plot_image
@@ -136,7 +140,7 @@ def inferencer_default(
     cctf_encoding: Callable = eotf_inverse_sRGB,
     apply_cctf_encoding: bool = True,
     show: bool = False,
-) -> NDArrayInt | NDArrayFloat:
+) -> NDArrayReal:
     """
     Predict the colour checker rectangles in given image using
     *Ultralytics YOLOv8*.
@@ -224,17 +228,60 @@ INFERRED_CLASSES: Dict = {0: "ColorCheckerClassic24"}
 """Inferred classes."""
 
 
+@typing.overload
+def detect_colour_checkers_inference(
+    image: str | ArrayLike,
+    samples: int = ...,
+    cctf_decoding: Callable = ...,
+    apply_cctf_decoding: bool = ...,
+    inferencer: Callable = ...,
+    inferencer_kwargs: dict | None = ...,
+    show: bool = ...,
+    additional_data: Literal[True] = True,
+    **kwargs: Any,
+) -> Tuple[DataDetectionColourChecker, ...]: ...
+
+
+@typing.overload
+def detect_colour_checkers_inference(
+    image: str | ArrayLike,
+    samples: int = ...,
+    cctf_decoding: Callable = ...,
+    apply_cctf_decoding: bool = ...,
+    inferencer: Callable = ...,
+    inferencer_kwargs: dict | None = ...,
+    show: bool = ...,
+    *,
+    additional_data: Literal[False],
+    **kwargs: Any,
+) -> Tuple[NDArrayFloat, ...]: ...
+
+
+@typing.overload
+def detect_colour_checkers_inference(
+    image: str | ArrayLike,
+    samples: int,
+    cctf_decoding: Callable,
+    apply_cctf_decoding: bool,
+    inferencer: Callable,
+    inferencer_kwargs: dict | None,
+    show: bool,
+    additional_data: Literal[False],
+    **kwargs: Any,
+) -> Tuple[NDArrayFloat, ...]: ...
+
+
 def detect_colour_checkers_inference(
     image: str | ArrayLike,
     samples: int = 32,
-    cctf_decoding=eotf_sRGB,
+    cctf_decoding: Callable = eotf_sRGB,
     apply_cctf_decoding: bool = False,
     inferencer: Callable = inferencer_default,
     inferencer_kwargs: dict | None = None,
     show: bool = False,
     additional_data: bool = False,
     **kwargs: Any,
-) -> Tuple[DataDetectionColourChecker | NDArrayFloat, ...]:
+) -> Tuple[DataDetectionColourChecker, ...] | Tuple[NDArrayFloat, ...]:
     """
     Detect the colour checkers swatches in given image using inference.
 
@@ -375,7 +422,7 @@ def detect_colour_checkers_inference(
     if apply_cctf_decoding:
         image = cctf_decoding(image)
 
-    image = cast(NDArrayInt | NDArrayFloat, image)
+    image = cast(NDArrayReal, image)
 
     rectangle = as_int32_array(
         [
@@ -443,8 +490,8 @@ def detect_colour_checkers_inference(
 
     if additional_data:
         return tuple(colour_checkers_data)
-    else:
-        return tuple(
-            colour_checker_data.swatch_colours
-            for colour_checker_data in colour_checkers_data
-        )
+
+    return tuple(
+        colour_checker_data.swatch_colours
+        for colour_checker_data in colour_checkers_data
+    )

@@ -19,20 +19,25 @@ References
 
 from __future__ import annotations
 
+import typing
 from dataclasses import dataclass
 
 import cv2
 import numpy as np
-from colour.hints import (
-    Any,
-    ArrayLike,
-    Callable,
-    Dict,
-    NDArrayFloat,
-    NDArrayInt,
-    Tuple,
-    cast,
-)
+
+if typing.TYPE_CHECKING:
+    from colour.hints import (
+        Any,
+        ArrayLike,
+        Callable,
+        Dict,
+        Literal,
+        NDArrayFloat,
+        NDArrayInt,
+        Tuple,
+    )
+
+from colour.hints import NDArrayReal, cast
 from colour.io import convert_bit_depth, read_image
 from colour.models import eotf_inverse_sRGB, eotf_sRGB
 from colour.plotting import CONSTANTS_COLOUR_STYLE, plot_image
@@ -163,6 +168,37 @@ class DataSegmentationColourCheckers(MixinDataclassIterable):
     clusters: NDArrayInt
     swatches: NDArrayInt
     segmented_image: NDArrayFloat
+
+
+@typing.overload
+def segmenter_default(
+    image: ArrayLike,
+    cctf_encoding: Callable = ...,
+    apply_cctf_encoding: bool = ...,
+    additional_data: Literal[True] = True,
+    **kwargs: Any,
+) -> DataSegmentationColourCheckers: ...
+
+
+@typing.overload
+def segmenter_default(
+    image: ArrayLike,
+    cctf_encoding: Callable = ...,
+    apply_cctf_encoding: bool = ...,
+    *,
+    additional_data: Literal[False],
+    **kwargs: Any,
+) -> NDArrayInt: ...
+
+
+@typing.overload
+def segmenter_default(
+    image: ArrayLike,
+    cctf_encoding: Callable,
+    apply_cctf_encoding: bool,
+    additional_data: Literal[False],
+    **kwargs: Any,
+) -> NDArrayInt: ...
 
 
 def segmenter_default(
@@ -319,7 +355,7 @@ def segmenter_default(
         if minimum_area < cv2.contourArea(swatch_contour) < maximum_area and is_square(
             swatch_contour
         ):
-            squares.append(
+            squares.append(  # noqa: PERF401
                 as_int32_array(cv2.boxPoints(cv2.minAreaRect(swatch_contour)))
             )
 
@@ -384,8 +420,50 @@ def segmenter_default(
             squares,
             image_k,  # pyright: ignore
         )
-    else:
-        return rectangles
+    return rectangles
+
+
+@typing.overload
+def detect_colour_checkers_segmentation(
+    image: str | ArrayLike,
+    samples: int = ...,
+    cctf_decoding: Callable = ...,
+    apply_cctf_decoding: bool = ...,
+    segmenter: Callable = ...,
+    segmenter_kwargs: dict | None = ...,
+    show: bool = ...,
+    additional_data: Literal[True] = True,
+    **kwargs: Any,
+) -> Tuple[DataDetectionColourChecker, ...]: ...
+
+
+@typing.overload
+def detect_colour_checkers_segmentation(
+    image: str | ArrayLike,
+    samples: int = ...,
+    cctf_decoding: Callable = ...,
+    apply_cctf_decoding: bool = ...,
+    segmenter: Callable = ...,
+    segmenter_kwargs: dict | None = ...,
+    show: bool = ...,
+    *,
+    additional_data: Literal[False],
+    **kwargs: Any,
+) -> Tuple[NDArrayFloat, ...]: ...
+
+
+@typing.overload
+def detect_colour_checkers_segmentation(
+    image: str | ArrayLike,
+    samples: int,
+    cctf_decoding: Callable,
+    apply_cctf_decoding: bool,
+    segmenter: Callable,
+    segmenter_kwargs: dict | None,
+    show: bool,
+    additional_data: Literal[False],
+    **kwargs: Any,
+) -> Tuple[NDArrayFloat, ...]: ...
 
 
 def detect_colour_checkers_segmentation(
@@ -398,7 +476,7 @@ def detect_colour_checkers_segmentation(
     show: bool = False,
     additional_data: bool = False,
     **kwargs: Any,
-) -> Tuple[DataDetectionColourChecker | NDArrayFloat, ...]:
+) -> Tuple[DataDetectionColourChecker, ...] | Tuple[NDArrayFloat, ...]:
     """
     Detect the colour checkers swatches in given image using segmentation.
 
@@ -550,7 +628,7 @@ def detect_colour_checkers_segmentation(
     if apply_cctf_decoding:
         image = cctf_decoding(image)
 
-    image = cast(NDArrayInt | NDArrayFloat, image)
+    image = cast(NDArrayReal, image)
 
     image = reformat_image(image, settings.working_width, settings.interpolation_method)
 
@@ -625,8 +703,8 @@ def detect_colour_checkers_segmentation(
 
     if additional_data:
         return tuple(colour_checkers_data)
-    else:
-        return tuple(
-            colour_checker_data.swatch_colours
-            for colour_checker_data in colour_checkers_data
-        )
+
+    return tuple(
+        colour_checker_data.swatch_colours
+        for colour_checker_data in colour_checkers_data
+    )

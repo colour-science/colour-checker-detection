@@ -19,25 +19,27 @@ a/55339684/931625
 
 from __future__ import annotations
 
+import typing
 from dataclasses import dataclass
 
 import cv2
 import numpy as np
 from colour.algebra import linear_conversion
 from colour.characterisation import CCS_COLOURCHECKERS
-from colour.hints import (
-    Any,
-    ArrayLike,
-    Dict,
-    DTypeFloat,
-    DTypeInt,
-    Literal,
-    NDArrayFloat,
-    NDArrayInt,
-    Tuple,
-    Type,
-    cast,
-)
+
+if typing.TYPE_CHECKING:
+    from colour.hints import (
+        Any,
+        ArrayLike,
+        Dict,
+        DTypeFloat,
+        DTypeInt,
+        Literal,
+        NDArrayReal,
+        Type,
+    )
+
+from colour.hints import NDArrayFloat, NDArrayInt, NDArrayReal, Tuple, cast
 from colour.models import XYZ_to_RGB, xyY_to_XYZ
 from colour.utilities import (
     MixinDataclassIterable,
@@ -275,7 +277,7 @@ def swatch_masks(
     offset_v = height / swatches_v / 2
     for j in np.linspace(offset_v, height - offset_v, swatches_v):
         for i in np.linspace(offset_h, width - offset_h, swatches_h):
-            masks.append(
+            masks.append(  # noqa: PERF401
                 as_int32_array(
                     [
                         j - samples_half,
@@ -352,7 +354,7 @@ def reformat_image(
         cv2.WARP_FILL_OUTLIERS,  # pyright: ignore
         cv2.WARP_INVERSE_MAP,  # pyright: ignore
     ] = cv2.INTER_CUBIC,
-) -> NDArrayInt | NDArrayFloat:
+) -> NDArrayReal:
     """
     Reformat given image so that it is horizontal and resizes it to given target
     width.
@@ -432,10 +434,10 @@ def reformat_image(
 
 
 def transform_image(
-    image,
-    translation=np.array([0, 0]),
-    rotation=0,
-    scale=np.array([1, 1]),
+    image: ArrayLike,
+    translation: ArrayLike = (0, 0),
+    rotation: float = 0,
+    scale: ArrayLike = (1, 1),
     interpolation_method: Literal[
         cv2.INTER_AREA,  # pyright: ignore
         cv2.INTER_CUBIC,  # pyright: ignore
@@ -448,7 +450,7 @@ def transform_image(
         cv2.WARP_FILL_OUTLIERS,  # pyright: ignore
         cv2.WARP_INVERSE_MAP,  # pyright: ignore
     ] = cv2.INTER_CUBIC,
-) -> NDArrayInt | NDArrayFloat:
+) -> NDArrayReal:
     """
     Transform given image using given translation, rotation and scale values.
 
@@ -550,7 +552,7 @@ def transform_image(
     transform += as_float32_array([[0, 0, t_x], [0, 0, t_y]])
 
     return cast(
-        NDArrayInt | NDArrayFloat,
+        NDArrayReal,
         cv2.warpAffine(
             image,
             transform,
@@ -563,7 +565,7 @@ def transform_image(
 
 def detect_contours(
     image: ArrayLike, additional_data: bool = False, **kwargs: Any
-) -> Tuple[NDArrayInt] | Tuple[Tuple[NDArrayInt], NDArrayInt | NDArrayFloat]:
+) -> Tuple[NDArrayInt] | Tuple[Tuple[NDArrayInt], NDArrayReal]:
     """
     Detect the contours of given image using given settings.
 
@@ -648,7 +650,7 @@ def detect_contours(
         iterations=settings.convolution_iterations,
     )
 
-    image_k = cast(NDArrayInt | NDArrayFloat, image_k)
+    image_k = cast(NDArrayReal, image_k)
 
     # Detecting contours.
     contours, _hierarchy = cv2.findContours(
@@ -659,8 +661,7 @@ def detect_contours(
 
     if additional_data:
         return contours, image_k
-    else:
-        return contours
+    return contours
 
 
 def is_square(contour: ArrayLike, tolerance: float = 0.015) -> bool:
@@ -730,12 +731,10 @@ def contour_centroid(contour: ArrayLike) -> Tuple[float, float]:
 
     moments = cv2.moments(contour)
 
-    centroid = (
+    return (
         moments["m10"] / moments["m00"],
         moments["m01"] / moments["m00"],
     )
-
-    return centroid
 
 
 def scale_contour(contour: ArrayLike, factor: ArrayLike) -> NDArrayFloat:
@@ -773,9 +772,7 @@ def scale_contour(contour: ArrayLike, factor: ArrayLike) -> NDArrayFloat:
 
     centroid = contour_centroid(contour)
 
-    scaled_contour = (contour - centroid) * factor + centroid
-
-    return scaled_contour
+    return (contour - centroid) * factor + centroid
 
 
 def approximate_contour(
@@ -995,7 +992,11 @@ class DataDetectionColourChecker(MixinDataclassIterable):
 
 
 def sample_colour_checker(
-    image: ArrayLike, quadrilateral, rectangle, samples=32, **kwargs
+    image: ArrayLike,
+    quadrilateral: ArrayLike,
+    rectangle: ArrayLike,
+    samples: int = 32,
+    **kwargs: Any,
 ) -> DataDetectionColourChecker:
     """
     Sample the colour checker using the given source quadrilateral, i.e.,

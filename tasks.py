@@ -9,6 +9,7 @@ import fnmatch
 import inspect
 import os
 import re
+import typing
 import uuid
 
 import biblib.bib
@@ -19,7 +20,9 @@ import colour_checker_detection
 if not hasattr(inspect, "getargspec"):
     inspect.getargspec = inspect.getfullargspec  # pyright: ignore
 
-from invoke.context import Context
+if typing.TYPE_CHECKING:
+    from invoke.context import Context
+
 from invoke.tasks import task
 
 __author__ = "Colour Developers"
@@ -71,7 +74,7 @@ def clean(
     docs: bool = True,
     bytecode: bool = False,
     pytest: bool = True,
-):
+) -> None:
     """Clean the project.
 
     Parameters
@@ -110,7 +113,7 @@ def formatting(
     ctx: Context,
     asciify: bool = True,
     bibtex: bool = True,
-):
+) -> None:
     """Convert unicode characters to ASCII and cleanup the *BibTeX* file.
 
     Parameters
@@ -152,7 +155,7 @@ def quality(
     ctx: Context,
     pyright: bool = True,
     rstlint: bool = True,
-):
+) -> None:
     """Check the codebase with *Pyright* and lints various *restructuredText*
     files with *rst-lint*.
 
@@ -176,7 +179,7 @@ def quality(
 
 
 @task
-def precommit(ctx: Context):
+def precommit(ctx: Context) -> None:
     """Run the "pre-commit" hooks on the codebase.
 
     Parameters
@@ -190,7 +193,7 @@ def precommit(ctx: Context):
 
 
 @task
-def tests(ctx: Context):
+def tests(ctx: Context) -> None:
     """Run the unit tests with *Pytest*.
 
     Parameters
@@ -210,7 +213,7 @@ def tests(ctx: Context):
 
 
 @task
-def examples(ctx: Context):
+def examples(ctx: Context) -> None:
     """Run the examples.
 
     Parameters
@@ -229,7 +232,7 @@ def examples(ctx: Context):
 
 
 @task(formatting, quality, precommit, tests, examples)
-def preflight(ctx: Context):  # noqa: ARG001
+def preflight(ctx: Context) -> None:  # noqa: ARG001
     """Perform the preflight tasks, i.e., *formatting*, *tests*, *quality*, and
     *examples*.
 
@@ -243,7 +246,7 @@ def preflight(ctx: Context):  # noqa: ARG001
 
 
 @task
-def docs(ctx: Context, html: bool = True, pdf: bool = True):
+def docs(ctx: Context, html: bool = True, pdf: bool = True) -> None:
     """Build the documentation.
 
     Parameters
@@ -267,7 +270,7 @@ def docs(ctx: Context, html: bool = True, pdf: bool = True):
 
 
 @task
-def todo(ctx: Context):
+def todo(ctx: Context) -> None:
     """Export the TODO items.
 
     Parameters
@@ -283,7 +286,7 @@ def todo(ctx: Context):
 
 
 @task
-def requirements(ctx: Context):
+def requirements(ctx: Context) -> None:
     """Export the *requirements.txt* file.
 
     Parameters
@@ -303,7 +306,7 @@ def requirements(ctx: Context):
 
 
 @task(clean, preflight, docs, todo, requirements)
-def build(ctx: Context):
+def build(ctx: Context) -> None:
     """Build the project and runs dependency tasks, i.e., *docs*, *todo*, and
     *preflight*.
 
@@ -319,7 +322,7 @@ def build(ctx: Context):
 
 
 @task
-def virtualise(ctx: Context, tests: bool = True):
+def virtualise(ctx: Context, tests: bool = True) -> None:
     """Create a virtual environment for the project build.
 
     Parameters
@@ -356,7 +359,7 @@ def virtualise(ctx: Context, tests: bool = True):
 
 
 @task
-def tag(ctx: Context):
+def tag(ctx: Context) -> None:
     """Tag the repository according to defined version using *git-flow*.
 
     Parameters
@@ -369,7 +372,9 @@ def tag(ctx: Context):
     result = ctx.run("git rev-parse --abbrev-ref HEAD", hide="both")
 
     if result.stdout.strip() != "develop":  # pyright: ignore
-        raise RuntimeError("Are you still on a feature or master branch?")
+        error = "Are you still on a feature or master branch?"
+
+        raise RuntimeError(error)
 
     with open(os.path.join(PYTHON_PACKAGE_NAME, "__init__.py")) as file_handle:
         file_content = file_handle.read()
@@ -389,7 +394,7 @@ def tag(ctx: Context):
             1
         )
 
-        version = ".".join((major_version, minor_version, change_version))
+        version = f"{major_version}.{minor_version}.{change_version}"
 
         result = ctx.run("git ls-remote --tags upstream", hide="both")
         remote_tags = result.stdout.strip().split("\n")  # pyright: ignore
@@ -398,17 +403,19 @@ def tag(ctx: Context):
             tags.add(remote_tag.split("refs/tags/")[1].replace("refs/tags/", "^{}"))
         version_tags = sorted(tags)
         if f"v{version}" in version_tags:
-            raise RuntimeError(
+            error = (
                 f'A "{PYTHON_PACKAGE_NAME}" "v{version}" tag already exists in '
                 f"remote repository!"
             )
+
+            raise RuntimeError(error)
 
         ctx.run(f"git flow release start v{version}")
         ctx.run(f"git flow release finish v{version}")
 
 
 @task(build)
-def release(ctx: Context):
+def release(ctx: Context) -> None:
     """Release the project to *Pypi* with *Twine*.
 
     Parameters
@@ -424,7 +431,7 @@ def release(ctx: Context):
 
 
 @task
-def sha256(ctx: Context):
+def sha256(ctx: Context) -> None:
     """Compute the project *Pypi* package *sha256* with *OpenSSL*.
 
     Parameters

@@ -3,6 +3,8 @@ Define the unit tests for the
 :mod:`colour_checker_detection.detection.common` module.
 """
 
+from __future__ import annotations
+
 import glob
 import os
 
@@ -68,7 +70,7 @@ class TestSwatchMasks:
     definition unit tests methods.
     """
 
-    def test_swatch_masks(self):
+    def test_swatch_masks(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.swatch_masks`
         definition unit tests methods.
@@ -97,7 +99,7 @@ class TestSwatchColours:
     definition unit tests methods.
     """
 
-    def test_swatch_colours(self):
+    def test_swatch_colours(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.swatch_colours`
         definition unit tests methods.
@@ -132,7 +134,7 @@ class TestReformatImage:
     definition unit tests methods.
     """
 
-    def test_reformat_image(self):
+    def test_reformat_image(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.reformat_image`
         definition unit tests methods.
@@ -157,7 +159,7 @@ class TestTransformImage:
     definition unit tests methods.
     """
 
-    def test_transform_image(self):
+    def test_transform_image(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.transform_image`
         definition unit tests methods.
@@ -221,13 +223,13 @@ class TestDetectContours:
     definition unit tests methods.
     """
 
-    def test_detect_contours(self):
+    def test_detect_contours(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.detect_contours`
         definition unit tests methods.
         """
 
-        image = zeros([240, 320, 3])
+        image = zeros((240, 320, 3))
         image[100:140, 50:90] = 1
         image[150:190, 140:180] = 1
 
@@ -240,7 +242,7 @@ class TestIsSquare:
     definition unit tests methods.
     """
 
-    def test_is_square(self):
+    def test_is_square(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.is_square`
         definition unit tests methods.
@@ -260,7 +262,7 @@ class TestContourCentroid:
     definition unit tests methods.
     """
 
-    def test_contour_centroid(self):
+    def test_contour_centroid(self) -> None:
         """
                 Define :func:`colour_checker_detection.detection.common.
         contour_centroid` definition unit tests methods.
@@ -276,7 +278,7 @@ class TestScaleContour:
     definition unit tests methods.
     """
 
-    def test_scale_contour(self):
+    def test_scale_contour(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.scale_contour`
         definition unit tests methods.
@@ -300,7 +302,7 @@ class TestApproximateContour:
     definition unit tests methods.
     """
 
-    def test_approximate_contour(self):
+    def test_approximate_contour(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.approximate_contour`
         definition unit tests methods.
@@ -325,7 +327,7 @@ class TestQuadrilateraliseContours:
 quadrilateralise_contours` definition unit tests methods.
     """
 
-    def test_quadrilateralise_contours(self):
+    def test_quadrilateralise_contours(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.\
 quadrilateralise_contours` definition unit tests methods.
@@ -355,7 +357,7 @@ class TestRemoveStackedContours:
 remove_stacked_contours` definition unit tests methods.
     """
 
-    def test_remove_stacked_contours(self):
+    def test_remove_stacked_contours(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.\
 remove_stacked_contours` definition unit tests methods.
@@ -386,7 +388,7 @@ class TestSampleColourChecker:
 remove_stacked_contours` definition unit tests methods.
     """
 
-    def test_sample_colour_checker(self):
+    def test_sample_colour_checker(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.\
 sample_colour_checker` definition unit tests methods.

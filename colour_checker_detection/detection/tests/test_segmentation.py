@@ -3,6 +3,8 @@ Define the unit tests for the
 :mod:`colour_checker_detection.detection.segmentation` module.
 """
 
+from __future__ import annotations
+
 import glob
 import os
 import platform
@@ -43,7 +45,7 @@ class TestSegmenterDefault:
 segmenter_default` definition unit tests methods.
     """
 
-    def test_segmenter_default(self):
+    def test_segmenter_default(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.segmentation.\
 segmenter_default` definition unit tests methods.
@@ -69,7 +71,7 @@ segmenter_default` definition unit tests methods.
 
         for i, png_file in enumerate(PNG_FILES):
             np.testing.assert_array_equal(
-                segmenter_default(read_image(png_file)),
+                segmenter_default(read_image(png_file), additional_data=False),
                 colour_checkers_rectangles[i],
             )
 
@@ -133,7 +135,7 @@ class TestDetectColourCheckersSegmentation:
 detect_colour_checkers_segmentation` definition unit tests methods.
     """
 
-    def test_detect_colour_checkers_segmentation(self):
+    def test_detect_colour_checkers_segmentation(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.segmentation.\
 detect_colour_checkers_segmentation` definition unit tests methods.
@@ -333,7 +335,7 @@ detect_colour_checkers_segmentation` definition unit tests methods.
 
         for i, png_file in enumerate(PNG_FILES):
             np.testing.assert_allclose(
-                detect_colour_checkers_segmentation(png_file),
+                detect_colour_checkers_segmentation(png_file, additional_data=False),
                 test_swatches[i],
                 atol=0.0001,
             )
