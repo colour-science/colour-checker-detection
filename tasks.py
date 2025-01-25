@@ -233,8 +233,7 @@ def examples(ctx: Context) -> None:
 
 @task(formatting, quality, precommit, tests, examples)
 def preflight(ctx: Context) -> None:  # noqa: ARG001
-    """Perform the preflight tasks, i.e., *formatting*, *tests*, *quality*, and
-    *examples*.
+    """Perform the preflight tasks.
 
     Parameters
     ----------
@@ -307,8 +306,7 @@ def requirements(ctx: Context) -> None:
 
 @task(clean, preflight, docs, todo, requirements)
 def build(ctx: Context) -> None:
-    """Build the project and runs dependency tasks, i.e., *docs*, *todo*, and
-    *preflight*.
+    """Build the project and runs dependency tasks.
 
     Parameters
     ----------
