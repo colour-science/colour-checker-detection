@@ -86,6 +86,7 @@ dev-dependencies = [
     "pytest",
     "pytest-cov",
     "pytest-xdist",
+    "scipy-stubs",
     "toml",
     "twine",
 ]
