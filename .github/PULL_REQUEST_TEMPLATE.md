@@ -19,7 +19,7 @@ is available to guide the process: https://www.colour-science.org/contributing/.
 - [ ] Pre-commit hooks have been run and passed.
 
 <!-- The unit tests can be invoked with `uv run invoke tests` -->
-<!-- Pyright can be started with `pyright --threads --skipunannotated` -->
+<!-- Pyright can be started with `uv run pyright --threads --skipunannotated` -->
 
 **Documentation**
 
