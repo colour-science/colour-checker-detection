@@ -17,14 +17,21 @@ from __future__ import annotations
 
 import logging
 import os
-from pathlib import Path
+import typing
+
+if typing.TYPE_CHECKING:
+    from pathlib import Path
+
 from time import perf_counter
 
 import click
 import cv2
 import numpy as np
 from colour import read_image
-from colour.hints import List, Literal, NDArray, Tuple
+
+if typing.TYPE_CHECKING:
+    from colour.hints import Any, List, Literal, NDArray, Tuple
+
 from colour.io import convert_bit_depth
 
 __author__ = "Colour Developers"
@@ -72,7 +79,7 @@ def inference(
     source: str | Path | NDArray,
     model: YOLO,  # noqa: F821 # pyright: ignore
     show: bool = False,
-    **kwargs,
+    **kwargs: Any,
 ) -> List[Tuple[NDArray, NDArray, NDArray]]:
     """
     Run the inference on the provided source.

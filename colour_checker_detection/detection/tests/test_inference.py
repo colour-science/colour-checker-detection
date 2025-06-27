@@ -3,6 +3,8 @@ Define the unit tests for the
 :mod:`colour_checker_detection.detection.inference` module.
 """
 
+from __future__ import annotations
+
 import glob
 import os
 import platform
@@ -44,7 +46,7 @@ class TestInferencerDefault:
 inferencer_default` definition unit tests methods.
     """
 
-    def test_inferencer_default(self):
+    def test_inferencer_default(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.inference.\
 inferencer_default` definition unit tests methods.
@@ -83,7 +85,7 @@ class TestDetectColourCheckersInference:
 detect_colour_checkers_inference` definition unit tests methods.
     """
 
-    def test_detect_colour_checkers_inference(self):
+    def test_detect_colour_checkers_inference(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.inference.\
 detect_colour_checkers_inference` definition unit tests methods.
@@ -227,7 +229,9 @@ detect_colour_checkers_inference` definition unit tests methods.
 
         for i, png_file in enumerate(PNG_FILES):
             np.testing.assert_allclose(
-                detect_colour_checkers_inference(read_image(png_file)),
+                detect_colour_checkers_inference(
+                    read_image(png_file), additional_data=False
+                ),
                 test_swatches[i],
                 atol=0.0001,
             )
