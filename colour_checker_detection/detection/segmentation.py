@@ -209,7 +209,7 @@ def segmenter_default(
     **kwargs: Any,
 ) -> DataSegmentationColourCheckers | NDArrayInt:
     """
-    Detect the colour checker rectangles in given image :math:`image` using
+    Detect the colour checker rectangles in specified image :math:`image` using
     segmentation.
 
     The process is a follows:
@@ -478,7 +478,7 @@ def detect_colour_checkers_segmentation(
     **kwargs: Any,
 ) -> Tuple[DataDetectionColourChecker, ...] | Tuple[NDArrayFloat, ...]:
     """
-    Detect the colour checkers swatches in given image using segmentation.
+    Detect the colour checkers swatches in specified image using segmentation.
 
     Parameters
     ----------

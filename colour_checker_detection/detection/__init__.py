@@ -1,3 +1,14 @@
+"""
+Detection
+=========
+
+Colour checker detection algorithms and utilities.
+
+This subpackage provides common utilities, segmentation-based detection
+methods, and machine learning inference approaches for identifying colour
+checkers in images.
+"""
+
 # isort: skip_file
 
 from .common import (

@@ -142,7 +142,7 @@ def inferencer_default(
     show: bool = False,
 ) -> NDArrayReal:
     """
-    Predict the colour checker rectangles in given image using
+    Predict the colour checker rectangles in specified image using
     *Ultralytics YOLOv8*.
 
     Parameters
@@ -283,7 +283,7 @@ def detect_colour_checkers_inference(
     **kwargs: Any,
 ) -> Tuple[DataDetectionColourChecker, ...] | Tuple[NDArrayFloat, ...]:
     """
-    Detect the colour checkers swatches in given image using inference.
+    Detect the colour checkers swatches in specified image using inference.
 
     Parameters
     ----------

@@ -4,9 +4,13 @@ Colour - Checker Detection
 
 Colour checker detection algorithms for *Python*.
 
+This package provides computer vision algorithms to detect and extract colour
+checkers from images using both segmentation-based and machine learning
+inference approaches.
+
 Subpackages
 -----------
--   detection : Colour checker detection.
+-   detection : Colour checker detection algorithms and utilities.
 """
 
 # isort: skip_file
