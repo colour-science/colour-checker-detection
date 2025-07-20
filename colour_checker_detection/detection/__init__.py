@@ -9,78 +9,80 @@ methods, and machine learning inference approaches for identifying colour
 checkers in images.
 """
 
-# isort: skip_file
-
 from .common import (
-    DTYPE_INT_DEFAULT,
     DTYPE_FLOAT_DEFAULT,
+    DTYPE_INT_DEFAULT,
+    SETTINGS_CONTOUR_DETECTION_DEFAULT,
     SETTINGS_DETECTION_COLORCHECKER_CLASSIC,
     SETTINGS_DETECTION_COLORCHECKER_SG,
-    SETTINGS_CONTOUR_DETECTION_DEFAULT,
-    as_int32_array,
+    DataDetectionColourChecker,
+    approximate_contour,
     as_float32_array,
-    swatch_masks,
-    swatch_colours,
-    reformat_image,
-    transform_image,
+    as_int32_array,
+    contour_centroid,
     detect_contours,
     is_square,
-    contour_centroid,
-    scale_contour,
-    approximate_contour,
     quadrilateralise_contours,
+    reformat_image,
     remove_stacked_contours,
-    DataDetectionColourChecker,
     sample_colour_checker,
+    scale_contour,
+    swatch_colours,
+    swatch_masks,
+    transform_image,
 )
+
+# isort: split
+
 from .inference import (
     SETTINGS_INFERENCE_COLORCHECKER_CLASSIC,
     SETTINGS_INFERENCE_COLORCHECKER_CLASSIC_MINI,
-    inferencer_default,
     detect_colour_checkers_inference,
+    inferencer_default,
 )
+
+# isort: split
 
 from .segmentation import (
     SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC,
-    SETTINGS_SEGMENTATION_COLORCHECKER_SG,
     SETTINGS_SEGMENTATION_COLORCHECKER_NANO,
-    segmenter_default,
+    SETTINGS_SEGMENTATION_COLORCHECKER_SG,
     detect_colour_checkers_segmentation,
+    segmenter_default,
 )
 
 __all__ = [
-    "DTYPE_INT_DEFAULT",
     "DTYPE_FLOAT_DEFAULT",
+    "DTYPE_INT_DEFAULT",
+    "SETTINGS_CONTOUR_DETECTION_DEFAULT",
     "SETTINGS_DETECTION_COLORCHECKER_CLASSIC",
     "SETTINGS_DETECTION_COLORCHECKER_SG",
-    "SETTINGS_CONTOUR_DETECTION_DEFAULT",
-    "as_int32_array",
+    "DataDetectionColourChecker",
+    "approximate_contour",
     "as_float32_array",
-    "swatch_masks",
-    "swatch_colours",
-    "reformat_image",
-    "transform_image",
+    "as_int32_array",
+    "contour_centroid",
     "detect_contours",
     "is_square",
-    "contour_centroid",
-    "scale_contour",
-    "approximate_contour",
     "quadrilateralise_contours",
+    "reformat_image",
     "remove_stacked_contours",
-    "DataDetectionColourChecker",
     "sample_colour_checker",
-]
-__all__ += [
-    "SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC",
-    "SETTINGS_SEGMENTATION_COLORCHECKER_SG",
-    "SETTINGS_SEGMENTATION_COLORCHECKER_NANO",
-    "segmenter_default",
-    "extract_colour_checkers_segmentation",
-    "detect_colour_checkers_segmentation",
+    "scale_contour",
+    "swatch_colours",
+    "swatch_masks",
+    "transform_image",
 ]
 __all__ += [
     "SETTINGS_INFERENCE_COLORCHECKER_CLASSIC",
     "SETTINGS_INFERENCE_COLORCHECKER_CLASSIC_MINI",
-    "inferencer_default",
     "detect_colour_checkers_inference",
+    "inferencer_default",
+]
+__all__ += [
+    "SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC",
+    "SETTINGS_SEGMENTATION_COLORCHECKER_NANO",
+    "SETTINGS_SEGMENTATION_COLORCHECKER_SG",
+    "detect_colour_checkers_segmentation",
+    "segmenter_default",
 ]

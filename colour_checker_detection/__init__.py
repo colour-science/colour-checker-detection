@@ -13,8 +13,6 @@ Subpackages
 -   detection : Colour checker detection algorithms and utilities.
 """
 
-# isort: skip_file
-
 from __future__ import annotations
 
 import contextlib
@@ -24,6 +22,8 @@ import subprocess
 import colour
 import cv2
 import numpy as np
+
+# isort: split
 
 from .detection import (
     SETTINGS_INFERENCE_COLORCHECKER_CLASSIC,
