@@ -552,7 +552,7 @@ def transform_image(
     transform += as_float32_array([[0, 0, t_x], [0, 0, t_y]])
 
     return cast(
-        NDArrayReal,
+        "NDArrayReal",
         cv2.warpAffine(
             image,
             transform,
@@ -650,14 +650,14 @@ def detect_contours(
         iterations=settings.convolution_iterations,
     )
 
-    image_k = cast(NDArrayReal, image_k)
+    image_k = cast("NDArrayReal", image_k)
 
     # Detecting contours.
     contours, _hierarchy = cv2.findContours(
         image_k, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE
     )
 
-    contours = cast(Tuple[NDArrayInt], contours)
+    contours = cast("Tuple[NDArrayInt]", contours)
 
     if additional_data:
         return contours, image_k
@@ -827,7 +827,7 @@ def approximate_contour(
             contour, center * cv2.arcLength(contour, True), True
         )
 
-        approximation = cast(NDArrayInt, approximation)
+        approximation = cast("NDArrayInt", approximation)
 
         if len(approximation) > points:
             low = (low + high) / 2
@@ -1155,7 +1155,7 @@ def sample_colour_checker(
                 colour_checker = colour_checker_candidate
                 quadrilateral = candidate_quadrilateral
 
-    colour_checker = cast(NDArrayFloat, colour_checker)
+    colour_checker = cast("NDArrayFloat", colour_checker)
 
     return DataDetectionColourChecker(
         sampled_colours, masks, colour_checker, quadrilateral

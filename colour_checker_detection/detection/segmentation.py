@@ -628,7 +628,7 @@ def detect_colour_checkers_segmentation(
     if apply_cctf_decoding:
         image = cctf_decoding(image)
 
-    image = cast(NDArrayReal, image)
+    image = cast("NDArrayReal", image)
 
     image = reformat_image(image, settings.working_width, settings.interpolation_method)
 

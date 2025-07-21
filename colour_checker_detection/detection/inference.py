@@ -422,7 +422,7 @@ def detect_colour_checkers_inference(
     if apply_cctf_decoding:
         image = cctf_decoding(image)
 
-    image = cast(NDArrayReal, image)
+    image = cast("NDArrayReal", image)
 
     rectangle = as_int32_array(
         [
