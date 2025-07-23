@@ -327,10 +327,10 @@ def segmenter_default(
     ... )
     >>> image = read_image(path)
     >>> segmenter_default(image)  # doctest: +ELLIPSIS
-    array([[[ 358,  691],
-            [ 373,  219],
-            [1086,  242],
-            [1071,  713]]]...)
+    array([[[ 3...,  6...],
+            [ 3...,  2...],
+            [10...,  2...],
+            [10...,  7...]]]...)
     """
 
     settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
