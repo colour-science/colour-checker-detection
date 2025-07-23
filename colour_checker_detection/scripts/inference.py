@@ -215,7 +215,7 @@ def segmentation(
         LOGGER.debug('Using "%s" default model.', model)
         if not os.path.exists(model):
             LOGGER.info('Downloading "%s" model...', URL_MODEL_FILE_DEFAULT)
-            download(URL_MODEL_FILE_DEFAULT, ROOT_REPOSITORY)
+            download(URL_MODEL_FILE_DEFAULT, ROOT_REPOSITORY)  # pyright: ignore
 
     if input.endswith((".npy", ".npz")):
         LOGGER.debug('Reading "%s" serialised array...', input)
