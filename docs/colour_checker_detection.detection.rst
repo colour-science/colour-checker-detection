@@ -11,10 +11,10 @@ Inference
 .. autosummary::
     :toctree: generated/
 
+    detect_colour_checkers_inference
+    inferencer_default
     SETTINGS_INFERENCE_COLORCHECKER_CLASSIC
     SETTINGS_INFERENCE_COLORCHECKER_CLASSIC_MINI
-    inferencer_default
-    detect_colour_checkers_inference
 
 Segmentation
 ------------
@@ -26,11 +26,11 @@ Segmentation
 .. autosummary::
     :toctree: generated/
 
-    SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC
-    SETTINGS_SEGMENTATION_COLORCHECKER_SG
-    SETTINGS_SEGMENTATION_COLORCHECKER_NANO
-    segmenter_default
     detect_colour_checkers_segmentation
+    segmenter_default
+    SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC
+    SETTINGS_SEGMENTATION_COLORCHECKER_NANO
+    SETTINGS_SEGMENTATION_COLORCHECKER_SG
 
 Common Utilities
 ----------------
@@ -42,23 +42,23 @@ Common Utilities
 .. autosummary::
     :toctree: generated/
 
-    DTYPE_INT_DEFAULT
+    approximate_contour
+    as_float32_array
+    as_int32_array
+    contour_centroid
+    DataDetectionColourChecker
+    detect_contours
     DTYPE_FLOAT_DEFAULT
+    DTYPE_INT_DEFAULT
+    is_square
+    quadrilateralise_contours
+    reformat_image
+    remove_stacked_contours
+    sample_colour_checker
+    scale_contour
+    SETTINGS_CONTOUR_DETECTION_DEFAULT
     SETTINGS_DETECTION_COLORCHECKER_CLASSIC
     SETTINGS_DETECTION_COLORCHECKER_SG
-    SETTINGS_CONTOUR_DETECTION_DEFAULT
-    as_int32_array
-    as_float32_array
-    swatch_masks
     swatch_colours
-    reformat_image
+    swatch_masks
     transform_image
-    detect_contours
-    is_square
-    contour_centroid
-    scale_contour
-    approximate_contour
-    quadrilateralise_contours
-    remove_stacked_contours
-    DataDetectionColourChecker
-    sample_colour_checker

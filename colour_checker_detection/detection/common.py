@@ -2,7 +2,7 @@
 Common Utilities
 ================
 
-Define the common utilities objects that don't fall in any specific category.
+Define common utility objects that support colour checker detection algorithms.
 
 References
 ----------
@@ -180,7 +180,7 @@ Settings for contour detection.
 
 def as_int32_array(a: ArrayLike) -> NDArrayInt:
     """
-    Convert given variable :math:`a` to :class:`numpy.ndarray` using
+    Convert specified variable :math:`a` to :class:`numpy.ndarray` using
     `np.int32` :class:`numpy.dtype`.
 
     Parameters
@@ -205,7 +205,7 @@ def as_int32_array(a: ArrayLike) -> NDArrayInt:
 
 def as_float32_array(a: ArrayLike) -> NDArrayFloat:
     """
-    Convert given variable :math:`a` to :class:`numpy.ndarray` using
+    Convert specified variable :math:`a` to :class:`numpy.ndarray` using
     `np.float32` :class:`numpy.dtype`.
 
     Parameters
@@ -236,7 +236,7 @@ def swatch_masks(
     samples: int,
 ) -> NDArrayInt:
     """
-    Return swatch masks for given image width and height and swatches count.
+    Return swatch masks for specified image width and height and swatches count.
 
     Parameters
     ----------
@@ -293,7 +293,7 @@ def swatch_masks(
 
 def swatch_colours(image: ArrayLike, masks: ArrayLike) -> NDArrayFloat:
     """
-    Extract the swatch colours from given image using given masks.
+    Extract the swatch colours from specified image using specified masks.
 
     Parameters
     ----------
@@ -356,8 +356,8 @@ def reformat_image(
     ] = cv2.INTER_CUBIC,
 ) -> NDArrayReal:
     """
-    Reformat given image so that it is horizontal and resizes it to given target
-    width.
+    Reformat specified image so that it is horizontal and resizes it to specified
+    target width.
 
     Parameters
     ----------
@@ -452,7 +452,7 @@ def transform_image(
     ] = cv2.INTER_CUBIC,
 ) -> NDArrayReal:
     """
-    Transform given image using given translation, rotation and scale values.
+    Transform specified image using specified translation, rotation and scale values.
 
     The transformation is performed relatively to the image center and in the
     following order:
@@ -552,7 +552,7 @@ def transform_image(
     transform += as_float32_array([[0, 0, t_x], [0, 0, t_y]])
 
     return cast(
-        NDArrayReal,
+        "NDArrayReal",
         cv2.warpAffine(
             image,
             transform,
@@ -567,7 +567,7 @@ def detect_contours(
     image: ArrayLike, additional_data: bool = False, **kwargs: Any
 ) -> Tuple[NDArrayInt] | Tuple[Tuple[NDArrayInt], NDArrayReal]:
     """
-    Detect the contours of given image using given settings.
+    Detect the contours of specified image using specified settings.
 
     The process is a follows:
 
@@ -650,14 +650,14 @@ def detect_contours(
         iterations=settings.convolution_iterations,
     )
 
-    image_k = cast(NDArrayReal, image_k)
+    image_k = cast("NDArrayReal", image_k)
 
     # Detecting contours.
     contours, _hierarchy = cv2.findContours(
         image_k, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE
     )
 
-    contours = cast(Tuple[NDArrayInt], contours)
+    contours = cast("Tuple[NDArrayInt]", contours)
 
     if additional_data:
         return contours, image_k
@@ -666,7 +666,7 @@ def detect_contours(
 
 def is_square(contour: ArrayLike, tolerance: float = 0.015) -> bool:
     """
-    Return if given contour is a square.
+    Return if specified contour is a square.
 
     Parameters
     ----------
@@ -678,7 +678,7 @@ def is_square(contour: ArrayLike, tolerance: float = 0.015) -> bool:
     Returns
     -------
     :class:`bool`
-        Whether given contour is a square.
+        Whether specified contour is a square.
 
     Examples
     --------
@@ -703,7 +703,7 @@ def is_square(contour: ArrayLike, tolerance: float = 0.015) -> bool:
 
 def contour_centroid(contour: ArrayLike) -> Tuple[float, float]:
     """
-    Return the centroid of given contour.
+    Return the centroid of specified contour.
 
     Parameters
     ----------
@@ -739,7 +739,7 @@ def contour_centroid(contour: ArrayLike) -> Tuple[float, float]:
 
 def scale_contour(contour: ArrayLike, factor: ArrayLike) -> NDArrayFloat:
     """
-    Scale given contour by given scale factor.
+    Scale specified contour by specified scale factor.
 
     Parameters
     ----------
@@ -779,7 +779,7 @@ def approximate_contour(
     contour: ArrayLike, points: int = 4, iterations: int = 100
 ) -> NDArrayInt:
     """
-    Approximate given contour to have given number of points.
+    Approximate specified contour to have specified number of points.
 
     The process uses binary search to find the best *epsilon* value
     producing a contour approximation with exactly ``points``.
@@ -827,7 +827,7 @@ def approximate_contour(
             contour, center * cv2.arcLength(contour, True), True
         )
 
-        approximation = cast(NDArrayInt, approximation)
+        approximation = cast("NDArrayInt", approximation)
 
         if len(approximation) > points:
             low = (low + high) / 2
@@ -839,7 +839,7 @@ def approximate_contour(
 
 def quadrilateralise_contours(contours: ArrayLike) -> Tuple[NDArrayInt, ...]:
     """
-    Convert given to quadrilaterals.
+    Convert specified contours to quadrilaterals.
 
     Parameters
     ----------
@@ -880,7 +880,7 @@ def remove_stacked_contours(
     contours: ArrayLike, keep_smallest: bool = True
 ) -> Tuple[NDArrayInt, ...]:
     """
-    Remove amd filter out the stacked contours from given contours keeping
+    Remove and filter out the stacked contours from specified contours keeping
     either the smallest or the largest ones.
 
     Parameters
@@ -999,8 +999,8 @@ def sample_colour_checker(
     **kwargs: Any,
 ) -> DataDetectionColourChecker:
     """
-    Sample the colour checker using the given source quadrilateral, i.e.,
-    detected colour checker in the image, and the given target rectangle.
+    Sample the colour checker using the specified source quadrilateral, i.e.,
+    detected colour checker in the image, and the specified target rectangle.
 
     Parameters
     ----------
@@ -1155,7 +1155,7 @@ def sample_colour_checker(
                 colour_checker = colour_checker_candidate
                 quadrilateral = candidate_quadrilateral
 
-    colour_checker = cast(NDArrayFloat, colour_checker)
+    colour_checker = cast("NDArrayFloat", colour_checker)
 
     return DataDetectionColourChecker(
         sampled_colours, masks, colour_checker, quadrilateral

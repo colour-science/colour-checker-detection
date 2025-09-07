@@ -54,7 +54,7 @@ __all__ = [
 ]
 
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 ROOT_REPOSITORY: str = os.environ.get(
     "COLOUR_SCIENCE__COLOUR_CHECKER_DETECTION__REPOSITORY",
@@ -129,13 +129,13 @@ def inference(
             )
 
             if np.any(data[-1][-1]):
-                logging.debug(
+                LOGGER.debug(
                     'Found a "%s" class object with "%s" confidence.',
                     data[-1][1],
                     data[-1][0],
                 )
             else:
-                logging.warning("No objects were detected!")
+                LOGGER.warning("No objects were detected!")
 
     return data
 
@@ -203,8 +203,8 @@ def segmentation(
         Inference results.
     """
 
-    from ultralytics import YOLO
-    from ultralytics.utils.downloads import download
+    from ultralytics import YOLO  # noqa: PLC0415
+    from ultralytics.utils.downloads import download  # noqa: PLC0415
 
     time_start = perf_counter()
 
@@ -212,16 +212,16 @@ def segmentation(
 
     if model is None:
         model = os.path.join(ROOT_REPOSITORY, os.path.basename(URL_MODEL_FILE_DEFAULT))
-        logging.debug('Using "%s" default model.', model)
+        LOGGER.debug('Using "%s" default model.', model)
         if not os.path.exists(model):
-            logging.info('Downloading "%s" model...', URL_MODEL_FILE_DEFAULT)
-            download(URL_MODEL_FILE_DEFAULT, ROOT_REPOSITORY)
+            LOGGER.info('Downloading "%s" model...', URL_MODEL_FILE_DEFAULT)
+            download(URL_MODEL_FILE_DEFAULT, ROOT_REPOSITORY)  # pyright: ignore
 
     if input.endswith((".npy", ".npz")):
-        logging.debug('Reading "%s" serialised array...', input)
+        LOGGER.debug('Reading "%s" serialised array...', input)
         source = np.load(input)
     else:
-        logging.debug('Reading "%s" image...', input)
+        LOGGER.debug('Reading "%s" image...', input)
         source = convert_bit_depth(
             read_image(input)[..., :3],
             np.uint8.__name__,  # pyright: ignore
@@ -235,7 +235,7 @@ def segmentation(
 
     np.savez(output, results=results)
 
-    logging.debug('Total segmentation time: "%s" seconds.', perf_counter() - time_start)
+    LOGGER.debug('Total segmentation time: "%s" seconds.', perf_counter() - time_start)
 
     return results
 

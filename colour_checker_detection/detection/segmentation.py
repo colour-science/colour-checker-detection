@@ -209,7 +209,7 @@ def segmenter_default(
     **kwargs: Any,
 ) -> DataSegmentationColourCheckers | NDArrayInt:
     """
-    Detect the colour checker rectangles in given image :math:`image` using
+    Detect the colour checker rectangles in specified image :math:`image` using
     segmentation.
 
     The process is a follows:
@@ -327,10 +327,10 @@ def segmenter_default(
     ... )
     >>> image = read_image(path)
     >>> segmenter_default(image)  # doctest: +ELLIPSIS
-    array([[[ 358,  691],
-            [ 373,  219],
-            [1086,  242],
-            [1071,  713]]]...)
+    array([[[ 3...,  6...],
+            [ 3...,  2...],
+            [10...,  2...],
+            [10...,  7...]]]...)
     """
 
     settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)
@@ -478,7 +478,7 @@ def detect_colour_checkers_segmentation(
     **kwargs: Any,
 ) -> Tuple[DataDetectionColourChecker, ...] | Tuple[NDArrayFloat, ...]:
     """
-    Detect the colour checkers swatches in given image using segmentation.
+    Detect the colour checkers swatches in specified image using segmentation.
 
     Parameters
     ----------
@@ -628,7 +628,7 @@ def detect_colour_checkers_segmentation(
     if apply_cctf_decoding:
         image = cctf_decoding(image)
 
-    image = cast(NDArrayReal, image)
+    image = cast("NDArrayReal", image)
 
     image = reformat_image(image, settings.working_width, settings.interpolation_method)
 
