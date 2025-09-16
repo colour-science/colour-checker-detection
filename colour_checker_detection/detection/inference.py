@@ -36,10 +36,8 @@ if typing.TYPE_CHECKING:
 from colour.hints import NDArrayReal, cast
 from colour.io import convert_bit_depth, read_image, write_image
 from colour.models import eotf_inverse_sRGB, eotf_sRGB
-from colour.plotting import CONSTANTS_COLOUR_STYLE, plot_image
 from colour.utilities import (
     Structure,
-    as_int_scalar,
 )
 from colour.utilities.documentation import (
     DocstringDict,
@@ -52,8 +50,10 @@ from colour_checker_detection.detection.common import (
     DataDetectionColourChecker,
     as_int32_array,
     quadrilateralise_contours,
+    reformat_image,
     sample_colour_checker,
 )
+from colour_checker_detection.detection.plotting import plot_detection_results
 
 __author__ = "Colour Developers"
 __copyright__ = "Copyright 2018 Colour Developers"
@@ -67,6 +67,7 @@ __all__ = [
     "SETTINGS_INFERENCE_COLORCHECKER_CLASSIC_MINI",
     "PATH_INFERENCE_SCRIPT_DEFAULT",
     "inferencer_default",
+    "extractor_inference",
     "INFERRED_CLASSES",
     "detect_colour_checkers_inference",
 ]
@@ -224,6 +225,143 @@ def inferencer_default(
     return results
 
 
+def extractor_inference(
+    image: ArrayLike,
+    inference_data: Any,
+    samples: int = 32,
+    cctf_decoding: Callable = eotf_sRGB,
+    apply_cctf_decoding: bool = False,
+    inferred_confidence: float = 0.85,
+    working_width: int = 1440,
+    additional_data: bool = False,
+    **kwargs: Any,
+) -> tuple[DataDetectionColourChecker, ...] | tuple[NDArrayFloat, ...]:
+    """
+    Extract colour swatches using inference-based methods.
+
+    This function takes inference data (bounding boxes/contours) and extracts
+    colors using ML-guided sampling approach.
+
+    Parameters
+    ----------
+    image
+        Image to extract colours from.
+    inference_data
+        Inference data containing detected contours and confidence scores.
+    samples
+        Sample count to use to average (mean) the swatches colours. The effective
+        sample count is :math:`samples^2`.
+    cctf_decoding
+        Decoding colour component transfer function / opto-electronic
+        transfer function used when converting the image from 8-bit to float.
+    apply_cctf_decoding
+        Apply the decoding colour component transfer function / opto-electronic
+        transfer function.
+    inferred_confidence
+        Minimum confidence threshold for inference results.
+    working_width
+        Working width for image processing.
+    additional_data
+        Whether to include additional extraction data.
+
+    Returns
+    -------
+    :class:`tuple`
+        Tuple of detected colour checker data objects.
+
+    Examples
+    --------
+    >>> import os
+    >>> from colour import read_image
+    >>> from colour_checker_detection import (
+    ...     ROOT_RESOURCES_TESTS,
+    ...     inferencer_default,
+    ...     extractor_inference,
+    ... )
+    >>> path = os.path.join(
+    ...     ROOT_RESOURCES_TESTS,
+    ...     "colour_checker_detection",
+    ...     "detection",
+    ...     "IMG_1967.png",
+    ... )
+    >>> image = read_image(path)
+    >>> inference_data = inferencer_default(image)  # doctest: +SKIP
+    >>> extractor_inference(image, inference_data)  # doctest: +SKIP
+    (array([[ 0.36007342,  0.22303678,  0.1176604 ],
+           [ 0.62607545,  0.39443627,  0.24180005],
+           [ 0.33200133,  0.3159002 ,  0.28866205],
+           [ 0.304158  ,  0.27339226,  0.10521446],
+           [ 0.41758743,  0.31893715,  0.3078802 ],
+           [ 0.34878933,  0.43871346,  0.29159448],
+           [ 0.67982006,  0.3523331 ,  0.070414  ],
+           [ 0.27139527,  0.25354654,  0.33075848],
+           [ 0.6207255 ,  0.27040577,  0.18629737],
+           [ 0.3071541 ,  0.17973351,  0.19184262],
+           [ 0.48536164,  0.45853454,  0.03277667],
+           [ 0.65034246,  0.4002059 ,  0.01576474],
+           [ 0.19285583,  0.18593574,  0.27413625],
+           [ 0.28041738,  0.38502172,  0.12292562],
+           [ 0.5545266 ,  0.21458797,  0.12545331],
+           [ 0.7207607 ,  0.515445  ,  0.005255  ],
+           [ 0.5779864 ,  0.25786015,  0.2685206 ],
+           [ 0.17531879,  0.3166867 ,  0.29529998],
+           [ 0.7404447 ,  0.61071527,  0.4387243 ],
+           [ 0.6295517 ,  0.5178505 ,  0.37301064],
+           [ 0.51465   ,  0.42113122,  0.29825154],
+           [ 0.37083188,  0.30355468,  0.20928001],
+           [ 0.26390594,  0.21514489,  0.1433286 ],
+           [ 0.16213489,  0.13396774,  0.08086098]], dtype=float32),)
+    """
+    image = cast("NDArrayReal", image)
+
+    if apply_cctf_decoding:
+        image = cctf_decoding(image)
+
+    settings = SETTINGS_INFERENCE_COLORCHECKER_CLASSIC.copy()
+    settings.update(kwargs)
+
+    working_height = int(working_width / settings["aspect_ratio"])
+    image = reformat_image(image, working_width, settings["interpolation_method"])
+
+    rectangle = as_int32_array(
+        [
+            [0, 0],
+            [0, working_height],
+            [working_width, working_height],
+            [working_width, 0],
+        ]
+    )
+
+    colour_checkers_data = []
+
+    for result_confidence, _result_class, result_mask in inference_data:
+        if result_confidence < inferred_confidence:
+            continue
+
+        mask = cv2.resize(
+            result_mask,
+            image.shape[:2][::-1],
+            interpolation=cv2.INTER_BITS,
+        )
+
+        contours, _hierarchy = cv2.findContours(
+            mask.astype(np.uint8), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
+        )
+
+        colour_checkers_data.extend(
+            sample_colour_checker(image, quadrilateral, rectangle, samples, **settings)
+            for quadrilateral in quadrilateralise_contours(contours)
+        )
+
+    if additional_data:
+        return tuple(colour_checkers_data)
+
+    return tuple(
+        colour_checker_data.swatch_colours
+        for colour_checker_data in colour_checkers_data
+    )
+
+
 INFERRED_CLASSES: Dict = {0: "ColorCheckerClassic24"}
 """Inferred classes."""
 
@@ -236,6 +374,8 @@ def detect_colour_checkers_inference(
     apply_cctf_decoding: bool = ...,
     inferencer: Callable = ...,
     inferencer_kwargs: dict | None = ...,
+    extractor: Callable = ...,
+    extractor_kwargs: dict | None = ...,
     show: bool = ...,
     additional_data: Literal[True] = True,
     **kwargs: Any,
@@ -250,6 +390,8 @@ def detect_colour_checkers_inference(
     apply_cctf_decoding: bool = ...,
     inferencer: Callable = ...,
     inferencer_kwargs: dict | None = ...,
+    extractor: Callable = ...,
+    extractor_kwargs: dict | None = ...,
     show: bool = ...,
     *,
     additional_data: Literal[False],
@@ -265,6 +407,8 @@ def detect_colour_checkers_inference(
     apply_cctf_decoding: bool,
     inferencer: Callable,
     inferencer_kwargs: dict | None,
+    extractor: Callable,
+    extractor_kwargs: dict | None,
     show: bool,
     additional_data: Literal[False],
     **kwargs: Any,
@@ -278,6 +422,8 @@ def detect_colour_checkers_inference(
     apply_cctf_decoding: bool = False,
     inferencer: Callable = inferencer_default,
     inferencer_kwargs: dict | None = None,
+    extractor: Callable = extractor_inference,
+    extractor_kwargs: dict | None = None,
     show: bool = False,
     additional_data: bool = False,
     **kwargs: Any,
@@ -304,6 +450,11 @@ def detect_colour_checkers_inference(
         colour checker rectangles.
     inferencer_kwargs
         Keyword arguments to pass to the ``inferencer``.
+    extractor
+        Callable responsible to extract the colour checker data from the
+        inference results.
+    extractor_kwargs
+        Keyword arguments to pass to the ``extractor``.
     show
         Whether to show various debug images.
     additional_data
@@ -371,31 +522,32 @@ def detect_colour_checkers_inference(
     ...     "IMG_1967.png",
     ... )
     >>> image = read_image(path)
-    >>> detect_colour_checkers_inference(image)  # doctest: +SKIP
-    (array([[ 0.3602327 ,  0.22158547,  0.11813926],
-           [ 0.62800723,  0.39357048,  0.24196433],
-           [ 0.3284166 ,  0.31669423,  0.28818974],
-           [ 0.3072932 ,  0.2744136 ,  0.10451803],
-           [ 0.4204691 ,  0.31953654,  0.30901137],
-           [ 0.34471545,  0.44057423,  0.29297924],
-           [ 0.678418  ,  0.35242617,  0.06670552],
-           [ 0.27259055,  0.2535471 ,  0.32912973],
-           [ 0.6190633 ,  0.27043283,  0.18543543],
-           [ 0.30721852,  0.18180828,  0.19161244],
-           [ 0.4858081 ,  0.46007228,  0.03085822],
-           [ 0.6499356 ,  0.4018961 ,  0.01579806],
-           [ 0.19425018,  0.18621376,  0.27193058],
-           [ 0.27500305,  0.38600868,  0.1245231 ],
-           [ 0.55459476,  0.21477987,  0.12434786],
-           [ 0.71898675,  0.5149239 ,  0.00561224],
-           [ 0.5787967 ,  0.25837064,  0.2693373 ],
-           [ 0.1743919 ,  0.31709513,  0.29550385],
-           [ 0.7383609 ,  0.60645705,  0.43850273],
-           [ 0.62609893,  0.5172464 ,  0.36816722],
-           [ 0.5117422 ,  0.4191487 ,  0.3013721 ],
-           [ 0.36412936,  0.2987345 ,  0.20754097],
-           [ 0.26675388,  0.21421173,  0.14176223],
-           [ 0.15856811,  0.13483825,  0.07938566]], dtype=float32),)
+    >>> detect_colour_checkers_inference(image, apply_cctf_decoding=True)
+    ... # doctest: +SKIP
+    (array([[  1.06845371e-01,   4.07868698e-02,   1.31441019e-02],
+           [  3.50147694e-01,   1.29043385e-01,   4.78129089e-02],
+           [  9.05092135e-02,   8.14050063e-02,   6.78419247e-02],
+           [  7.56733939e-02,   6.07803836e-02,   1.10923871e-02],
+           [  1.45852566e-01,   8.30223709e-02,   7.72851035e-02],
+           [  1.00246392e-01,   1.61679372e-01,   6.92804456e-02],
+           [  4.20029789e-01,   1.01915061e-01,   6.43535238e-03],
+           [  6.03192598e-02,   5.23659140e-02,   8.95039141e-02],
+           [  3.43519300e-01,   5.94778359e-02,   2.91121379e-02],
+           [  7.70977959e-02,   2.71929316e-02,   3.07033304e-02],
+           [  2.01079920e-01,   1.77687049e-01,   2.65044416e-03],
+           [  3.80813688e-01,   1.33050218e-01,   1.23625272e-03],
+           [  3.13875042e-02,   2.89476123e-02,   6.11585006e-02],
+           [  6.44312650e-02,   1.22649640e-01,   1.42761841e-02],
+           [  2.68237919e-01,   3.78787108e-02,   1.45872077e-02],
+           [  4.78466213e-01,   2.28658482e-01,   4.09228291e-04],
+           [  2.93730289e-01,   5.41352853e-02,   5.86953908e-02],
+           [  2.68954877e-02,   8.18221569e-02,   7.10325763e-02],
+           [  5.08168578e-01,   3.31246942e-01,   1.61783472e-01],
+           [  3.54471445e-01,   2.30975851e-01,   1.14853390e-01],
+           [  2.28191391e-01,   1.48212209e-01,   7.24881589e-02],
+           [  1.13720678e-01,   7.50572383e-02,   3.62149812e-02],
+           [  5.70064113e-02,   3.80622372e-02,   1.82537530e-02],
+           [  2.30789520e-02,   1.61857158e-02,   7.48640532e-03]...),)
     """
 
     if inferencer_kwargs is None:
@@ -406,10 +558,8 @@ def detect_colour_checkers_inference(
 
     swatches_horizontal = settings.swatches_horizontal
     swatches_vertical = settings.swatches_vertical
-    working_width = settings.working_width
-    working_height = settings.working_height
 
-    results = inferencer(image, **inferencer_kwargs)
+    inference_results = inferencer(image, **inferencer_kwargs)
 
     if isinstance(image, str):
         image = read_image(image)
@@ -424,69 +574,27 @@ def detect_colour_checkers_inference(
 
     image = cast("NDArrayReal", image)
 
-    rectangle = as_int32_array(
-        [
-            [0, 0],
-            [0, working_height],
-            [working_width, working_height],
-            [working_width, 0],
-        ]
+    if extractor_kwargs is None:
+        extractor_kwargs = {}
+
+    colour_checkers_data = list(
+        extractor(
+            image,
+            inference_results,
+            samples=samples,
+            cctf_decoding=cctf_decoding,
+            apply_cctf_decoding=False,
+            additional_data=True,
+            **{**extractor_kwargs, **kwargs},
+        )
     )
 
-    colour_checkers_data = []
-    for result_confidence, result_class, result_mask in results:
-        if result_confidence < settings.inferred_confidence:
-            continue
-
-        if settings.inferred_class != INFERRED_CLASSES[int(result_class)]:
-            continue
-
-        mask = cv2.resize(
-            result_mask,
-            image.shape[:2][::-1],
-            interpolation=cv2.INTER_BITS,
+    if show:
+        plot_detection_results(
+            tuple(colour_checkers_data),
+            swatches_horizontal,
+            swatches_vertical,
         )
-
-        contours, _hierarchy = cv2.findContours(
-            mask.astype(np.uint8), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
-        )
-        for quadrilateral in quadrilateralise_contours(contours):
-            colour_checkers_data.append(
-                sample_colour_checker(
-                    image, quadrilateral, rectangle, samples, **settings
-                )
-            )
-
-            if show:
-                colour_checker = np.copy(colour_checkers_data[-1].colour_checker)
-                for swatch_mask in colour_checkers_data[-1].swatch_masks:
-                    colour_checker[
-                        swatch_mask[0] : swatch_mask[1],
-                        swatch_mask[2] : swatch_mask[3],
-                        ...,
-                    ] = 0
-
-                plot_image(
-                    CONSTANTS_COLOUR_STYLE.colour.colourspace.cctf_encoding(
-                        colour_checker
-                    ),
-                    text_kwargs={
-                        "text": (
-                            f"Class: "
-                            f'"{INFERRED_CLASSES[as_int_scalar(result_class)]}", '
-                            f"Confidence : {result_confidence:.3f}"
-                        )
-                    },
-                )
-
-                plot_image(
-                    CONSTANTS_COLOUR_STYLE.colour.colourspace.cctf_encoding(
-                        np.reshape(
-                            colour_checkers_data[-1].swatch_colours,
-                            [swatches_vertical, swatches_horizontal, 3],
-                        )
-                    ),
-                )
 
     if additional_data:
         return tuple(colour_checkers_data)

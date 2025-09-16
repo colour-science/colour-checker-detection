@@ -15,6 +15,7 @@ from colour import read_image
 from colour_checker_detection import ROOT_RESOURCES_TESTS
 from colour_checker_detection.detection import (
     detect_colour_checkers_segmentation,
+    extractor_segmentation,
     segmenter_default,
 )
 
@@ -29,6 +30,7 @@ __all__ = [
     "DETECTION_DIRECTORY",
     "PNG_FILES",
     "TestSegmenterDefault",
+    "TestExtractorSegmentation",
     "TestDetectColourCheckersSegmentation",
 ]
 
@@ -61,11 +63,17 @@ segmenter_default` definition unit tests methods.
             return
 
         colour_checkers_rectangles = [
+            # IMG_1966.png
             np.array([[[671, 578], [675, 364], [994, 370], [990, 584]]]),
+            # IMG_1967.png
             np.array([[[357, 691], [372, 219], [1086, 242], [1071, 713]]]),
+            # IMG_1968.png
             np.array([[[572, 670], [576, 357], [1045, 363], [1041, 676]]]),
+            # IMG_1969.png
             np.array([[[616, 605], [617, 310], [1056, 312], [1055, 607]]]),
+            # IMG_1970.png
             np.array([[[639, 333], [795, 333], [795, 437], [639, 437]]]),
+            # IMG_1971.png
             np.array([[[759, 654], [762, 288], [1010, 290], [1007, 657]]]),
         ]
 
@@ -129,6 +137,57 @@ segmenter_default` definition unit tests methods.
         )
 
 
+class TestExtractorSegmentation:
+    """Define :func:`extractor_segmentation` definition unit tests methods."""
+
+    def test_extractor_segmentation(self) -> None:
+        """Test :func:`extractor_segmentation` definition."""
+
+        # Test the extractor function with segmentation data
+        image = read_image(PNG_FILES[0])
+
+        # First get segmentation data
+        segmentation_data = segmenter_default(image, additional_data=True)
+
+        # Then use extractor to get colors
+        extractors_result = extractor_segmentation(
+            image, segmentation_data, additional_data=True
+        )
+
+        # Should return tuple of DataDetectionColourChecker
+        assert isinstance(extractors_result, tuple)
+        assert len(extractors_result) == 1
+
+        # Check that result has expected attributes
+        colour_checker_data = extractors_result[0]
+        assert hasattr(colour_checker_data, "swatch_colours")
+        assert hasattr(colour_checker_data, "colour_checker")
+        assert hasattr(colour_checker_data, "swatch_masks")
+
+        # Check shape of swatch colors (24 swatches, RGB)
+        assert colour_checker_data.swatch_colours.shape == (24, 3)
+
+        # Test without additional_data
+        extractors_result_simple = extractor_segmentation(
+            image, segmentation_data, additional_data=False
+        )
+
+        # Should return tuple of NDArrayFloat when additional_data=False
+        assert isinstance(extractors_result_simple, tuple)
+        assert len(extractors_result_simple) == 1
+
+        # When additional_data=False, should return just the swatch colors
+        assert isinstance(extractors_result_simple[0], np.ndarray)
+        assert extractors_result_simple[0].shape == (24, 3)
+
+        # Colors should be similar between both calls
+        np.testing.assert_allclose(
+            extractors_result[0].swatch_colours,
+            extractors_result_simple[0],
+            atol=0.0001,
+        )
+
+
 class TestDetectColourCheckersSegmentation:
     """
     Define :func:`colour_checker_detection.detection.segmentation.\
@@ -151,6 +210,7 @@ detect_colour_checkers_segmentation` definition unit tests methods.
             return
 
         test_swatches = [
+            # IMG_1966.png
             (
                 np.array(
                     [
@@ -181,6 +241,7 @@ detect_colour_checkers_segmentation` definition unit tests methods.
                     ],
                 ),
             ),
+            # IMG_1967.png
             (
                 np.array(
                     [
@@ -211,6 +272,7 @@ detect_colour_checkers_segmentation` definition unit tests methods.
                     ],
                 ),
             ),
+            # IMG_1968.png
             (
                 np.array(
                     [
@@ -241,6 +303,7 @@ detect_colour_checkers_segmentation` definition unit tests methods.
                     ],
                 ),
             ),
+            # IMG_1969.png
             (
                 np.array(
                     [
@@ -271,6 +334,7 @@ detect_colour_checkers_segmentation` definition unit tests methods.
                     ],
                 ),
             ),
+            # IMG_1970.png
             (
                 np.array(
                     [
@@ -301,6 +365,7 @@ detect_colour_checkers_segmentation` definition unit tests methods.
                     ],
                 ),
             ),
+            # IMG_1971.png
             (
                 np.array(
                     [
@@ -339,3 +404,57 @@ detect_colour_checkers_segmentation` definition unit tests methods.
                 test_swatches[i],
                 atol=0.0001,
             )
+
+        (
+            swatch_colours,
+            swatch_masks,
+            colour_checker,
+            quadrilateral,
+        ) = detect_colour_checkers_segmentation(
+            read_image(PNG_FILES[0]), additional_data=True
+        )[0].values
+
+        np.testing.assert_allclose(
+            swatch_colours,
+            test_swatches[0][0],
+            atol=0.0001,
+        )
+
+        np.testing.assert_array_equal(
+            colour_checker.shape[0:2],
+            np.array([960, 1440]),
+        )
+
+        np.testing.assert_array_equal(
+            swatch_masks,
+            np.array(
+                [
+                    [104, 136, 104, 136],
+                    [104, 136, 344, 376],
+                    [104, 136, 584, 616],
+                    [104, 136, 824, 856],
+                    [104, 136, 1064, 1096],
+                    [104, 136, 1304, 1336],
+                    [344, 376, 104, 136],
+                    [344, 376, 344, 376],
+                    [344, 376, 584, 616],
+                    [344, 376, 824, 856],
+                    [344, 376, 1064, 1096],
+                    [344, 376, 1304, 1336],
+                    [584, 616, 104, 136],
+                    [584, 616, 344, 376],
+                    [584, 616, 584, 616],
+                    [584, 616, 824, 856],
+                    [584, 616, 1064, 1096],
+                    [584, 616, 1304, 1336],
+                    [824, 856, 104, 136],
+                    [824, 856, 344, 376],
+                    [824, 856, 584, 616],
+                    [824, 856, 824, 856],
+                    [824, 856, 1064, 1096],
+                    [824, 856, 1304, 1336],
+                ]
+            ),
+        )
+
+        assert quadrilateral.shape == (4, 2)

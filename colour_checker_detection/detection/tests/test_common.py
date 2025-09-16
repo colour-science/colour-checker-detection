@@ -17,8 +17,11 @@ from colour_checker_detection import ROOT_RESOURCES_TESTS
 from colour_checker_detection.detection.common import (
     approximate_contour,
     as_float32_array,
+    cluster_swatches,
     contour_centroid,
     detect_contours,
+    filter_clusters,
+    is_quadrilateral,
     is_square,
     quadrilateralise_contours,
     reformat_image,
@@ -48,12 +51,15 @@ __all__ = [
     "TestReformatImage",
     "TestTransformImage",
     "TestDetectContours",
+    "TestIsQuadrilateral",
     "TestIsSquare",
     "TestContourCentroid",
     "TestScaleContour",
     "TestApproximateContour",
     "TestQuadrilateraliseContours",
     "TestRemoveStackedContours",
+    "TestClusterSwatches",
+    "TestFilterClusters",
     "TestSampleColourChecker",
 ]
 
@@ -236,6 +242,37 @@ class TestDetectContours:
         assert len(detect_contours(image)) == 5
 
 
+class TestIsQuadrilateral:
+    """
+    Define :func:`colour_checker_detection.detection.common.is_quadrilateral`
+    definition unit tests methods.
+    """
+
+    def test_is_quadrilateral(self) -> None:
+        """
+        Test :func:`colour_checker_detection.detection.common.is_quadrilateral`
+        definition.
+        """
+
+        # Valid quadrilateral (rectangle corners)
+        assert is_quadrilateral(np.array([[0, 0], [10, 0], [10, 10], [0, 10]]))
+
+        # Three collinear points (invalid quadrilateral)
+        assert not is_quadrilateral(np.array([[0, 0], [5, 0], [10, 0], [0, 10]]))
+
+        # Another valid quadrilateral (irregular but valid)
+        assert is_quadrilateral(np.array([[0, 0], [8, 2], [10, 12], [2, 10]]))
+
+        # All points on a line (degenerate case)
+        assert not is_quadrilateral(np.array([[0, 0], [2, 0], [4, 0], [6, 0]]))
+
+        # Three points collinear on vertical line
+        assert not is_quadrilateral(np.array([[0, 0], [0, 5], [0, 10], [5, 5]]))
+
+        # Template correspondence case
+        assert is_quadrilateral(np.array([[192, 56], [756, 56], [756, 503], [51, 503]]))
+
+
 class TestIsSquare:
     """
     Define :func:`colour_checker_detection.detection.common.is_square`
@@ -380,6 +417,106 @@ remove_stacked_contours` definition unit tests methods.
             remove_stacked_contours(contours, False),
             np.array([[[0, 0], [10, 0], [10, 10], [0, 10]]]),
         )
+
+
+class TestClusterSwatches:
+    """
+    Define :func:`colour_checker_detection.detection.common.cluster_swatches`
+    definition unit tests methods.
+    """
+
+    def test_cluster_swatches(self) -> None:
+        """
+        Test :func:`colour_checker_detection.detection.common.cluster_swatches`
+        definition.
+        """
+
+        image = np.zeros((600, 900, 3))
+
+        # Two separate swatches that should form two clusters
+        swatches = np.array(
+            [
+                [[100, 100], [200, 100], [200, 200], [100, 200]],
+                [[300, 100], [400, 100], [400, 200], [300, 200]],
+            ],
+            dtype=np.int32,
+        )
+        result = cluster_swatches(image, swatches, 1.5)
+        assert result.shape == (2, 4, 2)
+        assert result.dtype == np.int32
+
+        # Two overlapping swatches that should form one cluster
+        swatches = np.array(
+            [
+                [[100, 100], [150, 100], [150, 150], [100, 150]],
+                [[140, 100], [190, 100], [190, 150], [140, 150]],
+            ],
+            dtype=np.int32,
+        )
+        result = cluster_swatches(image, swatches, 2.0)
+        assert result.shape[0] == 1
+        assert result.dtype == np.int32
+
+        # Empty swatches array
+        swatches = np.array([], dtype=np.int32).reshape(0, 4, 2)
+        result = cluster_swatches(image, swatches, 1.5)
+        assert len(result) == 0
+
+
+class TestFilterClusters:
+    """
+    Define :func:`colour_checker_detection.detection.common.filter_clusters`
+    definition unit tests methods.
+    """
+
+    def test_filter_clusters(self) -> None:
+        """
+        Test :func:`colour_checker_detection.detection.common.filter_clusters`
+        definition.
+        """
+
+        # Both clusters contain swatches within range
+        clusters = np.array(
+            [
+                [[0, 0], [200, 0], [200, 200], [0, 200]],
+                [[300, 300], [400, 300], [400, 400], [300, 400]],
+            ],
+            dtype=np.int32,
+        )
+        swatches = np.array(
+            [
+                [[50, 50], [100, 50], [100, 100], [50, 100]],
+                [[350, 350], [380, 350], [380, 380], [350, 380]],
+            ],
+            dtype=np.int32,
+        )
+        result = filter_clusters(clusters, swatches, 1, 2)
+        assert result.shape == (2, 4, 2)
+        assert result.dtype == np.int32
+
+        # Only first cluster contains swatches
+        swatches = np.array(
+            [
+                [[50, 50], [100, 50], [100, 100], [50, 100]],
+            ],
+            dtype=np.int32,
+        )
+        result = filter_clusters(clusters, swatches, 1, 2)
+        assert result.shape == (1, 4, 2)
+
+        # No clusters contain required number of swatches
+        result = filter_clusters(clusters, swatches, 5, 10)
+        assert result.shape == (0, 4, 2)
+
+        # Empty clusters array
+        empty_clusters = np.array([], dtype=np.int32).reshape(0, 4, 2)
+        result = filter_clusters(empty_clusters, swatches, 1, 2)
+        assert result.shape == (0, 4, 2)
+
+        # Empty swatches array
+        empty_swatches = np.array([], dtype=np.int32).reshape(0, 4, 2)
+        result = filter_clusters(clusters, empty_swatches, 1, 2)
+        assert result.shape == (0, 4, 2)
 
 
 class TestSampleColourChecker:

@@ -31,10 +31,17 @@ from .detection import (
     SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC,
     SETTINGS_SEGMENTATION_COLORCHECKER_NANO,
     SETTINGS_SEGMENTATION_COLORCHECKER_SG,
+    SETTINGS_TEMPLATED_COLORCHECKER_CLASSIC,
     detect_colour_checkers_inference,
     detect_colour_checkers_segmentation,
+    detect_colour_checkers_templated,
+    extractor_inference,
+    extractor_segmentation,
+    extractor_templated,
     inferencer_default,
+    plot_detection_results,
     segmenter_default,
+    segmenter_templated,
 )
 
 __author__ = "Colour Developers"
@@ -50,10 +57,17 @@ __all__ = [
     "SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC",
     "SETTINGS_SEGMENTATION_COLORCHECKER_NANO",
     "SETTINGS_SEGMENTATION_COLORCHECKER_SG",
+    "SETTINGS_TEMPLATED_COLORCHECKER_CLASSIC",
     "detect_colour_checkers_inference",
     "detect_colour_checkers_segmentation",
+    "detect_colour_checkers_templated",
+    "extractor_inference",
+    "extractor_segmentation",
+    "extractor_templated",
     "inferencer_default",
+    "plot_detection_results",
     "segmenter_default",
+    "segmenter_templated",
 ]
 
 ROOT_RESOURCES: str = os.path.join(os.path.dirname(__file__), "resources")
