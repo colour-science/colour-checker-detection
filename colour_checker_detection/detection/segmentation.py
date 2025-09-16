@@ -20,10 +20,8 @@ References
 from __future__ import annotations
 
 import typing
-from dataclasses import dataclass
 
 import cv2
-import numpy as np
 
 if typing.TYPE_CHECKING:
     from colour.hints import (
@@ -37,13 +35,12 @@ if typing.TYPE_CHECKING:
         Tuple,
     )
 
-from colour.hints import NDArrayReal, cast
+from colour.hints import Any, Dict, NDArrayReal, cast
 from colour.io import convert_bit_depth, read_image
 from colour.models import eotf_inverse_sRGB, eotf_sRGB
-from colour.plotting import CONSTANTS_COLOUR_STYLE, plot_image
 from colour.utilities import (
-    MixinDataclassIterable,
     Structure,
+    optional,
 )
 from colour.utilities.documentation import (
     DocstringDict,
@@ -55,16 +52,19 @@ from colour_checker_detection.detection.common import (
     SETTINGS_DETECTION_COLORCHECKER_CLASSIC,
     SETTINGS_DETECTION_COLORCHECKER_SG,
     DataDetectionColourChecker,
+    DataSegmentationColourCheckers,
+    as_float32_array,
     as_int32_array,
-    contour_centroid,
+    cluster_swatches,
     detect_contours,
+    filter_clusters,
     is_square,
     quadrilateralise_contours,
     reformat_image,
     remove_stacked_contours,
     sample_colour_checker,
-    scale_contour,
 )
+from colour_checker_detection.detection.plotting import plot_detection_results
 
 __author__ = "Colour Developers"
 __copyright__ = "Copyright 2018 Colour Developers"
@@ -79,6 +79,7 @@ __all__ = [
     "SETTINGS_SEGMENTATION_COLORCHECKER_NANO",
     "DataSegmentationColourCheckers",
     "segmenter_default",
+    "extractor_segmentation",
     "detect_colour_checkers_segmentation",
 ]
 
@@ -90,8 +91,8 @@ SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC.update(
     {
         "aspect_ratio_minimum": 1.5 * 0.9,
         "aspect_ratio_maximum": 1.5 * 1.1,
-        "swatches_count_minimum": int(24 * 0.75),
-        "swatches_count_maximum": int(24 * 1.25),
+        "swatches_count_minimum": int(24 * 0.5),
+        "swatches_count_maximum": int(24 * 1.5),
         "swatch_minimum_area_factor": 200,
         "swatch_contour_scale": 1 + 1 / 3,
     }
@@ -145,31 +146,6 @@ Settings for the segmentation of the *X-Rite* *ColorChecker Nano**.
 """
 
 
-@dataclass
-class DataSegmentationColourCheckers(MixinDataclassIterable):
-    """
-    Colour checkers detection data used for plotting, debugging and further
-    analysis.
-
-    Parameters
-    ----------
-    rectangles
-        Colour checker bounding boxes, i.e., the clusters that have the
-        relevant count of swatches.
-    clusters
-        Detected swatches clusters.
-    swatches
-        Detected swatches.
-    segmented_image
-        Segmented image.
-    """
-
-    rectangles: NDArrayInt
-    clusters: NDArrayInt
-    swatches: NDArrayInt
-    segmented_image: NDArrayFloat
-
-
 @typing.overload
 def segmenter_default(
     image: ArrayLike,
@@ -209,10 +185,9 @@ def segmenter_default(
     **kwargs: Any,
 ) -> DataSegmentationColourCheckers | NDArrayInt:
     """
-    Detect the colour checker rectangles in specified image :math:`image` using
-    segmentation.
+    Detect the colour checker rectangles in specified image using segmentation.
 
-    The process is a follows:
+    The process is as follows:
 
     -   Input image :math:`image` is converted to a grayscale image
         :math:`image_g` and normalised to range [0, 1].
@@ -318,7 +293,7 @@ def segmenter_default(
     --------
     >>> import os
     >>> from colour import read_image
-    >>> from colour_checker_detection import ROOT_RESOURCES_TESTS
+    >>> from colour_checker_detection import ROOT_RESOURCES_TESTS, segmenter_default
     >>> path = os.path.join(
     ...     ROOT_RESOURCES_TESTS,
     ...     "colour_checker_detection",
@@ -359,28 +334,10 @@ def segmenter_default(
                 as_int32_array(cv2.boxPoints(cv2.minAreaRect(swatch_contour)))
             )
 
-    # Removing stacked squares.
-    squares = as_int32_array(remove_stacked_contours(squares))
+    swatches = as_int32_array(remove_stacked_contours(squares))
 
-    # Clustering swatches.
-    swatches = [
-        scale_contour(square, settings.swatch_contour_scale) for square in squares
-    ]
-    image_c = np.zeros(image.shape, dtype=np.uint8)
-    cv2.drawContours(
-        image_c,
-        as_int32_array(swatches),  # pyright: ignore
-        -1,
-        [255] * 3,
-        -1,
-    )
-    image_c = cv2.cvtColor(image_c, cv2.COLOR_RGB2GRAY)
-
-    contours, _hierarchy = cv2.findContours(
-        image_c, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE
-    )
-    clusters = as_int32_array(
-        [cv2.boxPoints(cv2.minAreaRect(contour)) for contour in contours]
+    clusters = cluster_swatches(
+        as_float32_array(image), swatches, settings.swatch_contour_scale
     )
 
     # Filtering clusters using their aspect ratio.
@@ -396,31 +353,195 @@ def segmenter_default(
     clusters = as_int32_array(filtered_clusters)
 
     # Filtering swatches within cluster.
-    counts = []
-    for cluster in clusters:
-        count = 0
-        for swatch in swatches:
-            if cv2.pointPolygonTest(cluster, contour_centroid(swatch), False) == 1:
-                count += 1
-        counts.append(count)
-
-    indexes = np.where(
-        np.logical_and(
-            as_int32_array(counts) >= settings.swatches_count_minimum,
-            as_int32_array(counts) <= settings.swatches_count_maximum,
-        )
-    )[0]
-
-    rectangles = clusters[indexes]
+    rectangles = filter_clusters(
+        clusters,
+        swatches,
+        settings.swatches_count_minimum,
+        settings.swatches_count_maximum,
+    )
 
     if additional_data:
         return DataSegmentationColourCheckers(
             rectangles,
             clusters,
-            squares,
+            swatches,
             image_k,  # pyright: ignore
         )
     return rectangles
+
+
+@typing.overload
+def extractor_segmentation(
+    image: ArrayLike,
+    segmentation_data: Any,
+    samples: int = ...,
+    cctf_decoding: Callable = ...,
+    apply_cctf_decoding: bool = ...,
+    additional_data: Literal[True] = True,
+    **kwargs: Any,
+) -> tuple[DataDetectionColourChecker, ...]: ...
+
+
+@typing.overload
+def extractor_segmentation(
+    image: ArrayLike,
+    segmentation_data: Any,
+    samples: int = ...,
+    cctf_decoding: Callable = ...,
+    apply_cctf_decoding: bool = ...,
+    *,
+    additional_data: Literal[False],
+    **kwargs: Any,
+) -> tuple[NDArrayFloat, ...]: ...
+
+
+@typing.overload
+def extractor_segmentation(
+    image: ArrayLike,
+    segmentation_data: Any,
+    samples: int,
+    cctf_decoding: Callable,
+    apply_cctf_decoding: bool,
+    additional_data: Literal[False],
+    **kwargs: Any,
+) -> tuple[NDArrayFloat, ...]: ...
+
+
+def extractor_segmentation(
+    image: ArrayLike,
+    segmentation_data: Any,
+    samples: int = 32,
+    cctf_decoding: Callable = eotf_sRGB,
+    apply_cctf_decoding: bool = False,
+    additional_data: bool = False,
+    **kwargs: Any,
+) -> tuple[DataDetectionColourChecker, ...] | tuple[NDArrayFloat, ...]:
+    """
+    Extract colour swatches using segmentation-based methods.
+
+    This function takes segmentation data (rectangles/quadrilaterals) and extracts
+    colors using the standard geometric sampling approach.
+
+    Parameters
+    ----------
+    image
+        Image to extract colours from.
+    segmentation_data
+        Segmentation data containing detected rectangles and swatches.
+    samples
+        Sample count to use to average (mean) the swatches colours. The effective
+        sample count is :math:`samples^2`.
+    cctf_decoding
+        Decoding colour component transfer function / opto-electronic
+        transfer function used when converting the image from 8-bit to float.
+    apply_cctf_decoding
+        Apply the decoding colour component transfer function / opto-electronic
+        transfer function.
+    additional_data
+        Whether to include additional extraction data.
+
+    Other Parameters
+    ----------------
+    interpolation_method
+        Interpolation method used when resizing the images, `cv2.INTER_CUBIC`
+        and `cv2.INTER_LINEAR` methods are recommended.
+    working_width
+        Width the input image is resized to for detection.
+    aspect_ratio
+        Colour checker aspect ratio, e.g. 1.5.
+
+    Returns
+    -------
+    :class:`tuple`
+        Tuple of detected colour checker data objects.
+
+    Examples
+    --------
+    >>> import os
+    >>> from colour import read_image
+    >>> from colour_checker_detection import (
+    ...     ROOT_RESOURCES_TESTS,
+    ...     segmenter_default,
+    ...     extractor_segmentation,
+    ... )
+    >>> path = os.path.join(
+    ...     ROOT_RESOURCES_TESTS,
+    ...     "colour_checker_detection",
+    ...     "detection",
+    ...     "IMG_1967.png",
+    ... )
+    >>> image = read_image(path)
+    >>> segmentation_data = segmenter_default(image, additional_data=True)
+    >>> extractor_segmentation(image, segmentation_data)
+    ... # doctest: +SKIP
+    (array([[ 0.36018878,  0.22291452,  0.11730091],
+           [ 0.6256498 ,  0.39444408,  0.241824  ],
+           [ 0.33206907,  0.31609666,  0.2886104 ],
+           [ 0.30452022,  0.27339727,  0.10480344],
+           [ 0.41740698,  0.3191239 ,  0.30785984],
+           [ 0.3486532 ,  0.43936515,  0.29126465],
+           [ 0.6797462 ,  0.3522702 ,  0.06983876],
+           [ 0.27157846,  0.25354025,  0.33056694],
+           [ 0.62124234,  0.27033532,  0.18669768],
+           [ 0.3070325 ,  0.17978221,  0.19183952],
+           [ 0.48548093,  0.45865163,  0.03294417],
+           [ 0.6508147 ,  0.4002312 ,  0.01611003],
+           [ 0.1930163 ,  0.18572474,  0.2745065 ],
+           [ 0.28079677,  0.38511798,  0.12274227],
+           [ 0.5547266 ,  0.21451429,  0.12551409],
+           [ 0.7207452 ,  0.5150524 ,  0.00542995],
+           [ 0.5774373 ,  0.25776303,  0.26855013],
+           [ 0.17295608,  0.31638905,  0.2951069 ],
+           [ 0.7390023 ,  0.60931826,  0.43826106],
+           [ 0.62775826,  0.5176888 ,  0.3718117 ],
+           [ 0.51389074,  0.42036685,  0.29863322],
+           [ 0.3694671 ,  0.30227602,  0.20832038],
+           [ 0.2630599 ,  0.21490613,  0.14286397],
+           [ 0.16101658,  0.13380753,  0.08050805]]...),)
+    """
+
+    image = cast("NDArrayReal", image)
+
+    if apply_cctf_decoding:
+        image = cctf_decoding(image)
+
+    settings = SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC.copy()
+    settings.update(kwargs)
+
+    working_height = int(settings["working_width"] / settings["aspect_ratio"])
+    image = reformat_image(
+        image, settings["working_width"], settings["interpolation_method"]
+    )
+
+    rectangle = as_int32_array(
+        [
+            [settings["working_width"], 0],
+            [settings["working_width"], working_height],
+            [0, working_height],
+            [0, 0],
+        ]
+    )
+
+    colour_checkers_data = []
+
+    if hasattr(segmentation_data, "rectangles"):
+        colour_checkers_data.extend(
+            sample_colour_checker(image, quadrilateral, rectangle, samples, **settings)
+            for quadrilateral in segmentation_data.rectangles
+        )
+    else:
+        colour_checkers_data.extend(
+            sample_colour_checker(image, quadrilateral, rectangle, samples, **settings)
+            for quadrilateral in segmentation_data
+        )
+
+    if additional_data:
+        return tuple(colour_checkers_data)
+
+    return tuple(
+        colour_checker_data.swatch_colours
+        for colour_checker_data in colour_checkers_data
+    )
 
 
 @typing.overload
@@ -431,6 +552,8 @@ def detect_colour_checkers_segmentation(
     apply_cctf_decoding: bool = ...,
     segmenter: Callable = ...,
     segmenter_kwargs: dict | None = ...,
+    extractor: Callable = ...,
+    extractor_kwargs: dict | None = ...,
     show: bool = ...,
     additional_data: Literal[True] = True,
     **kwargs: Any,
@@ -445,6 +568,8 @@ def detect_colour_checkers_segmentation(
     apply_cctf_decoding: bool = ...,
     segmenter: Callable = ...,
     segmenter_kwargs: dict | None = ...,
+    extractor: Callable = ...,
+    extractor_kwargs: dict | None = ...,
     show: bool = ...,
     *,
     additional_data: Literal[False],
@@ -460,6 +585,8 @@ def detect_colour_checkers_segmentation(
     apply_cctf_decoding: bool,
     segmenter: Callable,
     segmenter_kwargs: dict | None,
+    extractor: Callable,
+    extractor_kwargs: dict | None,
     show: bool,
     additional_data: Literal[False],
     **kwargs: Any,
@@ -473,6 +600,8 @@ def detect_colour_checkers_segmentation(
     apply_cctf_decoding: bool = False,
     segmenter: Callable = segmenter_default,
     segmenter_kwargs: dict | None = None,
+    extractor: Callable = extractor_segmentation,
+    extractor_kwargs: dict | None = None,
     show: bool = False,
     additional_data: bool = False,
     **kwargs: Any,
@@ -499,6 +628,11 @@ def detect_colour_checkers_segmentation(
         checker rectangles.
     segmenter_kwargs
         Keyword arguments to pass to the ``segmenter``.
+    extractor
+        Callable responsible to extract the colour checker data from the
+        segmented rectangles.
+    extractor_kwargs
+        Keyword arguments to pass to the ``extractor``.
     show
         Whether to show various debug images.
     additional_data
@@ -578,32 +712,32 @@ def detect_colour_checkers_segmentation(
     ...     "IMG_1967.png",
     ... )
     >>> image = read_image(path)
-    >>> detect_colour_checkers_segmentation(image)  # doctest: +SKIP
-    (array([[ 0.360005  ,  0.22310828,  0.11760835],
-           [ 0.6258309 ,  0.39448667,  0.24166533],
-           [ 0.33198   ,  0.31600377,  0.28866866],
-           [ 0.3046006 ,  0.273321  ,  0.10486555],
-           [ 0.41751358,  0.31914026,  0.30789137],
-           [ 0.34866226,  0.43934596,  0.29126382],
-           [ 0.67983997,  0.35236534,  0.06997226],
-           [ 0.27118555,  0.25352538,  0.33078724],
-           [ 0.62091863,  0.27034152,  0.18652563],
-           [ 0.3071613 ,  0.17978874,  0.19181632],
-           [ 0.48547146,  0.4585586 ,  0.03294956],
-           [ 0.6507678 ,  0.40023172,  0.01607676],
-           [ 0.19286253,  0.18585181,  0.27459183],
-           [ 0.28054565,  0.38513032,  0.1224441 ],
-           [ 0.5545431 ,  0.21436104,  0.12549178],
-           [ 0.72068894,  0.51493925,  0.00548734],
-           [ 0.5772921 ,  0.2577179 ,  0.2685553 ],
-           [ 0.17289193,  0.3163792 ,  0.2950853 ],
-           [ 0.7394083 ,  0.60953134,  0.4383072 ],
-           [ 0.6281671 ,  0.51759964,  0.37215686],
-           [ 0.51360977,  0.42048824,  0.2985709 ],
-           [ 0.36953217,  0.30218402,  0.20827036],
-           [ 0.26286703,  0.21493268,  0.14277342],
-           [ 0.16102524,  0.13381621,  0.08047409]]...),)
-
+    >>> detect_colour_checkers_segmentation(image, apply_cctf_decoding=True)
+    ... # doctest: +SKIP
+    (array([[  1.06804565e-01,   4.08109687e-02,   1.31266015e-02],
+           [  3.49683374e-01,   1.29072860e-01,   4.77699488e-02],
+           [  9.05181840e-02,   8.14911500e-02,   6.78349435e-02],
+           [  7.58600757e-02,   6.07827008e-02,   1.10303042e-02],
+           [  1.45751402e-01,   8.31151009e-02,   7.72669688e-02],
+           [  1.00159235e-01,   1.62195116e-01,   6.91367984e-02],
+           [  4.20038819e-01,   1.01927504e-01,   6.38073916e-03],
+           [  6.02441281e-02,   5.23594357e-02,   8.94734785e-02],
+           [  3.43939215e-01,   5.94407171e-02,   2.92109884e-02],
+           [  7.70443529e-02,   2.71991435e-02,   3.07092462e-02],
+           [  2.01171950e-01,   1.77795976e-01,   2.66185054e-03],
+           [  3.81304830e-01,   1.33062363e-01,   1.23752898e-03],
+           [  3.14101577e-02,   2.89250631e-02,   6.13652393e-02],
+           [  6.45340234e-02,   1.22705154e-01,   1.41930664e-02],
+           [  2.68294245e-01,   3.78271416e-02,   1.45846475e-02],
+           [  4.78512675e-01,   2.28180945e-01,   4.21307486e-04],
+           [  2.93216556e-01,   5.40601388e-02,   5.87599911e-02],
+           [  2.61003822e-02,   8.16240311e-02,   7.08173811e-02],
+           [  5.06426811e-01,   3.29764754e-01,   1.61412135e-01],
+           [  3.52356732e-01,   2.30743274e-01,   1.14147641e-01],
+           [  2.27152765e-01,   1.47627085e-01,   7.27180764e-02],
+           [  1.12553783e-01,   7.42645189e-02,   3.58113647e-02],
+           [  5.65953329e-02,   3.79680507e-02,   1.81693807e-02],
+           [  2.30163466e-02,   1.61432363e-02,   7.43864896e-03]]...),)
     """
 
     if segmenter_kwargs is None:
@@ -614,8 +748,6 @@ def detect_colour_checkers_segmentation(
 
     swatches_h = settings.swatches_horizontal
     swatches_v = settings.swatches_vertical
-    working_width = settings.working_width
-    working_height = int(working_width / settings.aspect_ratio)
 
     if isinstance(image, str):
         image = read_image(image)
@@ -632,73 +764,31 @@ def detect_colour_checkers_segmentation(
 
     image = reformat_image(image, settings.working_width, settings.interpolation_method)
 
-    rectangle = as_int32_array(
-        [
-            [working_width, 0],
-            [working_width, working_height],
-            [0, working_height],
-            [0, 0],
-        ]
-    )
-
     segmentation_colour_checkers_data = segmenter(
         image, additional_data=True, **{**segmenter_kwargs, **settings}
     )
 
-    colour_checkers_data = []
-    for quadrilateral in segmentation_colour_checkers_data.rectangles:
-        colour_checkers_data.append(
-            sample_colour_checker(image, quadrilateral, rectangle, samples, **settings)
+    extractor_kwargs = cast("Dict[str, Any]", optional(extractor_kwargs, {}))
+
+    colour_checkers_data = list(
+        extractor(
+            image,
+            segmentation_colour_checkers_data,
+            samples=samples,
+            cctf_decoding=cctf_decoding,
+            apply_cctf_decoding=False,
+            additional_data=True,
+            **{**extractor_kwargs, **kwargs},
         )
-
-        if show:
-            colour_checker = np.copy(colour_checkers_data[-1].colour_checker)
-            for swatch_mask in colour_checkers_data[-1].swatch_masks:
-                colour_checker[
-                    swatch_mask[0] : swatch_mask[1],
-                    swatch_mask[2] : swatch_mask[3],
-                    ...,
-                ] = 0
-
-            plot_image(
-                CONSTANTS_COLOUR_STYLE.colour.colourspace.cctf_encoding(colour_checker),
-            )
-
-            plot_image(
-                CONSTANTS_COLOUR_STYLE.colour.colourspace.cctf_encoding(
-                    np.reshape(
-                        colour_checkers_data[-1].swatch_colours,
-                        [swatches_v, swatches_h, 3],
-                    )
-                ),
-            )
+    )
 
     if show:
-        plot_image(
-            segmentation_colour_checkers_data.segmented_image,
-            text_kwargs={"text": "Segmented Image", "color": "black"},
-        )
-
-        image_c = np.copy(image)
-
-        cv2.drawContours(
-            image_c,
-            segmentation_colour_checkers_data.swatches,
-            -1,
-            (1, 0, 1),
-            3,
-        )
-        cv2.drawContours(
-            image_c,
-            segmentation_colour_checkers_data.clusters,
-            -1,
-            (0, 1, 1),
-            3,
-        )
-
-        plot_image(
-            CONSTANTS_COLOUR_STYLE.colour.colourspace.cctf_encoding(image_c),
-            text_kwargs={"text": "Swatches & Clusters", "color": "white"},
+        plot_detection_results(
+            tuple(colour_checkers_data),
+            swatches_h,
+            swatches_v,
+            segmentation_colour_checkers_data,
+            image,
         )
 
     if additional_data:

@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import typing
 from dataclasses import dataclass
+from itertools import combinations
 
 import cv2
 import numpy as np
@@ -35,7 +36,6 @@ if typing.TYPE_CHECKING:
         DTypeFloat,
         DTypeInt,
         Literal,
-        NDArrayReal,
         Type,
     )
 
@@ -75,13 +75,17 @@ __all__ = [
     "reformat_image",
     "transform_image",
     "detect_contours",
+    "is_quadrilateral",
     "is_square",
     "contour_centroid",
     "scale_contour",
+    "cluster_swatches",
+    "filter_clusters",
     "approximate_contour",
     "quadrilateralise_contours",
     "remove_stacked_contours",
     "DataDetectionColourChecker",
+    "DataSegmentationColourCheckers",
     "sample_colour_checker",
 ]
 
@@ -664,6 +668,44 @@ def detect_contours(
     return contours
 
 
+def is_quadrilateral(points: NDArrayFloat) -> bool:
+    """
+    Check if points form a quadrilateral (no three points are collinear).
+
+    Parameters
+    ----------
+    points
+        Points to check (should be 4 points).
+
+    Returns
+    -------
+    :class:`bool`
+        True if points form a quadrilateral (no three collinear), False otherwise.
+
+    Notes
+    -----
+    This function checks that no three points are collinear, which ensures
+    the 4 points form a proper quadrilateral suitable for perspective transformation.
+
+    Examples
+    --------
+    >>> points = np.array([[0, 0], [10, 0], [10, 10], [0, 10]], dtype=float)
+    >>> is_quadrilateral(points)
+    True
+    >>> points = np.array([[0, 0], [5, 0], [10, 0], [0, 10]], dtype=float)
+    >>> is_quadrilateral(points)  # Three points collinear
+    False
+    """
+
+    for pts in combinations(points, 3):
+        matrix = np.column_stack((pts, np.ones(len(pts))))
+
+        if np.linalg.matrix_rank(matrix) < 3:
+            return False
+
+    return True
+
+
 def is_square(contour: ArrayLike, tolerance: float = 0.015) -> bool:
     """
     Return if specified contour is a square.
@@ -773,6 +815,140 @@ def scale_contour(contour: ArrayLike, factor: ArrayLike) -> NDArrayFloat:
     centroid = contour_centroid(contour)
 
     return (contour - centroid) * factor + centroid
+
+
+def cluster_swatches(
+    image: NDArrayFloat, swatches: NDArrayInt, swatch_contour_scale: float
+) -> NDArrayInt:
+    """
+    Cluster swatches by expanding them and fitting rectangles to overlapping areas.
+
+    Parameters
+    ----------
+    image
+        Image containing the swatches. Only used for its shape.
+    swatches
+        The swatches to cluster.
+    swatch_contour_scale
+        The scale by which to expand the swatches.
+
+    Returns
+    -------
+    :class:`NDArrayInt`
+        The clusters of swatches.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> image = np.zeros((600, 900, 3))
+    >>> swatches = np.array(
+    ...     [
+    ...         [[100, 100], [200, 100], [200, 200], [100, 200]],
+    ...         [[300, 100], [400, 100], [400, 200], [300, 200]],
+    ...     ],
+    ...     dtype=np.int32,
+    ... )
+    >>> cluster_swatches(image, swatches, 1.5)
+    array([[[275,  75],
+            [425,  75],
+            [425, 225],
+            [275, 225]],
+    <BLANKLINE>
+           [[ 75,  75],
+            [225,  75],
+            [225, 225],
+            [ 75, 225]]], dtype=int32)
+    """
+
+    scaled_swatches = [
+        scale_contour(swatch, swatch_contour_scale) for swatch in swatches
+    ]
+    image_c = np.zeros(image.shape[:2], dtype=np.uint8)
+
+    cv2.drawContours(
+        image_c, [as_int32_array(s) for s in scaled_swatches], -1, (255,), -1
+    )
+
+    contours, _ = cv2.findContours(image_c, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+    return as_int32_array(
+        [cv2.boxPoints(cv2.minAreaRect(contour)) for contour in contours]
+    )
+
+
+def filter_clusters(
+    clusters: NDArrayInt,
+    swatches: NDArrayInt,
+    swatches_count_minimum: int,
+    swatches_count_maximum: int,
+) -> NDArrayInt:
+    """
+    Filter clusters by the number of swatches they contain.
+
+    Parameters
+    ----------
+    clusters
+        The clusters to filter.
+    swatches
+        The swatches to count within each cluster.
+    swatches_count_minimum
+        Minimum number of swatches required in a cluster.
+    swatches_count_maximum
+        Maximum number of swatches allowed in a cluster.
+
+    Returns
+    -------
+    :class:`NDArrayInt`
+        The filtered clusters that contain the expected number of swatches.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> clusters = np.array(
+    ...     [
+    ...         [[0, 0], [200, 0], [200, 200], [0, 200]],
+    ...         [[300, 300], [400, 300], [400, 400], [300, 400]],
+    ...     ],
+    ...     dtype=np.int32,
+    ... )
+    >>> swatches = np.array(
+    ...     [
+    ...         [[50, 50], [100, 50], [100, 100], [50, 100]],
+    ...         [[350, 350], [380, 350], [380, 380], [350, 380]],
+    ...     ],
+    ...     dtype=np.int32,
+    ... )
+    >>> filter_clusters(clusters, swatches, 1, 2)
+    array([[[  0,   0],
+            [200,   0],
+            [200, 200],
+            [  0, 200]],
+    <BLANKLINE>
+           [[300, 300],
+            [400, 300],
+            [400, 400],
+            [300, 400]]], dtype=int32)
+    """
+
+    if len(clusters) == 0 or len(swatches) == 0:
+        return as_int32_array([]).reshape(0, 4, 2)
+
+    filtered_clusters = []
+    for cluster in clusters:
+        count = 0
+        for swatch in swatches:
+            centroid = contour_centroid(swatch)
+            if cv2.pointPolygonTest(cluster, centroid, False) >= 0:
+                count += 1
+
+        if swatches_count_minimum <= count <= swatches_count_maximum:
+            filtered_clusters.append(cluster)
+
+    return (
+        as_int32_array(filtered_clusters)
+        if len(filtered_clusters) > 0
+        else as_int32_array([]).reshape(0, 4, 2)
+    )
 
 
 def approximate_contour(
@@ -989,6 +1165,31 @@ class DataDetectionColourChecker(MixinDataclassIterable):
     swatch_masks: NDArrayInt
     colour_checker: NDArrayFloat
     quadrilateral: NDArrayFloat
+
+
+@dataclass
+class DataSegmentationColourCheckers(MixinDataclassIterable):
+    """
+    Colour checkers detection data used for plotting, debugging and further
+    analysis.
+
+    Parameters
+    ----------
+    rectangles
+        Colour checker bounding boxes, i.e., the clusters that have the
+        relevant count of swatches.
+    clusters
+        Detected swatches clusters.
+    swatches
+        Detected swatches.
+    segmented_image
+        Segmented image.
+    """
+
+    rectangles: NDArrayInt
+    clusters: NDArrayInt
+    swatches: NDArrayInt
+    segmented_image: NDArrayFloat
 
 
 def sample_colour_checker(

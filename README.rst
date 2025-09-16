@@ -40,6 +40,7 @@ Features
 The following colour checker detection algorithms are implemented:
 
 -   Segmentation
+-   Templated
 -   Machine learning inference via `Ultralytics YOLOv8 <https://github.com/ultralytics/ultralytics>`__
 
     -   The model is published on `HuggingFace <https://huggingface.co/colour-science/colour-checker-detection-models>`__,
