@@ -10,6 +10,7 @@ import os
 import platform
 
 import numpy as np
+import pytest
 from colour import read_image
 
 from colour_checker_detection import ROOT_RESOURCES_TESTS
@@ -47,6 +48,10 @@ class TestSegmenterDefault:
 segmenter_default` definition unit tests methods.
     """
 
+    @pytest.mark.skipif(
+        platform.system() in ("Windows", "Microsoft", "Linux"),
+        reason="Unit test is only reproducible on macOS",
+    )
     def test_segmenter_default(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.segmentation.\
@@ -56,10 +61,6 @@ segmenter_default` definition unit tests methods.
         # Skipping unit test when "png" files are missing, e.g., when testing
         # the distributed "Python" package.
         if len(PNG_FILES) == 0:
-            return
-
-        # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
-        if platform.system() in ("Windows", "Microsoft", "Linux"):
             return
 
         colour_checkers_rectangles = [
@@ -194,6 +195,10 @@ class TestDetectColourCheckersSegmentation:
 detect_colour_checkers_segmentation` definition unit tests methods.
     """
 
+    @pytest.mark.skipif(
+        platform.system() in ("Windows", "Microsoft", "Linux"),
+        reason="Unit test is only reproducible on macOS",
+    )
     def test_detect_colour_checkers_segmentation(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.segmentation.\
@@ -203,10 +208,6 @@ detect_colour_checkers_segmentation` definition unit tests methods.
         # Skipping unit test when "png" files are missing, e.g., when testing
         # the distributed "Python" package.
         if len(PNG_FILES) == 0:
-            return
-
-        # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
-        if platform.system() in ("Windows", "Microsoft", "Linux"):
             return
 
         test_swatches = [

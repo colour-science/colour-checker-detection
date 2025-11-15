@@ -10,6 +10,7 @@ import os
 import platform
 
 import numpy as np
+import pytest
 from colour import read_image
 
 from colour_checker_detection import ROOT_RESOURCES_TESTS
@@ -47,6 +48,10 @@ class TestInferencerDefault:
 inferencer_default` definition unit tests methods.
     """
 
+    @pytest.mark.skipif(
+        platform.system() in ("Windows", "Microsoft", "Linux"),
+        reason="Unit test is only reproducible on macOS",
+    )
     def test_inferencer_default(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.inference.\
@@ -56,10 +61,6 @@ inferencer_default` definition unit tests methods.
         # Skipping unit test when "png" files are missing, e.g., when testing
         # the distributed "Python" package.
         if len(PNG_FILES) == 0:
-            return
-
-        # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
-        if platform.system() in ("Windows", "Microsoft", "Linux"):
             return
 
         shapes = [
@@ -79,16 +80,16 @@ inferencer_default` definition unit tests methods.
 class TestExtractorInference:
     """Define :func:`extractor_inference` definition unit tests methods."""
 
+    @pytest.mark.skipif(
+        platform.system() in ("Windows", "Microsoft", "Linux"),
+        reason="Unit test is only reproducible on macOS",
+    )
     def test_extractor_inference(self) -> None:
         """Test :func:`extractor_inference` definition."""
 
         # Skipping unit test when "png" files are missing, e.g., when testing
         # the distributed "Python" package.
         if len(PNG_FILES) == 0:
-            return
-
-        # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
-        if platform.system() in ("Windows", "Microsoft", "Linux"):
             return
 
         image = read_image(PNG_FILES[0])
@@ -132,6 +133,10 @@ class TestDetectColourCheckersInference:
 detect_colour_checkers_inference` definition unit tests methods.
     """
 
+    @pytest.mark.skipif(
+        platform.system() in ("Windows", "Microsoft", "Linux"),
+        reason="Unit test is only reproducible on macOS",
+    )
     def test_detect_colour_checkers_inference(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.inference.\
@@ -141,10 +146,6 @@ detect_colour_checkers_inference` definition unit tests methods.
         # Skipping unit test when "png" files are missing, e.g., when testing
         # the distributed "Python" package.
         if len(PNG_FILES) == 0:
-            return
-
-        # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
-        if platform.system() in ("Windows", "Microsoft", "Linux"):
             return
 
         test_swatches = [
