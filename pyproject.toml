@@ -78,7 +78,9 @@ Changelog = "https://github.com/colour-science/colour-checker-detection/releases
 
 [tool.uv]
 package = true
-dev-dependencies = [
+
+[dependency-groups]
+dev = [
     "coverage",
     "coveralls",
     "hatch",
