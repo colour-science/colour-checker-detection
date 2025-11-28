@@ -124,7 +124,7 @@ def inference(
                 (
                     data_boxes[i, 4].cpu().numpy(),
                     data_boxes[i, 5].cpu().numpy(),
-                    data_masks[i].data.cpu().numpy(),
+                    data_masks[i].data.cpu().float().numpy(),
                 )
             )
 
