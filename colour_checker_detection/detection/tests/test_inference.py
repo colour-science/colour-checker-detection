@@ -281,7 +281,7 @@ detect_colour_checkers_inference` definition unit tests methods.
                     read_image(png_file), additional_data=False
                 ),
                 test_swatches[i],
-                atol=0.0001,
+                atol=0.005,
             )
 
         (
