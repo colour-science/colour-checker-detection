@@ -6,27 +6,13 @@ TODO
 
 -   colour_checker_detection/__init__.py
 
-    -   Line 90 : # TODO: Remove legacy printing support when deemed appropriate.
+    -   Line 110 : # TODO: Remove legacy printing support when deemed appropriate.
 
 
 -   colour_checker_detection/detection/common.py
 
-    -   Line 126 : # TODO: Update when "Colour" 0.4.5 is released.
-    -   Line 1120 : # TODO: Update when "Colour" 0.4.5 is released.
-
-
--   colour_checker_detection/detection/tests/test_inference.py
-
-    -   Line 58 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
-    -   Line 62 : # TODO: Enable when "torch" is available on Python 3.12.
-    -   Line 97 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
-    -   Line 101 : # TODO: Enable when "torch" is available on Python 3.13.
-
-
--   colour_checker_detection/detection/tests/test_segmentation.py
-
-    -   Line 57 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
-    -   Line 147 : # TODO: Unit test is only reproducible on "macOs", skipping other OSes.
+    -   Line 131 : # TODO: Update when "Colour" 0.4.5 is released.
+    -   Line 1321 : # TODO: Update when "Colour" 0.4.5 is released.
 
 About
 -----
