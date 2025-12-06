@@ -124,7 +124,7 @@ def inference(
                 (
                     data_boxes[i, 4].cpu().numpy(),
                     data_boxes[i, 5].cpu().numpy(),
-                    data_masks[i].data.cpu().numpy(),
+                    data_masks[i].data.cpu().float().numpy(),
                 )
             )
 
@@ -203,7 +203,7 @@ def segmentation(
         Inference results.
     """
 
-    from ultralytics import YOLO  # noqa: PLC0415
+    from ultralytics import YOLO  # noqa: PLC0415  # pyright: ignore
     from ultralytics.utils.downloads import download  # noqa: PLC0415
 
     time_start = perf_counter()

@@ -8,6 +8,7 @@ from __future__ import annotations
 import glob
 import os
 import platform
+import sys
 
 import numpy as np
 import pytest
@@ -49,8 +50,9 @@ inferencer_default` definition unit tests methods.
     """
 
     @pytest.mark.skipif(
-        platform.system() in ("Windows", "Microsoft", "Linux"),
-        reason="Unit test is only reproducible on macOS",
+        platform.system() in ("Windows", "Microsoft", "Linux")
+        or sys.version_info >= (3, 14),
+        reason="Unit test is only reproducible on macOS and requires Python < 3.14",
     )
     def test_inferencer_default(self) -> None:
         """
@@ -81,8 +83,9 @@ class TestExtractorInference:
     """Define :func:`extractor_inference` definition unit tests methods."""
 
     @pytest.mark.skipif(
-        platform.system() in ("Windows", "Microsoft", "Linux"),
-        reason="Unit test is only reproducible on macOS",
+        platform.system() in ("Windows", "Microsoft", "Linux")
+        or sys.version_info >= (3, 14),
+        reason="Unit test is only reproducible on macOS and requires Python < 3.14",
     )
     def test_extractor_inference(self) -> None:
         """Test :func:`extractor_inference` definition."""
@@ -134,8 +137,9 @@ detect_colour_checkers_inference` definition unit tests methods.
     """
 
     @pytest.mark.skipif(
-        platform.system() in ("Windows", "Microsoft", "Linux"),
-        reason="Unit test is only reproducible on macOS",
+        platform.system() in ("Windows", "Microsoft", "Linux")
+        or sys.version_info >= (3, 14),
+        reason="Unit test is only reproducible on macOS and requires Python < 3.14",
     )
     def test_detect_colour_checkers_inference(self) -> None:
         """
@@ -153,30 +157,30 @@ detect_colour_checkers_inference` definition unit tests methods.
             (
                 np.array(
                     [
-                        [0.24867499, 0.15330502, 0.08164288],
-                        [0.41613602, 0.25717810, 0.15542191],
-                        [0.21558925, 0.19957373, 0.18079756],
-                        [0.19679485, 0.17270973, 0.06542107],
-                        [0.27353886, 0.20367795, 0.19482557],
-                        [0.23354954, 0.28888842, 0.19005811],
-                        [0.45829877, 0.23313290, 0.04977580],
-                        [0.18111429, 0.16065562, 0.20710111],
-                        [0.39512363, 0.16722846, 0.11299202],
-                        [0.19604993, 0.11015564, 0.11477494],
-                        [0.31544134, 0.29128322, 0.02166587],
-                        [0.43199968, 0.25869599, 0.00824983],
-                        [0.13822055, 0.12490844, 0.17794068],
-                        [0.18937516, 0.24567719, 0.07760347],
-                        [0.35584736, 0.13182278, 0.07427428],
-                        [0.46339110, 0.32318470, 0.00223334],
-                        [0.37146100, 0.15859614, 0.16342331],
-                        [0.12267984, 0.20146658, 0.18591304],
-                        [0.50486773, 0.41277468, 0.29183933],
-                        [0.41462421, 0.33589253, 0.23704799],
-                        [0.32868931, 0.26556620, 0.18510209],
-                        [0.23908001, 0.18781137, 0.12658580],
-                        [0.16659373, 0.13050708, 0.08609813],
-                        [0.11020049, 0.07912453, 0.04847530],
+                        [0.24863878, 0.15329053, 0.08158918],
+                        [0.41507748, 0.25731990, 0.15481426],
+                        [0.21601081, 0.19963661, 0.18040785],
+                        [0.19686793, 0.17291754, 0.06548586],
+                        [0.27357155, 0.20301168, 0.19400775],
+                        [0.23356010, 0.28720620, 0.18817304],
+                        [0.45823488, 0.23316798, 0.04992789],
+                        [0.18078160, 0.16045800, 0.20766605],
+                        [0.39627394, 0.16691503, 0.11309760],
+                        [0.19422898, 0.11006075, 0.11565600],
+                        [0.31493783, 0.29084757, 0.02219770],
+                        [0.43131799, 0.25828508, 0.00795346],
+                        [0.13812497, 0.12478630, 0.17762889],
+                        [0.18720838, 0.24592778, 0.07732303],
+                        [0.35516253, 0.13156214, 0.07454837],
+                        [0.46337095, 0.32273552, 0.00165196],
+                        [0.37116164, 0.15837687, 0.16341914],
+                        [0.12098821, 0.20031747, 0.18507589],
+                        [0.50464547, 0.41264072, 0.29166794],
+                        [0.41424599, 0.33581433, 0.23724470],
+                        [0.32868224, 0.26551095, 0.18507436],
+                        [0.23896469, 0.18752976, 0.12675764],
+                        [0.16701609, 0.13087222, 0.08458477],
+                        [0.10941069, 0.07924574, 0.04898232],
                     ]
                 ),
             ),
