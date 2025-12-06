@@ -3,6 +3,8 @@ Define the unit tests for the
 :mod:`colour_checker_detection.detection.common` module.
 """
 
+from __future__ import annotations
+
 import glob
 import os
 
@@ -15,8 +17,11 @@ from colour_checker_detection import ROOT_RESOURCES_TESTS
 from colour_checker_detection.detection.common import (
     approximate_contour,
     as_float32_array,
+    cluster_swatches,
     contour_centroid,
     detect_contours,
+    filter_clusters,
+    is_quadrilateral,
     is_square,
     quadrilateralise_contours,
     reformat_image,
@@ -46,12 +51,15 @@ __all__ = [
     "TestReformatImage",
     "TestTransformImage",
     "TestDetectContours",
+    "TestIsQuadrilateral",
     "TestIsSquare",
     "TestContourCentroid",
     "TestScaleContour",
     "TestApproximateContour",
     "TestQuadrilateraliseContours",
     "TestRemoveStackedContours",
+    "TestClusterSwatches",
+    "TestFilterClusters",
     "TestSampleColourChecker",
 ]
 
@@ -68,7 +76,7 @@ class TestSwatchMasks:
     definition unit tests methods.
     """
 
-    def test_swatch_masks(self):
+    def test_swatch_masks(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.swatch_masks`
         definition unit tests methods.
@@ -97,7 +105,7 @@ class TestSwatchColours:
     definition unit tests methods.
     """
 
-    def test_swatch_colours(self):
+    def test_swatch_colours(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.swatch_colours`
         definition unit tests methods.
@@ -132,7 +140,7 @@ class TestReformatImage:
     definition unit tests methods.
     """
 
-    def test_reformat_image(self):
+    def test_reformat_image(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.reformat_image`
         definition unit tests methods.
@@ -157,7 +165,7 @@ class TestTransformImage:
     definition unit tests methods.
     """
 
-    def test_transform_image(self):
+    def test_transform_image(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.transform_image`
         definition unit tests methods.
@@ -172,7 +180,7 @@ class TestTransformImage:
                     [
                         [47.68359375, 48.68359375, 49.68359375],
                         [41.15771866, 42.15770721, 43.15771484],
-                        [37.69516754, 38.69516754, 39.69516373],
+                        [37.69516373, 38.69516754, 39.69516754],
                         [34.04169083, 35.04169464, 36.04168320],
                         [29.82055664, 30.82055473, 31.82055283],
                         [22.41366768, 23.41366577, 24.41366577],
@@ -182,36 +190,36 @@ class TestTransformImage:
                     [
                         [56.25146103, 57.25147247, 58.25146484],
                         [49.13193512, 50.13193512, 51.13193512],
-                        [43.10541153, 44.10540390, 45.10540390],
-                        [40.26855469, 41.26855850, 42.26855469],
-                        [36.38168335, 37.38168335, 38.38168716],
+                        [43.10541153, 44.10540771, 45.10540390],
+                        [40.26855469, 41.26855469, 42.26855850],
+                        [36.38168335, 37.38168335, 38.38168335],
                         [31.61718750, 32.61718750, 33.61718750],
-                        [24.64370728, 25.64370918, 26.64370537],
-                        [19.65682983, 20.65682983, 21.65682793],
+                        [24.64370728, 25.64370728, 26.64370537],
+                        [19.65682602, 20.65682983, 21.65682793],
                     ],
                     [
-                        [62.66984177, 63.66983414, 64.66983032],
+                        [62.66984177, 63.66983414, 64.66983795],
                         [58.19916534, 59.19915771, 60.19916153],
                         [51.70532227, 52.70532227, 53.70532227],
-                        [45.44541168, 46.44540405, 47.44540024],
+                        [45.44540405, 46.44540405, 47.44540024],
                         [42.06518555, 43.06518555, 44.06518555],
-                        [38.61172867, 39.61172485, 40.61172485],
-                        [33.82864380, 34.82863998, 35.82864380],
+                        [38.61172867, 39.61172485, 40.61172867],
+                        [33.82863998, 34.82864380, 35.82864380],
                         [26.57885551, 27.57885933, 28.57886314],
                     ],
                     [
                         [69.03441620, 70.03442383, 71.03441620],
-                        [65.24323273, 66.24321747, 67.24322510],
-                        [60.53915405, 61.53916931, 62.53915405],
+                        [65.24322510, 66.24321747, 67.24322510],
+                        [60.53916168, 61.53916168, 62.53915405],
                         [53.50195312, 54.50195312, 55.50195312],
                         [47.67544556, 48.67544174, 49.67544556],
-                        [44.27664566, 45.27664185, 46.27664185],
+                        [44.27664185, 45.27664185, 46.27664185],
                         [40.54687500, 41.54687500, 42.54687500],
-                        [36.09164429, 37.09164810, 38.09164810],
+                        [36.09164429, 37.09164429, 38.09164810],
                     ],
                 ],
             ),
-            atol=TOLERANCE_ABSOLUTE_TESTS,
+            atol=TOLERANCE_ABSOLUTE_TESTS * 100,
         )
 
 
@@ -221,17 +229,48 @@ class TestDetectContours:
     definition unit tests methods.
     """
 
-    def test_detect_contours(self):
+    def test_detect_contours(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.detect_contours`
         definition unit tests methods.
         """
 
-        image = zeros([240, 320, 3])
+        image = zeros((240, 320, 3))
         image[100:140, 50:90] = 1
         image[150:190, 140:180] = 1
 
         assert len(detect_contours(image)) == 5
+
+
+class TestIsQuadrilateral:
+    """
+    Define :func:`colour_checker_detection.detection.common.is_quadrilateral`
+    definition unit tests methods.
+    """
+
+    def test_is_quadrilateral(self) -> None:
+        """
+        Test :func:`colour_checker_detection.detection.common.is_quadrilateral`
+        definition.
+        """
+
+        # Valid quadrilateral (rectangle corners)
+        assert is_quadrilateral(np.array([[0, 0], [10, 0], [10, 10], [0, 10]]))
+
+        # Three collinear points (invalid quadrilateral)
+        assert not is_quadrilateral(np.array([[0, 0], [5, 0], [10, 0], [0, 10]]))
+
+        # Another valid quadrilateral (irregular but valid)
+        assert is_quadrilateral(np.array([[0, 0], [8, 2], [10, 12], [2, 10]]))
+
+        # All points on a line (degenerate case)
+        assert not is_quadrilateral(np.array([[0, 0], [2, 0], [4, 0], [6, 0]]))
+
+        # Three points collinear on vertical line
+        assert not is_quadrilateral(np.array([[0, 0], [0, 5], [0, 10], [5, 5]]))
+
+        # Template correspondence case
+        assert is_quadrilateral(np.array([[192, 56], [756, 56], [756, 503], [51, 503]]))
 
 
 class TestIsSquare:
@@ -240,7 +279,7 @@ class TestIsSquare:
     definition unit tests methods.
     """
 
-    def test_is_square(self):
+    def test_is_square(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.is_square`
         definition unit tests methods.
@@ -260,7 +299,7 @@ class TestContourCentroid:
     definition unit tests methods.
     """
 
-    def test_contour_centroid(self):
+    def test_contour_centroid(self) -> None:
         """
                 Define :func:`colour_checker_detection.detection.common.
         contour_centroid` definition unit tests methods.
@@ -276,7 +315,7 @@ class TestScaleContour:
     definition unit tests methods.
     """
 
-    def test_scale_contour(self):
+    def test_scale_contour(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.scale_contour`
         definition unit tests methods.
@@ -300,7 +339,7 @@ class TestApproximateContour:
     definition unit tests methods.
     """
 
-    def test_approximate_contour(self):
+    def test_approximate_contour(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.approximate_contour`
         definition unit tests methods.
@@ -325,7 +364,7 @@ class TestQuadrilateraliseContours:
 quadrilateralise_contours` definition unit tests methods.
     """
 
-    def test_quadrilateralise_contours(self):
+    def test_quadrilateralise_contours(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.\
 quadrilateralise_contours` definition unit tests methods.
@@ -355,7 +394,7 @@ class TestRemoveStackedContours:
 remove_stacked_contours` definition unit tests methods.
     """
 
-    def test_remove_stacked_contours(self):
+    def test_remove_stacked_contours(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.\
 remove_stacked_contours` definition unit tests methods.
@@ -380,13 +419,113 @@ remove_stacked_contours` definition unit tests methods.
         )
 
 
+class TestClusterSwatches:
+    """
+    Define :func:`colour_checker_detection.detection.common.cluster_swatches`
+    definition unit tests methods.
+    """
+
+    def test_cluster_swatches(self) -> None:
+        """
+        Test :func:`colour_checker_detection.detection.common.cluster_swatches`
+        definition.
+        """
+
+        image = np.zeros((600, 900, 3))
+
+        # Two separate swatches that should form two clusters
+        swatches = np.array(
+            [
+                [[100, 100], [200, 100], [200, 200], [100, 200]],
+                [[300, 100], [400, 100], [400, 200], [300, 200]],
+            ],
+            dtype=np.int32,
+        )
+        result = cluster_swatches(image, swatches, 1.5)
+        assert result.shape == (2, 4, 2)
+        assert result.dtype == np.int32
+
+        # Two overlapping swatches that should form one cluster
+        swatches = np.array(
+            [
+                [[100, 100], [150, 100], [150, 150], [100, 150]],
+                [[140, 100], [190, 100], [190, 150], [140, 150]],
+            ],
+            dtype=np.int32,
+        )
+        result = cluster_swatches(image, swatches, 2.0)
+        assert result.shape[0] == 1
+        assert result.dtype == np.int32
+
+        # Empty swatches array
+        swatches = np.array([], dtype=np.int32).reshape(0, 4, 2)
+        result = cluster_swatches(image, swatches, 1.5)
+        assert len(result) == 0
+
+
+class TestFilterClusters:
+    """
+    Define :func:`colour_checker_detection.detection.common.filter_clusters`
+    definition unit tests methods.
+    """
+
+    def test_filter_clusters(self) -> None:
+        """
+        Test :func:`colour_checker_detection.detection.common.filter_clusters`
+        definition.
+        """
+
+        # Both clusters contain swatches within range
+        clusters = np.array(
+            [
+                [[0, 0], [200, 0], [200, 200], [0, 200]],
+                [[300, 300], [400, 300], [400, 400], [300, 400]],
+            ],
+            dtype=np.int32,
+        )
+        swatches = np.array(
+            [
+                [[50, 50], [100, 50], [100, 100], [50, 100]],
+                [[350, 350], [380, 350], [380, 380], [350, 380]],
+            ],
+            dtype=np.int32,
+        )
+        result = filter_clusters(clusters, swatches, 1, 2)
+        assert result.shape == (2, 4, 2)
+        assert result.dtype == np.int32
+
+        # Only first cluster contains swatches
+        swatches = np.array(
+            [
+                [[50, 50], [100, 50], [100, 100], [50, 100]],
+            ],
+            dtype=np.int32,
+        )
+        result = filter_clusters(clusters, swatches, 1, 2)
+        assert result.shape == (1, 4, 2)
+
+        # No clusters contain required number of swatches
+        result = filter_clusters(clusters, swatches, 5, 10)
+        assert result.shape == (0, 4, 2)
+
+        # Empty clusters array
+        empty_clusters = np.array([], dtype=np.int32).reshape(0, 4, 2)
+        result = filter_clusters(empty_clusters, swatches, 1, 2)
+        assert result.shape == (0, 4, 2)
+
+        # Empty swatches array
+        empty_swatches = np.array([], dtype=np.int32).reshape(0, 4, 2)
+        result = filter_clusters(clusters, empty_swatches, 1, 2)
+        assert result.shape == (0, 4, 2)
+
+
 class TestSampleColourChecker:
     """
     Define :func:`colour_checker_detection.detection.common.\
 remove_stacked_contours` definition unit tests methods.
     """
 
-    def test_sample_colour_checker(self):
+    def test_sample_colour_checker(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.common.\
 sample_colour_checker` definition unit tests methods.

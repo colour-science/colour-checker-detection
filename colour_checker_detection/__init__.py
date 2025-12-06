@@ -4,9 +4,13 @@ Colour - Checker Detection
 
 Colour checker detection algorithms for *Python*.
 
+This package provides computer vision algorithms to detect and extract colour
+checkers from images using both segmentation-based and machine learning
+inference approaches.
+
 Subpackages
 -----------
--   detection : Colour checker detection.
+-   detection : Colour checker detection algorithms and utilities.
 """
 
 from __future__ import annotations
@@ -19,16 +23,25 @@ import colour
 import cv2
 import numpy as np
 
+# isort: split
+
 from .detection import (
     SETTINGS_INFERENCE_COLORCHECKER_CLASSIC,
     SETTINGS_INFERENCE_COLORCHECKER_CLASSIC_MINI,
     SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC,
     SETTINGS_SEGMENTATION_COLORCHECKER_NANO,
     SETTINGS_SEGMENTATION_COLORCHECKER_SG,
+    SETTINGS_TEMPLATED_COLORCHECKER_CLASSIC,
     detect_colour_checkers_inference,
     detect_colour_checkers_segmentation,
+    detect_colour_checkers_templated,
+    extractor_inference,
+    extractor_segmentation,
+    extractor_templated,
     inferencer_default,
+    plot_detection_results,
     segmenter_default,
+    segmenter_templated,
 )
 
 __author__ = "Colour Developers"
@@ -44,10 +57,17 @@ __all__ = [
     "SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC",
     "SETTINGS_SEGMENTATION_COLORCHECKER_NANO",
     "SETTINGS_SEGMENTATION_COLORCHECKER_SG",
+    "SETTINGS_TEMPLATED_COLORCHECKER_CLASSIC",
     "detect_colour_checkers_inference",
     "detect_colour_checkers_segmentation",
+    "detect_colour_checkers_templated",
+    "extractor_inference",
+    "extractor_segmentation",
+    "extractor_templated",
     "inferencer_default",
+    "plot_detection_results",
     "segmenter_default",
+    "segmenter_templated",
 ]
 
 ROOT_RESOURCES: str = os.path.join(os.path.dirname(__file__), "resources")
@@ -64,20 +84,20 @@ __application_name__ = "Colour - Checker Detection"
 
 __major_version__ = "0"
 __minor_version__ = "2"
-__change_version__ = "1"
-__version__ = ".".join((__major_version__, __minor_version__, __change_version__))
+__change_version__ = "2"
+__version__ = f"{__major_version__}.{__minor_version__}.{__change_version__}"
 
 try:
     _version = (
         subprocess.check_output(
-            ["git", "describe"],  # noqa: S603, S607
+            ["git", "describe"],  # noqa: S607
             cwd=os.path.dirname(__file__),
             stderr=subprocess.STDOUT,
         )
         .strip()
         .decode("utf-8")
     )
-except Exception:
+except Exception:  # noqa: BLE001
     _version = __version__
 
 colour.utilities.ANCILLARY_COLOUR_SCIENCE_PACKAGES[  # pyright: ignore
