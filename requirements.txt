@@ -137,6 +137,8 @@ idna==3.11
     #   hyperlink
     #   jsonschema
     #   requests
+imageio==2.37.2
+    # via colour-checker-detection
 imagesize==1.4.1
     # via sphinx
 importlib-metadata==8.7.0 ; python_full_version < '3.12'
@@ -301,6 +303,7 @@ numpy==2.3.5
     #   colour-checker-detection
     #   colour-science
     #   contourpy
+    #   imageio
     #   matplotlib
     #   numpy-typing-compat
     #   opencv-python
@@ -388,6 +391,7 @@ pexpect==4.9.0
     #   ipython
 pillow==12.0.0
     # via
+    #   imageio
     #   matplotlib
     #   torchvision
     #   ultralytics
