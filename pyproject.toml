@@ -1,6 +1,6 @@
 [project]
 name = "colour-checker-detection"
-version = "0.2.2"
+version = "0.2.3"
 description = "Colour checker detection with Python"
 readme = "README.rst"
 requires-python = ">=3.11,<3.15"
