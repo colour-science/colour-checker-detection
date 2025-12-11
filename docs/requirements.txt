@@ -43,6 +43,8 @@ fsspec==2025.12.0 ; python_full_version < '3.14'
     # via torch
 idna==3.11
     # via requests
+imageio==2.37.2
+    # via colour-checker-detection
 imagesize==1.4.1
     # via sphinx
 jinja2==3.1.6
@@ -70,6 +72,7 @@ numpy==2.3.5
     #   colour-checker-detection
     #   colour-science
     #   contourpy
+    #   imageio
     #   matplotlib
     #   opencv-python
     #   openimageio
@@ -129,6 +132,7 @@ packaging==25.0
     #   sphinx
 pillow==12.0.0
     # via
+    #   imageio
     #   matplotlib
     #   torchvision
     #   ultralytics

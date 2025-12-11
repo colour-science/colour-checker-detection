@@ -34,6 +34,7 @@ from colour.models import eotf_inverse_sRGB, eotf_sRGB
 from colour.utilities import (
     Structure,
     optional,
+    required,
     usage_warning,
 )
 from colour.utilities.documentation import (
@@ -42,7 +43,6 @@ from colour.utilities.documentation import (
 )
 from scipy.optimize import linear_sum_assignment
 from scipy.spatial import distance_matrix
-from sklearn.cluster import DBSCAN
 
 from colour_checker_detection.detection.common import (
     DTYPE_FLOAT_DEFAULT,
@@ -159,6 +159,7 @@ def segmenter_templated(
 ) -> NDArrayInt: ...
 
 
+@required("scikit-learn")  # pyright: ignore
 def segmenter_templated(
     image: ArrayLike,
     cctf_encoding: Callable = eotf_inverse_sRGB,
@@ -296,6 +297,9 @@ def segmenter_templated(
             [1086,  244],
             [1069,  715]]], dtype=int32)
     """
+
+    from sklearn.cluster import DBSCAN  # noqa: PLC0415
+
     settings = Structure(**SETTINGS_TEMPLATED_COLORCHECKER_CLASSIC)
     settings.update(**kwargs)
 
