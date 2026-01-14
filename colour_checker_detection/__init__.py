@@ -15,13 +15,11 @@ Subpackages
 
 from __future__ import annotations
 
-import contextlib
 import os
 import subprocess
 
 import colour
 import cv2
-import numpy as np
 
 # isort: split
 
@@ -106,7 +104,3 @@ colour.utilities.ANCILLARY_COLOUR_SCIENCE_PACKAGES[  # pyright: ignore
 colour.utilities.ANCILLARY_RUNTIME_PACKAGES["opencv"] = cv2.__version__  # pyright: ignore
 
 del _version
-
-# TODO: Remove legacy printing support when deemed appropriate.
-with contextlib.suppress(TypeError):
-    np.set_printoptions(legacy="1.13")
