@@ -63,8 +63,8 @@ docs = [
     "sphinxcontrib-bibtex",
 ]
 ultralytics = [
-    "click>=8,<9; python_version<'3.14'",
-    "ultralytics>=8,<9; python_version<'3.14'",
+    "click>=8,<9",
+    "ultralytics>=8,<9",
 ]
 sklearn = [
     "scikit-learn>=1.7,<2",
