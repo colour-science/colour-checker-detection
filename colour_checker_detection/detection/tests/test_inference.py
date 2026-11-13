@@ -20,6 +20,7 @@ from colour_checker_detection.detection import (
     extractor_inference,
     inferencer_default,
 )
+from colour_checker_detection.detection.tests import TOLERANCE_SWATCH_COLOURS
 
 __author__ = "Colour Developers"
 __copyright__ = "Copyright 2018 Colour Developers"
@@ -285,7 +286,7 @@ detect_colour_checkers_inference` definition unit tests methods.
                     read_image(png_file), additional_data=False
                 ),
                 test_swatches[i],
-                atol=0.0001,
+                atol=TOLERANCE_SWATCH_COLOURS,
             )
 
         (
@@ -300,7 +301,7 @@ detect_colour_checkers_inference` definition unit tests methods.
         np.testing.assert_allclose(
             swatch_colours,
             test_swatches[0][0],
-            atol=0.0001,
+            atol=TOLERANCE_SWATCH_COLOURS,
         )
 
         np.testing.assert_array_equal(

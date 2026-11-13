@@ -292,6 +292,7 @@ def segmenter_default(
     Examples
     --------
     >>> import os
+    >>> import numpy as np
     >>> from colour import read_image
     >>> from colour_checker_detection import ROOT_RESOURCES_TESTS, segmenter_default
     >>> path = os.path.join(
@@ -301,11 +302,14 @@ def segmenter_default(
     ...     "IMG_1967.png",
     ... )
     >>> image = read_image(path)
-    >>> segmenter_default(image)  # doctest: +ELLIPSIS
+    >>> rectangles = segmenter_default(image)
+    >>> # Sort vertices because OpenCV does not guarantee their starting point.
+    >>> np.array([sorted(rectangle.tolist()) for rectangle in rectangles])
+    ... # doctest: +ELLIPSIS
     array([[[ 3...,  6...],
             [ 3...,  2...],
-            [10...,  2...],
-            [10...,  7...]]]...)
+            [10...,  7...],
+            [10...,  2...]]])
     """
 
     settings = Structure(**SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC)

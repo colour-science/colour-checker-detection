@@ -291,11 +291,13 @@ def segmenter_templated(
     ...     "IMG_1967.png",
     ... )
     >>> image = read_image(path)
-    >>> segmenter_templated(image)  # doctest: +ELLIPSIS
+    >>> rectangles = segmenter_templated(image)
+    >>> # Sort vertices because OpenCV does not guarantee their starting point.
+    >>> np.array([sorted(rectangle.tolist()) for rectangle in rectangles])
     array([[[ 357,  690],
             [ 373,  219],
-            [1086,  244],
-            [1069,  715]]], dtype=int32)
+            [1069,  715],
+            [1086,  244]]])
     """
 
     from sklearn.cluster import DBSCAN  # noqa: PLC0415
@@ -704,7 +706,7 @@ def extractor_templated(
             ).reshape(-1, 2)
 
             cost_matrix = distance_matrix(warped_pts, template.swatch_centroids)
-            row_id, col_id = linear_sum_assignment(cost_matrix)  # pyright: ignore
+            row_id, col_id = linear_sum_assignment(cost_matrix)
             cost = float(np.sum(cost_matrix[row_id, col_id]) / len(cluster))
 
             if cost < warping_data[cluster_id].cost:

@@ -1,9 +1,9 @@
 [project]
 name = "colour-checker-detection"
-version = "0.2.3"
+version = "0.2.4"
 description = "Colour checker detection with Python"
 readme = "README.rst"
-requires-python = ">=3.11,<3.15"
+requires-python = ">=3.13,<3.16"
 authors = [
     { name = "Colour Developers", email = "colour-developers@colour-science.org" },
 ]
@@ -42,18 +42,18 @@ classifiers = [
     "Topic :: Software Development"
 ]
 dependencies = [
-    "colour-science>=0.4.5",
-    "openimageio>=3,<4",
-    "numpy>=2.0.0,<3",
+    "colour-science>=0.4.7",
+    "openimageio>=3.1.19,<4",
+    "numpy>=2.2,<3",
     "opencv-python>=4,<5",
-    "scipy>=1.13.0,<2",
+    "scipy>=1.15,<2",
     "typing-extensions>=4,<5",
 ]
 
 [project.optional-dependencies]
 optional = [
     "imageio>=2,<3",
-    "matplotlib>=3.9",
+    "matplotlib>=3.10",
 ]
 docs = [
     "biblib-simple",
@@ -79,6 +79,9 @@ Changelog = "https://github.com/colour-science/colour-checker-detection/releases
 
 [tool.uv]
 package = true
+
+[tool.uv.sources]
+colour-science = { git = "https://github.com/colour-science/colour.git", branch = "feature/array-api-review" }
 
 [dependency-groups]
 dev = [
@@ -139,7 +142,7 @@ reportUnusedExpression = false
 addopts = "-n auto --dist=loadscope --durations=5"
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py313"
 line-length = 88
 select = ["ALL"]
 ignore = [
