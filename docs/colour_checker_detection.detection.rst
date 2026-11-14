@@ -111,8 +111,6 @@ Common Utilities
     contour_centroid
     DataDetectionColourChecker
     detect_contours
-    DTYPE_FLOAT_DEFAULT
-    DTYPE_INT_DEFAULT
     is_square
     quadrilateralise_contours
     reformat_image
@@ -127,3 +125,10 @@ Common Utilities
     swatch_colours
     swatch_masks
     transform_image
+
+.. autosummary::
+    :toctree: generated/
+    :template: type.rst
+
+    DTYPE_FLOAT_DEFAULT
+    DTYPE_INT_DEFAULT
