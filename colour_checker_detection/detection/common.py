@@ -627,7 +627,7 @@ def detect_contours(
     settings = Structure(**SETTINGS_CONTOUR_DETECTION_DEFAULT)
     settings.update(**kwargs)
 
-    image_g = np.max(image, axis=-1)
+    image_g = np.max(np.asarray(image), axis=-1)
 
     # Normalisation
     image_g = (
@@ -848,16 +848,18 @@ def cluster_swatches(
     ...     ],
     ...     dtype=np.int32,
     ... )
-    >>> cluster_swatches(image, swatches, 1.5)
+    >>> clusters = cluster_swatches(image, swatches, 1.5)
+    >>> # Sort vertices because OpenCV does not guarantee their starting point.
+    >>> np.array([sorted(cluster.tolist()) for cluster in clusters])
     array([[[275,  75],
+            [275, 225],
             [425,  75],
-            [425, 225],
-            [275, 225]],
+            [425, 225]],
     <BLANKLINE>
            [[ 75,  75],
+            [ 75, 225],
             [225,  75],
-            [225, 225],
-            [ 75, 225]]], dtype=int32)
+            [225, 225]]])
     """
 
     scaled_swatches = [

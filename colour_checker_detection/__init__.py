@@ -41,6 +41,7 @@ from .detection import (
     segmenter_default,
     segmenter_templated,
 )
+from .utilities import is_sklearn_installed
 
 __author__ = "Colour Developers"
 __copyright__ = "Copyright 2018 Colour Developers"
@@ -50,6 +51,7 @@ __email__ = "colour-developers@colour-science.org"
 __status__ = "Production"
 
 __all__ = [
+    "is_sklearn_installed",
     "SETTINGS_INFERENCE_COLORCHECKER_CLASSIC",
     "SETTINGS_INFERENCE_COLORCHECKER_CLASSIC_MINI",
     "SETTINGS_SEGMENTATION_COLORCHECKER_CLASSIC",
@@ -82,7 +84,7 @@ __application_name__ = "Colour - Checker Detection"
 
 __major_version__ = "0"
 __minor_version__ = "2"
-__change_version__ = "3"
+__change_version__ = "4"
 __version__ = f"{__major_version__}.{__minor_version__}.{__change_version__}"
 
 try:

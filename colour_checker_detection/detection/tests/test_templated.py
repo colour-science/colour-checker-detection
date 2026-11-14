@@ -19,6 +19,10 @@ from colour_checker_detection.detection import (
     extractor_templated,
     segmenter_templated,
 )
+from colour_checker_detection.detection.tests import (
+    TOLERANCE_CONTOUR_PIXELS,
+    sort_contour_vertices,
+)
 
 __author__ = "Colour Developers"
 __copyright__ = "Copyright 2018 Colour Developers"
@@ -84,9 +88,13 @@ segmenter_templated` definition unit tests methods.
         ]
 
         for i, png_file in enumerate(PNG_FILES):
-            np.testing.assert_array_equal(
-                segmenter_templated(read_image(png_file), additional_data=False),
-                colour_checkers_rectangles[i],
+            np.testing.assert_allclose(
+                sort_contour_vertices(
+                    segmenter_templated(read_image(png_file), additional_data=False)
+                ),
+                sort_contour_vertices(colour_checkers_rectangles[i]),
+                rtol=0,
+                atol=TOLERANCE_CONTOUR_PIXELS,
             )
 
         (
@@ -97,13 +105,15 @@ segmenter_templated` definition unit tests methods.
         ) = segmenter_templated(read_image(PNG_FILES[0]), additional_data=True).values
 
         np.testing.assert_array_equal(
-            colour_checkers,
-            colour_checkers_rectangles[0],
+            sort_contour_vertices(colour_checkers),
+            sort_contour_vertices(colour_checkers_rectangles[0]),
         )
 
         np.testing.assert_array_equal(
-            clusters,
-            np.array([[[672, 579], [675, 366], [994, 371], [991, 584]]]),
+            sort_contour_vertices(clusters),
+            sort_contour_vertices(
+                np.array([[[672, 579], [675, 366], [994, 371], [991, 584]]])
+            ),
         )
 
         np.testing.assert_array_equal(

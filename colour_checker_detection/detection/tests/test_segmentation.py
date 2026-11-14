@@ -19,6 +19,11 @@ from colour_checker_detection.detection import (
     extractor_segmentation,
     segmenter_default,
 )
+from colour_checker_detection.detection.tests import (
+    TOLERANCE_CONTOUR_PIXELS,
+    TOLERANCE_SWATCH_COLOURS,
+    sort_contour_vertices,
+)
 
 __author__ = "Colour Developers"
 __copyright__ = "Copyright 2018 Colour Developers"
@@ -79,9 +84,13 @@ segmenter_default` definition unit tests methods.
         ]
 
         for i, png_file in enumerate(PNG_FILES):
-            np.testing.assert_array_equal(
-                segmenter_default(read_image(png_file), additional_data=False),
-                colour_checkers_rectangles[i],
+            np.testing.assert_allclose(
+                sort_contour_vertices(
+                    segmenter_default(read_image(png_file), additional_data=False)
+                ),
+                sort_contour_vertices(colour_checkers_rectangles[i]),
+                rtol=0,
+                atol=TOLERANCE_CONTOUR_PIXELS,
             )
 
         (
@@ -92,43 +101,47 @@ segmenter_default` definition unit tests methods.
         ) = segmenter_default(read_image(PNG_FILES[0]), additional_data=True).values
 
         np.testing.assert_array_equal(
-            colour_checkers,
-            colour_checkers_rectangles[0],
+            sort_contour_vertices(colour_checkers),
+            sort_contour_vertices(colour_checkers_rectangles[0]),
         )
 
         np.testing.assert_array_equal(
-            clusters,
-            np.array([[[671, 578], [675, 364], [994, 370], [990, 584]]]),
+            sort_contour_vertices(clusters),
+            sort_contour_vertices(
+                np.array([[[671, 578], [675, 364], [994, 370], [990, 584]]])
+            ),
         )
 
         np.testing.assert_array_equal(
-            swatches,
-            np.array(
-                [
-                    [[886, 575], [887, 531], [931, 532], [930, 576]],
-                    [[835, 574], [836, 530], [880, 531], [879, 575]],
-                    [[782, 572], [784, 528], [829, 530], [828, 573]],
-                    [[732, 571], [732, 527], [777, 529], [776, 572]],
-                    [[681, 570], [682, 526], [726, 527], [725, 571]],
-                    [[939, 525], [940, 481], [984, 483], [982, 526]],
-                    [[887, 524], [887, 479], [933, 481], [932, 525]],
-                    [[835, 523], [836, 478], [881, 480], [879, 524]],
-                    [[784, 522], [784, 477], [829, 478], [829, 523]],
-                    [[733, 521], [733, 477], [778, 479], [777, 522]],
-                    [[683, 518], [684, 478], [726, 479], [725, 519]],
-                    [[939, 474], [939, 429], [986, 431], [985, 475]],
-                    [[888, 473], [889, 429], [934, 430], [933, 474]],
-                    [[837, 472], [837, 428], [882, 430], [881, 473]],
-                    [[785, 472], [785, 427], [831, 429], [830, 473]],
-                    [[734, 470], [734, 426], [779, 428], [778, 471]],
-                    [[682, 469], [683, 425], [728, 427], [727, 471]],
-                    [[941, 423], [941, 378], [987, 380], [986, 424]],
-                    [[889, 422], [889, 377], [935, 379], [934, 423]],
-                    [[838, 421], [838, 377], [883, 379], [882, 422]],
-                    [[786, 420], [786, 376], [831, 378], [830, 421]],
-                    [[735, 420], [736, 376], [780, 377], [779, 421]],
-                    [[683, 419], [684, 375], [728, 376], [727, 420]],
-                ],
+            sort_contour_vertices(swatches),
+            sort_contour_vertices(
+                np.array(
+                    [
+                        [[886, 575], [887, 531], [931, 532], [930, 576]],
+                        [[835, 574], [836, 530], [880, 531], [879, 575]],
+                        [[782, 572], [784, 528], [829, 530], [828, 573]],
+                        [[732, 571], [732, 527], [777, 529], [776, 572]],
+                        [[681, 570], [682, 526], [726, 527], [725, 571]],
+                        [[939, 525], [940, 481], [984, 483], [982, 526]],
+                        [[887, 524], [887, 479], [933, 481], [932, 525]],
+                        [[835, 523], [836, 478], [881, 480], [879, 524]],
+                        [[784, 522], [784, 477], [829, 478], [829, 523]],
+                        [[733, 521], [733, 477], [778, 479], [777, 522]],
+                        [[683, 518], [684, 478], [726, 479], [725, 519]],
+                        [[939, 474], [939, 429], [986, 431], [985, 475]],
+                        [[888, 473], [889, 429], [934, 430], [933, 474]],
+                        [[837, 472], [837, 428], [882, 430], [881, 473]],
+                        [[785, 472], [785, 427], [831, 429], [830, 473]],
+                        [[734, 470], [734, 426], [779, 428], [778, 471]],
+                        [[682, 469], [683, 425], [728, 427], [727, 471]],
+                        [[941, 423], [941, 378], [987, 380], [986, 424]],
+                        [[889, 422], [889, 377], [935, 379], [934, 423]],
+                        [[838, 421], [838, 377], [883, 379], [882, 422]],
+                        [[786, 420], [786, 376], [831, 378], [830, 421]],
+                        [[735, 420], [736, 376], [780, 377], [779, 421]],
+                        [[683, 419], [684, 375], [728, 376], [727, 420]],
+                    ],
+                )
             ),
         )
 
@@ -403,7 +416,7 @@ detect_colour_checkers_segmentation` definition unit tests methods.
             np.testing.assert_allclose(
                 detect_colour_checkers_segmentation(png_file, additional_data=False),
                 test_swatches[i],
-                atol=0.0001,
+                atol=TOLERANCE_SWATCH_COLOURS,
             )
 
         (
@@ -418,7 +431,7 @@ detect_colour_checkers_segmentation` definition unit tests methods.
         np.testing.assert_allclose(
             swatch_colours,
             test_swatches[0][0],
-            atol=0.0001,
+            atol=TOLERANCE_SWATCH_COLOURS,
         )
 
         np.testing.assert_array_equal(

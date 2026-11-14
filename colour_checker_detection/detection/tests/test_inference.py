@@ -7,11 +7,8 @@ from __future__ import annotations
 
 import glob
 import os
-import platform
-import sys
 
 import numpy as np
-import pytest
 from colour import read_image
 
 from colour_checker_detection import ROOT_RESOURCES_TESTS
@@ -20,6 +17,7 @@ from colour_checker_detection.detection import (
     extractor_inference,
     inferencer_default,
 )
+from colour_checker_detection.detection.tests import TOLERANCE_SWATCH_COLOURS
 
 __author__ = "Colour Developers"
 __copyright__ = "Copyright 2018 Colour Developers"
@@ -49,11 +47,6 @@ class TestInferencerDefault:
 inferencer_default` definition unit tests methods.
     """
 
-    @pytest.mark.skipif(
-        platform.system() in ("Windows", "Microsoft", "Linux")
-        or sys.version_info >= (3, 14),
-        reason="Unit test is only reproducible on macOS and requires Python < 3.14",
-    )
     def test_inferencer_default(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.inference.\
@@ -82,11 +75,6 @@ inferencer_default` definition unit tests methods.
 class TestExtractorInference:
     """Define :func:`extractor_inference` definition unit tests methods."""
 
-    @pytest.mark.skipif(
-        platform.system() in ("Windows", "Microsoft", "Linux")
-        or sys.version_info >= (3, 14),
-        reason="Unit test is only reproducible on macOS and requires Python < 3.14",
-    )
     def test_extractor_inference(self) -> None:
         """Test :func:`extractor_inference` definition."""
 
@@ -136,11 +124,6 @@ class TestDetectColourCheckersInference:
 detect_colour_checkers_inference` definition unit tests methods.
     """
 
-    @pytest.mark.skipif(
-        platform.system() in ("Windows", "Microsoft", "Linux")
-        or sys.version_info >= (3, 14),
-        reason="Unit test is only reproducible on macOS and requires Python < 3.14",
-    )
     def test_detect_colour_checkers_inference(self) -> None:
         """
         Define :func:`colour_checker_detection.detection.inference.\
@@ -285,7 +268,7 @@ detect_colour_checkers_inference` definition unit tests methods.
                     read_image(png_file), additional_data=False
                 ),
                 test_swatches[i],
-                atol=0.0001,
+                atol=TOLERANCE_SWATCH_COLOURS,
             )
 
         (
@@ -300,7 +283,7 @@ detect_colour_checkers_inference` definition unit tests methods.
         np.testing.assert_allclose(
             swatch_colours,
             test_swatches[0][0],
-            atol=0.0001,
+            atol=TOLERANCE_SWATCH_COLOURS,
         )
 
         np.testing.assert_array_equal(
