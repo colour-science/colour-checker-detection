@@ -1,4 +1,5 @@
-"""Invoke - Tasks
+"""
+Invoke - Tasks
 ==============
 """
 
@@ -83,7 +84,8 @@ def clean(
     bytecode: bool = False,
     pytest: bool = True,
 ) -> None:
-    """Clean the project.
+    """
+    Clean the project.
 
     Parameters
     ----------
@@ -164,7 +166,8 @@ def quality(
     pyright: bool = True,
     rstlint: bool = True,
 ) -> None:
-    """Check the codebase with *Pyright* and lints various *restructuredText*
+    """
+    Check the codebase with *Pyright* and lints various *restructuredText*
     files with *rst-lint*.
 
     Parameters
@@ -188,7 +191,8 @@ def quality(
 
 @task
 def prek(ctx: Context) -> None:
-    """Run the "prek" hooks on the codebase.
+    """
+    Run the "prek" hooks on the codebase.
 
     Parameters
     ----------
@@ -220,7 +224,6 @@ def tests(ctx: Context) -> None:
     )
 
 
-
 @task
 def examples(ctx: Context) -> None:
     """Run the examples.
@@ -242,7 +245,8 @@ def examples(ctx: Context) -> None:
 
 @task(formatting, quality, prek, tests, examples)
 def preflight(ctx: Context) -> None:  # noqa: ARG001
-    """Perform the preflight tasks.
+    """
+    Perform the preflight tasks.
 
     Parameters
     ----------
@@ -279,7 +283,8 @@ def docs(ctx: Context, html: bool = True, pdf: bool = True) -> None:
 
 @task
 def todo(ctx: Context) -> None:
-    """Export the TODO items.
+    """
+    Export the TODO items.
 
     Parameters
     ----------
@@ -319,7 +324,8 @@ def requirements(ctx: Context) -> None:
 
 @task(clean, preflight, docs, todo, requirements)
 def build(ctx: Context) -> None:
-    """Build the project and runs dependency tasks.
+    """
+    Build the project and runs dependency tasks.
 
     Parameters
     ----------
@@ -328,7 +334,27 @@ def build(ctx: Context) -> None:
     """
 
     message_box("Building...")
-    ctx.run("uv build")
+    status = ctx.run("git status --porcelain -- README.rst", hide="both")
+    if status is not None and status.stdout.strip():
+        error = 'Please commit your changes to the "README.rst" file!'
+
+        raise RuntimeError(error)
+
+    readme_path = Path("README.rst")
+    original_readme = readme_path.read_bytes()
+    readme_content = original_readme.decode("utf-8")
+    readme_content = re.sub(
+        r"(\.\. begin-trim-long-description.*?\.\. end-trim-long-description)",
+        "",
+        readme_content,
+        flags=re.DOTALL,
+    )
+    try:
+        readme_path.write_text(readme_content, encoding="utf-8", newline="")
+        ctx.run("uv build")
+    finally:
+        readme_path.write_bytes(original_readme)
+
     ctx.run("twine check dist/*.whl dist/*.tar.gz")
 
 
@@ -432,13 +458,16 @@ def virtualise(ctx: Context, tests: bool = True) -> None:
 
 
 @task
-def tag(ctx: Context) -> None:
-    """Tag the repository according to defined version using *git-flow*.
+def tag(ctx: Context, remote_name: str = "upstream") -> None:
+    """
+    Tag the repository according to defined version using *git-flow*.
 
     Parameters
     ----------
     ctx
         Context.
+    remote_name
+        Name of the remote repository.
     """
 
     message_box("Tagging...")
@@ -453,34 +482,36 @@ def tag(ctx: Context) -> None:
         file_content = file_handle.read()
         major_version = re.search(
             '__major_version__\\s+=\\s+"(.*)"', file_content
-        ).group(  # type: ignore[union-attr]
+        ).group(  # pyright: ignore
             1
         )
         minor_version = re.search(
             '__minor_version__\\s+=\\s+"(.*)"', file_content
-        ).group(  # type: ignore[union-attr]
+        ).group(  # pyright: ignore
             1
         )
         change_version = re.search(
             '__change_version__\\s+=\\s+"(.*)"', file_content
-        ).group(  # type: ignore[union-attr]
+        ).group(  # pyright: ignore
             1
         )
 
         version = f"{major_version}.{minor_version}.{change_version}"
 
-        result = ctx.run("git ls-remote --tags upstream", hide="both")
+        result = ctx.run(
+            f"git ls-remote --tags --refs {quote(remote_name)}", hide="both"
+        )
         if result is None:
             error = "Failed to list remote tags."
 
             raise RuntimeError(error)
 
-        remote_tags = result.stdout.strip().split("\n")
-        tags = set()
-        for remote_tag in remote_tags:
-            tags.add(remote_tag.split("refs/tags/")[1].replace("refs/tags/", "^{}"))
-        version_tags = sorted(tags)
-        if f"v{version}" in version_tags:
+        tags = {
+            ref.removeprefix("refs/tags/").removesuffix("^{}")
+            for line in result.stdout.splitlines()
+            if (ref := line.partition("\t")[2]).startswith("refs/tags/")
+        }
+        if f"v{version}" in tags:
             error = (
                 f'A "{PYTHON_PACKAGE_NAME}" "v{version}" tag already exists in '
                 f"remote repository!"
@@ -494,7 +525,8 @@ def tag(ctx: Context) -> None:
 
 @task(build)
 def release(ctx: Context) -> None:
-    """Release the project to *Pypi* with *Twine*.
+    """
+    Release the project to *Pypi* with *Twine*.
 
     Parameters
     ----------
