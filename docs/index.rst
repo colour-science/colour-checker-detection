@@ -7,9 +7,7 @@ checker detection algorithms and related utilities.
 It is open source and freely available under the
 `BSD-3-Clause <https://opensource.org/licenses/BSD-3-Clause>`__ terms.
 
-..  image:: https://raw.githubusercontent.com/colour-science/colour-checker-detection/master/docs/_static/ColourCheckerDetection_001.png
-
-.. sectnum::
+..  image:: _static/ColourCheckerDetection_001.png
 
 Features
 --------
